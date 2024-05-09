@@ -1,30 +1,40 @@
-// servicehealthresources
-// | where type =~ 'Microsoft.ResourceHealth/events'
-// | extend eventType = tostring(properties.EventType), status = properties.Status, description = properties.Title, trackingId = properties.TrackingId, summary = properties.Summary, priority = properties.Priority, impactStartTime = properties.ImpactStartTime, impactMitigationTime = properties.ImpactMitigationTime
-// | where eventType == 'ServiceIssue' //and status == 'Active'
-// | where trackingId  == 'NL8T-VCZ'
-//| summarize Count=count() by tostring(trackingId)
 
-servicehealthresources
-| where type == "microsoft.resourcehealth/events/impactedresources"
-| extend TrackingId = split(split(id, "/events/", 1)[0], "/impactedResources", 0)[0]
-| extend p = parse_json(properties)
-| project subscriptionId, TrackingId, targetResourceId= tostring(p.targetResourceId), details = p
-| join kind=inner (
-    resources
-    )
-    on $left.targetResourceId == $right.id
 
 servicehealthresources
 | where type =~ 'Microsoft.ResourceHealth/events'
-| extend eventType = tostring(properties.EventType), status = properties.Status, description = properties.Title, trackingId = properties.TrackingId, summary = properties.Summary, priority = properties.Priority, impactStartTime = properties.ImpactStartTime, impactMitigationTime = properties.ImpactMitigationTime
-| where eventType == 'ServiceIssue' //and status == 'Active'
-// | project 
-//     trackingId, 
-//     subscriptionId, 
-//     impactStartTime, 
-//     impactMitigationTime, 
-//     tostring(properties.EventLevel)
-| summarize subscriptionIds = make_set(subscriptionId) by 
-    tostring(trackingId), tostring(impactStartTime), tostring(impactMitigationTime)
-//| summarize Count=count() by tostring(trackingId)
+| extend eventType = tostring(properties.EventType) //, status = properties.Status, description = properties.Title, trackingId = properties.TrackingId, summary = properties.Summary, priority = properties.Priority, impactStartTime = properties.ImpactStartTime, impactMitigationTime = properties.ImpactMitigationTime
+| extend trackingId = tostring(name)
+| where eventType == 'ServiceIssue' and properties.Status == 'Active'
+
+| join kind=leftouter  (
+        servicehealthresources
+        | where type == "microsoft.resourcehealth/events/impactedresources"
+        | extend trackingId = tostring(split(split(id, "/events/", 1)[0], "/impactedResources", 0)[0])
+        | extend p = parse_json(properties)
+        | extend targetResourceId = tostring(p.targetResourceId)
+        | project tostring(trackingId), targetResourceId
+  ) 
+  on $left.trackingId == $right.trackingId
+
+| join kind=leftouter (
+    resources
+    // Creates a dynamic property bag object from a list of keys and values.
+    | extend impacted_resource_id = tostring(id)
+    | project 
+        impacted_resource_id = id,
+        impacted_resource_group= resourceGroup,
+        impacted_resource_type= type,
+        impacted_resource_name= name,
+        impacted_resource_location = location
+    | project impacted_resource_id, impacted_resources = pack_all()   //creates a dynamic JSON property bag (dict) of all the values of expr in the group.
+  ) 
+  on $left.targetResourceId == $right.impacted_resource_id
+
+| summarize subscriptionIds = make_set(subscriptionId) by
+    trackingId,
+    eventLevel = tostring(properties.EventLevel),
+    impactedStartTime = tostring(format_datetime(unixtime_seconds_todatetime(toint(properties.ImpactStartTime)), "dd-MM-yyyy hh:mm:ss")),
+    impactMitigationTime = tostring(format_datetime(unixtime_seconds_todatetime(toint(properties.impactMitigationTime)), "dd-MM-yyyy hh:mm:ss")),
+    title = tostring(properties.Title),
+    summary = tostring(properties.Summary),
+    impactedResources = tostring(impacted_resources)
