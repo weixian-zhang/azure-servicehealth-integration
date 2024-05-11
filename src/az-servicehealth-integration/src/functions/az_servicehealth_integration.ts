@@ -1,5 +1,5 @@
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from "@azure/functions";
-import { ClientSecretCredential } from "@azure/identity"
+import { ClientSecretCredential, DefaultAzureCredential, EnvironmentCredential, EnvironmentCredentialOptions  } from "@azure/identity"
 import { MicrosoftResourceHealth } from "@azure/arm-resourcehealth"
 import AppConfig from "./appconfig";
 
@@ -10,7 +10,8 @@ declare global {
 }
 
 function initAzureCredential() {
-    
+
+
     globalThis.wogAzCred = new ClientSecretCredential(
         globalThis.appconfig.wogTenantId,
         globalThis.appconfig.wogClientId,
@@ -34,7 +35,8 @@ export async function az_servicehealth_integration(request: HttpRequest, context
 
     const subscriptionId = "d8732e82-febd-4b92-b1ed-8fbce80a9ad8"
     const credential = globalThis.techpassAzCred;
-    const client = new MicrosoftResourceHealth(credential, subscriptionId);
+    const client = new MicrosoftResourceHealth(new DefaultAzureCredential(), subscriptionId) ;
+    //const accessToken =  await credential.getToken("https://management.azure.com/user_impersonation")
 
     const resArray = new Array();
 

@@ -26,7 +26,7 @@ servicehealthresources
         impacted_resource_type= type,
         impacted_resource_name= name,
         impacted_resource_location = location
-    | project impacted_resource_id, impacted_resources = pack_all()   //creates a dynamic JSON property bag (dict) of all the values of expr in the group.
+    | project impacted_resource_id, impacted_resources = pack_all() //pack_array('*')   //creates a dynamic JSON property bag (dict) of all the values of expr in the group.
   ) 
   on $left.targetResourceId == $right.impacted_resource_id
 
