@@ -1,7 +1,7 @@
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from "@azure/functions";
 import { ClientSecretCredential, DefaultAzureCredential, OnBehalfOfCredential   } from "@azure/identity"
 import { MicrosoftResourceHealth } from "@azure/arm-resourcehealth"
-import AppConfig from "./appconfig";
+import AppConfig from "./helpers/AppConfig";
 
 declare global {
     var appconfig: AppConfig;
@@ -13,15 +13,15 @@ function initAzureCredential() {
 
 
     globalThis.wogAzCred = new ClientSecretCredential(
-        globalThis.appconfig.wogTenantId,
-        globalThis.appconfig.wogClientId,
-        globalThis.appconfig.wogClientSecret
+        globalThis.appconfig.WogTenantId,
+        globalThis.appconfig.WogClientId,
+        globalThis.appconfig.WogClientSecret
       );
 
     globalThis.techpassAzCred = new ClientSecretCredential(
-      globalThis.appconfig.techpassTenantId,
-      globalThis.appconfig.techpassClientId,
-      globalThis.appconfig.techpassClientSecret
+      globalThis.appconfig.TechpassTenantId,
+      globalThis.appconfig.TechpassClientId,
+      globalThis.appconfig.TechpassClientSecret
 
     );
 }
