@@ -5,16 +5,19 @@ export default class AppConfig {
     WogClientId: string;
     WogClientSecret: string;
     WogTenantId: string;
-    IsDevTest: boolean
+    IsDevTest: boolean;
+    incidentQueryStartFromDate: string = '';
 
-    static loadFromEnvVar() {
-        var appconfg = new AppConfig()
-        appconfg.TechpassClientId  = process.env.GCC_TECHPASS_CLIENT_ID
-        appconfg.TechpassClientSecret  = process.env.GCC_TECHPASS_CLIENT_SECRET
-        appconfg.TechpassTenantId  = process.env.GCC_TECHPASS_TENANT_ID
-        appconfg.WogClientId  = process.env.GCC_WOG_CLIENT_ID
-        appconfg.WogClientSecret  = process.env.GCC_WOG_CLIENT_SECRET
-        appconfg.WogTenantId  = process.env.GCC_WOG_TENANT_ID
+    static loadFromEnvVar(incidentQueryStartFromDate: string) {
+        var appconfig = new AppConfig()
+
+        appconfig.incidentQueryStartFromDate = incidentQueryStartFromDate;
+        appconfig.TechpassClientId  = process.env.GCC_TECHPASS_CLIENT_ID
+        appconfig.TechpassClientSecret  = process.env.GCC_TECHPASS_CLIENT_SECRET
+        appconfig.TechpassTenantId  = process.env.GCC_TECHPASS_TENANT_ID
+        appconfig.WogClientId  = process.env.GCC_WOG_CLIENT_ID
+        appconfig.WogClientSecret  = process.env.GCC_WOG_CLIENT_SECRET
+        appconfig.WogTenantId  = process.env.GCC_WOG_TENANT_ID
 
         if (process.env.SERVICE_HEALTH_INTEGRATION_IS_DEVTEST.toLowerCase() == 'true') {
             appconfig.IsDevTest = true
@@ -24,6 +27,6 @@ export default class AppConfig {
         }
 
 
-        return appconfg
+        return appconfig
     }
   }
