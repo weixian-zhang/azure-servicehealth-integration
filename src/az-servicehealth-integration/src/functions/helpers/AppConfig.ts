@@ -5,6 +5,7 @@ export default class AppConfig {
     WogClientId: string;
     WogClientSecret: string;
     WogTenantId: string;
+    IsDevTest: boolean
 
     static loadFromEnvVar() {
         var appconfg = new AppConfig()
@@ -14,6 +15,14 @@ export default class AppConfig {
         appconfg.WogClientId  = process.env.GCC_WOG_CLIENT_ID
         appconfg.WogClientSecret  = process.env.GCC_WOG_CLIENT_SECRET
         appconfg.WogTenantId  = process.env.GCC_WOG_TENANT_ID
+
+        if (process.env.SERVICE_HEALTH_INTEGRATION_IS_DEVTEST.toLowerCase() == 'true') {
+            appconfig.IsDevTest = true
+        }
+        else {
+            appconfig.IsDevTest = false
+        }
+
 
         return appconfg
     }
