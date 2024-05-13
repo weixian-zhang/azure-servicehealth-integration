@@ -1,8 +1,7 @@
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from "@azure/functions";
+import AppConfig from "./helpers/AppConfig";
 import { ClientSecretCredential, DefaultAzureCredential, OnBehalfOfCredential   } from "@azure/identity"
 import { MicrosoftResourceHealth } from "@azure/arm-resourcehealth"
-import AppConfig from "./helpers/AppConfig";
-
 declare global {
     var appconfig: AppConfig;
     var wogAzCred: ClientSecretCredential;
@@ -34,25 +33,11 @@ export async function az_servicehealth_integration(request: HttpRequest, context
 
         // initAzureCredential()
 
-        const subscriptionId = "d8732e82-febd-4b92-b1ed-8fbce80a9ad8"
-        const credential = globalThis.techpassAzCred;
-        const client = new MicrosoftResourceHealth(new DefaultAzureCredential()) ;
-        //const accessToken =  await credential.getToken("https://management.azure.com/user_impersonation")
+        //const subscriptionId = "d8732e82-febd-4b92-b1ed-8fbce80a9ad8"
+        //const credential = globalThis.techpassAzCred;
 
-        const resArray = new Array();
 
-        const iterator = client.eventsOperations.listByTenantId(null)
-        let next;
-
-        while ((next = await iterator.next()).done === false) {
-            resArray.push(next.value);
-        }
-
-        // for await (const item of client.eventsOperations.listByTenantId(null)) {
-            
-        // }
-
-        console.log(resArray);
+        //console.log(resArray);
 
         return { body: `Hello, World}!` };
     }
