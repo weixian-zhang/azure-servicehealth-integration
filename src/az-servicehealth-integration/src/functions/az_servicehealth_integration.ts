@@ -2,6 +2,8 @@ import { app, HttpRequest, HttpResponseInit, InvocationContext } from "@azure/fu
 import AppConfig from "./helpers/AppConfig";
 import { ClientSecretCredential, DefaultAzureCredential, OnBehalfOfCredential   } from "@azure/identity"
 import { MicrosoftResourceHealth } from "@azure/arm-resourcehealth"
+import { IssueRetriever } from "./helpers/IssueRetriever";
+
 declare global {
     var appconfig: AppConfig;
     var wogAzCred: ClientSecretCredential;
@@ -29,7 +31,16 @@ export async function az_servicehealth_integration(request: HttpRequest, context
     // context.log(`Http function processed request for url "${request.url}"`);
 
     try {
-        // globalThis.appconfig = AppConfig.loadFromEnvVar()
+        
+        const incidentQueryStartFromDate = request.query.get('incidentStartFromDate');
+        
+        globalThis.appconfig = AppConfig.loadFromEnvVar(incidentQueryStartFromDate);
+
+        const ir = new IssueRetriever(appconfig, context);
+
+        const issues = await ir.getIssues();
+
+        // TODO: send to service bus
 
         // initAzureCredential()
 

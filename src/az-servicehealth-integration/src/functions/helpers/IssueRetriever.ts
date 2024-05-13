@@ -1,7 +1,7 @@
 import IIssueRetriever from "./IIssueRetriever"
 import ApiIssueRetriever from "./ApiIssueRetriever";
 import MockIssueRetriever from "./MockIssueRetriever";
-import ServiceIssue from "../models/ServiceIssue";
+import {ServiceIssue} from "./ServiceIssueModels";
 import AppConfig from "./AppConfig";
 import { InvocationContext, InvocationHookContext } from "@azure/functions";
 
@@ -24,8 +24,9 @@ export class IssueRetriever {
         }
     }
 
-    getIssues() : ServiceIssue[] {
-        return []
+    async getIssues() : Promise<ServiceIssue[]> {
+        const issues = await this.issueRetriever.getIssuesAndImpactedResourcesAtTenantLevel();
+        return issues
     }
 
     private getImpactedResources(TrackingId: string) {
