@@ -9,6 +9,8 @@ export class ServiceIssue {
     Description: string;
     ImpactedServices: ImpactedService[] = [];
     ImpactedResources: Array<ImpactedResource> = [];
+    LastUpdateTime: Date;
+    LastUpdateTimeEpoch: number;
 }
 
 export class ImpactedService {
@@ -30,6 +32,6 @@ export  class ImpactedResource {
     Id: string
     SubscriptionId: string
     ResourceGroup: string
-    targetResourceType: string;
+    ResourceType: string;
     ResourceName: string
 }
