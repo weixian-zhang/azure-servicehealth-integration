@@ -4,6 +4,7 @@ import MockIssueRetriever from "./MockIssueRetriever";
 import {ServiceIssue} from "./ServiceIssueModels";
 import AppConfig from "./AppConfig";
 import { InvocationContext, InvocationHookContext } from "@azure/functions";
+import { ClientSecretCredential } from "@azure/identity";
 
 export class IssueRetriever {
 
@@ -11,7 +12,7 @@ export class IssueRetriever {
     context: InvocationContext;
     appconfig: AppConfig;
 
-    constructor(appconfig: AppConfig, context: InvocationContext) {
+    constructor(azcred: ClientSecretCredential, subscriptionId: string, appconfig: AppConfig, context: InvocationContext) {
 
         this.appconfig = appconfig;
         this.context = context;
@@ -22,7 +23,7 @@ export class IssueRetriever {
             this.issueRetriever = new MockIssueRetriever();
         }
         else {
-            this.issueRetriever = new ApiIssueRetriever(this.appconfig, this.context);
+            this.issueRetriever = new ApiIssueRetriever(azcred,subscriptionId, this.appconfig, this.context);
         }
     }
 

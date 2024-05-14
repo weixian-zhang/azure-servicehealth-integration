@@ -1,23 +1,40 @@
+import { ClientSecretCredential } from "@azure/identity";
+
 export default class AppConfig {
-    TechpassClientId: string;
-    TechpassClientSecret: string;
-    TechpassTenantId: string;
+    TechPassClientId: string;
+    TechPassClientSecret: string;
+    TechPassTenantId: string;
+    TechPassTenantName: string;
+    TechPassResidentSubscriptionId: string;
+    TechPassClientSecretCredential: ClientSecretCredential;
     WogClientId: string;
     WogClientSecret: string;
     WogTenantId: string;
+    WogTenantName: string;
+    WogResidentSubscriptionId: string;
+    wogClientSecretCredential: ClientSecretCredential;
     IsDevTest: boolean;
     incidentQueryStartFromDate: string = '';
 
     static loadFromEnvVar(incidentQueryStartFromDate: string) {
+
         var appconfig = new AppConfig()
 
         appconfig.incidentQueryStartFromDate = incidentQueryStartFromDate;
-        appconfig.TechpassClientId  = process.env.GCC_TECHPASS_CLIENT_ID
-        appconfig.TechpassClientSecret  = process.env.GCC_TECHPASS_CLIENT_SECRET
-        appconfig.TechpassTenantId  = process.env.GCC_TECHPASS_TENANT_ID
-        appconfig.WogClientId  = process.env.GCC_WOG_CLIENT_ID
-        appconfig.WogClientSecret  = process.env.GCC_WOG_CLIENT_SECRET
-        appconfig.WogTenantId  = process.env.GCC_WOG_TENANT_ID
+
+        appconfig.TechPassClientId  = process.env.GCC_TECHPASS_CLIENT_ID;
+        appconfig.TechPassClientSecret  = process.env.GCC_TECHPASS_CLIENT_SECRET;
+        appconfig.TechPassTenantId  = process.env.GCC_TECHPASS_TENANT_ID;
+        appconfig.TechPassTenantName  = process.env.GCC_TECHPASS_TENANT_NAME;
+        appconfig.TechPassResidentSubscriptionId = process.env.GCC_TECHPASS_RESIDENT_SUBSCRIPTION_ID;
+
+        appconfig.WogClientId  = process.env.GCC_WOG_CLIENT_ID;
+        appconfig.WogClientSecret  = process.env.GCC_WOG_CLIENT_SECRET;
+        appconfig.WogTenantId  = process.env.GCC_WOG_TENANT_ID;
+        appconfig.WogTenantName  = process.env.GCC_WOG_TENANT_NAME;
+        appconfig.WogResidentSubscriptionId = process.env.GCC_WOG_RESIDENT_SUBSCRIPTION_ID;
+
+        this.createAzureCredentials(appconfig);
 
         if (process.env.SERVICE_HEALTH_INTEGRATION_IS_DEVTEST.toLowerCase() == 'true') {
             appconfig.IsDevTest = true
@@ -26,7 +43,22 @@ export default class AppConfig {
             appconfig.IsDevTest = false
         }
 
-
         return appconfig
+    }
+
+    static createAzureCredentials(appconfig: AppConfig) {
+
+        appconfig.wogClientSecretCredential = new ClientSecretCredential(
+            appconfig.WogTenantId,
+            appconfig.WogClientId,
+            appconfig.WogClientSecret
+          );
+    
+        appconfig.TechPassClientSecretCredential = new ClientSecretCredential(
+            appconfig.TechPassTenantId,
+            appconfig.TechPassClientId,
+            appconfig.TechPassClientSecret
+        )
+    
     }
   }

@@ -10,22 +10,7 @@ declare global {
     var techpassAzCred: ClientSecretCredential;
 }
 
-function initAzureCredential() {
 
-
-    globalThis.wogAzCred = new ClientSecretCredential(
-        globalThis.appconfig.WogTenantId,
-        globalThis.appconfig.WogClientId,
-        globalThis.appconfig.WogClientSecret
-      );
-
-    globalThis.techpassAzCred = new ClientSecretCredential(
-      globalThis.appconfig.TechpassTenantId,
-      globalThis.appconfig.TechpassClientId,
-      globalThis.appconfig.TechpassClientSecret
-
-    );
-}
 
 export async function az_servicehealth_integration(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
     // context.log(`Http function processed request for url "${request.url}"`);
@@ -36,23 +21,24 @@ export async function az_servicehealth_integration(request: HttpRequest, context
         
         globalThis.appconfig = AppConfig.loadFromEnvVar(incidentQueryStartFromDate);
 
-        const ir = new IssueRetriever(appconfig, context);
+        const techpassIR = new IssueRetriever(
+            globalThis.appconfig.TechPassClientSecretCredential, 
+            globalThis.appconfig.TechPassResidentSubscriptionId,
+            appconfig, context);
 
-        const issues = await ir.getIssues();
+        const techpassIssues = await techpassIR.getIssues();
 
-        // TODO: send to service bus
+        const wogIR = new IssueRetriever(
+            globalThis.appconfig.wogClientSecretCredential,
+            globalThis.appconfig.WogResidentSubscriptionId,
+            appconfig, 
+            context);
 
-        // initAzureCredential()
-
-        //const subscriptionId = "d8732e82-febd-4b92-b1ed-8fbce80a9ad8"
-        //const credential = globalThis.techpassAzCred;
-
-
-        //console.log(resArray);
+        const wogIssues = await wogIR.getIssues();
 
         return {
             status: 200, /* Defaults to 200 */
-            body: JSON.stringify({issues}),
+            body: JSON.stringify({techpassIssues}),
             headers: {
                 'Content-Type': 'application/json'
             }
