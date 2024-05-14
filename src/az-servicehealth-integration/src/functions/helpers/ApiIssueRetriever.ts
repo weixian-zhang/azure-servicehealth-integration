@@ -157,7 +157,7 @@ export default class ApiIssueRetriever implements IIssueRetriever {
 
         issues.forEach(async issue => {
         
-            for await (let resource of this.resourceHealthClient.impactedResources.listByTenantIdAndEventId(issue.TrackingId)) {
+            for await (let resource of this.resourceHealthClient.impactedResources.listBySubscriptionIdAndEventId(issue.TrackingId)) {//this.resourceHealthClient.impactedResources.listByTenantIdAndEventId(issue.TrackingId)) {
 
                 const ir = new ImpactedResource();
                 const rscArr = resource.targetResourceId.split("/");
