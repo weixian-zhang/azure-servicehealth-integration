@@ -7,8 +7,8 @@ export class ServiceIssue {
     Title: string;
     Summary: string;
     Description: string;
-    ImpactedServices: ImpactedService[] = [];
-    ImpactedResources: Array<ImpactedResource> = [];
+    ImpactedServices: ImpactedService[];
+    ImpactedResources: ImpactedResource[];
     LastUpdateTime: Date;
     LastUpdateTimeEpoch: number;
 }

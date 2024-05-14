@@ -50,7 +50,14 @@ export async function az_servicehealth_integration(request: HttpRequest, context
 
         //console.log(resArray);
 
-        return { body: `Hello, World}!` };
+        return {
+            status: 200, /* Defaults to 200 */
+            body: JSON.stringify({issues}),
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        };
+
     }
     catch(e){
      
