@@ -1,6 +1,6 @@
 import { ServiceIssue, ImpactedService, ImpactUpdates, ImpactedResource } from "./ServiceIssueModels";
 import IIssueRetriever from "./IIssueRetriever";
-import { ClientSecretCredential, DefaultAzureCredential, AccessToken   } from "@azure/identity"
+import { ClientSecretCredential  } from "@azure/identity"
 import { MicrosoftResourceHealth, EventsListByTenantIdOptionalParams, EventsListBySubscriptionIdOptionalParams } from "@azure/arm-resourcehealth"
 import {Update} from "@azure/arm-resourcehealth/types/arm-resourcehealth";
 import { ArrayHelper } from "./HelperFuncs";
@@ -26,12 +26,10 @@ export default class ApiIssueRetriever implements IIssueRetriever {
     context: InvocationContext;
     regionToFilter = "Southeast Asia";
 
-    constructor(appconfig: AppConfig, context: InvocationContext) {
+    constructor(azcred: ClientSecretCredential, subscriptionId: string, appconfig: AppConfig, context: InvocationContext) {
         this.appconfig = appconfig;
         this.context = context;
-        const subId = "00000000-0000-0000-0000-000000000000";
-        
-        this.resourceHealthClient = new MicrosoftResourceHealth(new DefaultAzureCredential(), subId);
+        this.resourceHealthClient = new MicrosoftResourceHealth(azcred, subscriptionId);
     }
     
 
