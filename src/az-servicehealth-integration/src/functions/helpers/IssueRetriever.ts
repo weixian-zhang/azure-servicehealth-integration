@@ -9,9 +9,11 @@ export class IssueRetriever {
 
     issueRetriever: IIssueRetriever;
     context: InvocationContext;
+    appconfig: AppConfig;
 
     constructor(appconfig: AppConfig, context: InvocationContext) {
 
+        this.appconfig = appconfig;
         this.context = context;
 
         const isDevTest = process.env.SERVICE_HEALTH_INTEGRATION_IS_DEVTEST
@@ -20,7 +22,7 @@ export class IssueRetriever {
             this.issueRetriever = new MockIssueRetriever();
         }
         else {
-            this.issueRetriever = new ApiIssueRetriever(this.context);
+            this.issueRetriever = new ApiIssueRetriever(this.appconfig, this.context);
         }
     }
 

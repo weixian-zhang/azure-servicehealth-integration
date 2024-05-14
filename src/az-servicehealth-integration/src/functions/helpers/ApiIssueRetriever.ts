@@ -1,9 +1,12 @@
-import { ServiceIssue, ImpactedService, ImpactUpdates } from "./ServiceIssueModels";
+import { ServiceIssue, ImpactedService, ImpactUpdates, ImpactedResource } from "./ServiceIssueModels";
 import IIssueRetriever from "./IIssueRetriever";
-import { ClientSecretCredential, DefaultAzureCredential   } from "@azure/identity"
+import { ClientSecretCredential, DefaultAzureCredential, AccessToken   } from "@azure/identity"
 import { MicrosoftResourceHealth, EventsListByTenantIdOptionalParams, EventsListBySubscriptionIdOptionalParams } from "@azure/arm-resourcehealth"
+import {Update} from "@azure/arm-resourcehealth/types/arm-resourcehealth";
 import { ArrayHelper } from "./HelperFuncs";
 import { InvocationContext } from "@azure/functions";
+import AppConfig from "./AppConfig";
+import {StaticTokenCredential, StringAccessToken} from './StaticTokenCredential';
 
 //service issue json schema
 //https://learn.microsoft.com/en-us/rest/api/resourcehealth/events/list-by-tenant-id?view=rest-resourcehealth-2022-10-01&tabs=HTTP#listeventsbytenantid
@@ -18,17 +21,20 @@ import { InvocationContext } from "@azure/functions";
 // https://github.com/Azure/azure-sdk-for-js/blob/%40azure/arm-resourcehealth_4.0.0/sdk/resourcehealth/arm-resourcehealth/samples/v4/typescript/src/eventsListByTenantIdSample.ts
 
 export default class ApiIssueRetriever implements IIssueRetriever {
-
+    appconfig: AppConfig;
     resourceHealthClient : MicrosoftResourceHealth;
     context: InvocationContext;
     regionToFilter = "Southeast Asia";
 
-    constructor(context: InvocationContext) {
+    constructor(appconfig: AppConfig, context: InvocationContext) {
+        this.appconfig = appconfig;
         this.context = context;
         const subId = "00000000-0000-0000-0000-000000000000";
+        
         this.resourceHealthClient = new MicrosoftResourceHealth(new DefaultAzureCredential(), subId);
     }
     
+
     async getIssuesAndImpactedResourcesAtTenantLevel() : Promise<ServiceIssue[]> {
         
         try {
@@ -51,12 +57,13 @@ export default class ApiIssueRetriever implements IIssueRetriever {
 
     }
 
+
     private async getServiceIssues() : Promise<ServiceIssue[]> {
 
         let serviceIssues = new Array();
 
         const filter = "region eq 'Southeast Asia'";
-        const queryStartTime = "1/1/2020";
+        const queryStartTime = this.appconfig.incidentQueryStartFromDate;
         // const options: EventsListByTenantIdOptionalParams = {
         //     queryStartTime
         // };
@@ -82,35 +89,43 @@ export default class ApiIssueRetriever implements IIssueRetriever {
             si.Description =issue.description
             si.ImpactStartTime = issue.impactStartTime;
             si.ImpactMitigationTime = issue.impactMitigationTime;
+            si.LastUpdateTime = new Date(issue.lastUpdateTime);
+            si.LastUpdateTimeEpoch = si.LastUpdateTime.valueOf();
+            si.ImpactedServices = new Array();
+            si.ImpactedResources = new Array();
 
             issue.impact.forEach(impact => {
 
                 impact.impactedRegions.forEach(region => {
 
-                    if (region.impactedRegion && region.impactedRegion != this.regionToFilter) {
-                        return;
-                    }
+                    //if (region.impactedRegion == this.regionToFilter || region.impactedRegion == "Global") {
 
-                    const impactedSvc = new ImpactedService();
+                        const impactedSvc = new ImpactedService();
 
-                    impactedSvc.ImpactedService = impact.impactedService;
-                    impactedSvc.SoutheastAsiaRegionStatus = region.status;
-                    impactedSvc.ImpactedTenants = region.impactedTenants;
-                    impactedSvc.ImpactedSubscriptions = region.impactedSubscriptions;
-                    impactedSvc.LastUpdateTime = region.lastUpdateTime;
-                    
-                    region.updates.forEach(update => {
+                        impactedSvc.ImpactedService = impact.impactedService;
+                        impactedSvc.SoutheastAsiaRegionStatus = region.status;
+                        impactedSvc.ImpactedTenants = region.impactedTenants;
+                        impactedSvc.ImpactedSubscriptions = region.impactedSubscriptions;
+                        impactedSvc.LastUpdateTime = region.lastUpdateTime;
+                        impactedSvc.ImpactUpdates = new Array();
+                        
+                        if (!ArrayHelper.isEmpty(region.updates)) {
 
-                        const iu = new ImpactUpdates();
-                        iu.Summary = update.summary;
-                        iu.UpdateDateTime = new Date(update.updateDateTime);
-                        iu.UpdateEpoch = iu.UpdateDateTime.valueOf();
+                            for (const u of region.updates) {
 
-                        impactedSvc.ImpactUpdates.push(iu);
+                                const iu = new ImpactUpdates();
+                                iu.Summary = u.summary;
+                                iu.UpdateDateTime = new Date(u.updateDateTime);
+                                iu.UpdateEpoch = iu.UpdateDateTime.valueOf();
+    
+                                impactedSvc.ImpactUpdates.push(iu);
+                            }
+                        }
+                        
 
-                    });
+                        si.ImpactedServices.push(impactedSvc);
 
-                    si.ImpactedServices.push(impactedSvc);
+                    //}
 
                 });
 
@@ -142,23 +157,21 @@ export default class ApiIssueRetriever implements IIssueRetriever {
 
         issues.forEach(async issue => {
         
-            const iterator = this.resourceHealthClient.impactedResources.listByTenantIdAndEventId(issue.TrackingId);
-            let next;;
+            for await (let resource of this.resourceHealthClient.impactedResources.listByTenantIdAndEventId(issue.TrackingId)) {
 
-            while ((next = await iterator.next()).done === false) {
-
-                const ip = next.value;
-
-                if (ip) {
-                    const jip = JSON.parse(ip)
-
-
-                }
+                const ir = new ImpactedResource();
+                const rscArr = resource.targetResourceId.split("/");
+                ir.SubscriptionId =  (rscArr[1]) ? rscArr[1] : "";
+                ir.ResourceGroup = resource.resourceGroup;
+                ir.ResourceType = resource.targetResourceType;
+                ir.ResourceName =  resource.resourceName;
+                
+                issue.ImpactedResources.push(ir);
             }
 
         });
 
-        return result;
+        return issues;
     }
 
 
