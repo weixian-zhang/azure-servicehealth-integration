@@ -1,8 +1,9 @@
-import { app, HttpRequest, HttpResponseInit, InvocationContext } from "@azure/functions";
+import { app, HttpRequest, HttpResponseInit, InvocationContext, InvocationHookContext } from "@azure/functions";
 import AppConfig from "./helpers/AppConfig";
 import { ClientSecretCredential, DefaultAzureCredential, OnBehalfOfCredential   } from "@azure/identity"
 import { MicrosoftResourceHealth } from "@azure/arm-resourcehealth"
 import { IssueRetriever } from "./helpers/IssueRetriever";
+import { ServiceIssue } from "./helpers/ServiceIssueModels";
 
 declare global {
     var appconfig: AppConfig;
@@ -11,9 +12,7 @@ declare global {
 }
 
 
-
 export async function az_servicehealth_integration(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
-    // context.log(`Http function processed request for url "${request.url}"`);
 
     try {
         
@@ -21,24 +20,15 @@ export async function az_servicehealth_integration(request: HttpRequest, context
         
         globalThis.appconfig = AppConfig.loadFromEnvVar(incidentQueryStartFromDate);
 
-        const techpassIR = new IssueRetriever(
-            globalThis.appconfig.TechPassClientSecretCredential, 
-            globalThis.appconfig.TechPassResidentSubscriptionId,
-            appconfig, context);
+        const tpIssues = await getTechPassIssues(context);
 
-        const techpassIssues = await techpassIR.getIssues();
+        const wogIssues = await getWOGIssues(context)
 
-        const wogIR = new IssueRetriever(
-            globalThis.appconfig.wogClientSecretCredential,
-            globalThis.appconfig.WogResidentSubscriptionId,
-            appconfig, 
-            context);
-
-        const wogIssues = await wogIR.getIssues();
+        const combinedIssues = tpIssues.concat(wogIssues)
 
         return {
-            status: 200, /* Defaults to 200 */
-            body: JSON.stringify({techpassIssues}),
+            status: 200,
+            body: JSON.stringify({combinedIssues}),
             headers: {
                 'Content-Type': 'application/json'
             }
@@ -56,6 +46,29 @@ export async function az_servicehealth_integration(request: HttpRequest, context
     }
     
 };
+
+async function getTechPassIssues(context: InvocationContext) : Promise<ServiceIssue[]> {
+    const techpassIR = new IssueRetriever(
+        globalThis.appconfig.TechPassClientSecretCredential, 
+        globalThis.appconfig.TechPassResidentSubscriptionId,
+        appconfig, context);
+
+    const issues = await techpassIR.getIssues();
+
+    return issues;
+}
+
+async function getWOGIssues(context: InvocationContext) : Promise<ServiceIssue[]> {
+    const wogIR = new IssueRetriever(
+        globalThis.appconfig.wogClientSecretCredential,
+        globalThis.appconfig.WogResidentSubscriptionId,
+        appconfig, 
+        context);
+
+    const issues = await wogIR.getIssues();
+
+    return issues
+}
 
 app.http('az_servicehealth_integration', {
     methods: ['GET', 'POST'],
