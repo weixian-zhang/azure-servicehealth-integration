@@ -3,17 +3,20 @@ import AppConfig from "./helpers/AppConfig";
 import { ClientSecretCredential   } from "@azure/identity"
 import { IssueRetriever } from "./helpers/issue-api/IssueRetriever";
 import { ServiceIssue } from "./helpers/issue-api/ServiceIssueModels";
-
+import { DB } from "./helpers/db/DB";
 declare global {
     var appconfig: AppConfig;
     var wogAzCred: ClientSecretCredential;
     var techpassAzCred: ClientSecretCredential;
+    var db: DB;
 }
 
 
 export async function az_servicehealth_integration(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
 
     try {
+
+        globalThis.db = new DB();
         
         const incidentQueryStartFromDate = request.query.get('incidentStartFromDate');
         

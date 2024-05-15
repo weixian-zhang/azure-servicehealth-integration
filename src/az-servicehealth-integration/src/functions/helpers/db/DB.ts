@@ -5,10 +5,10 @@ import * as _ from 'lodash';
 
 // status reference
 // https://learn.microsoft.com/en-us/rest/api/resourcehealth/events/list-by-subscription-id?view=rest-resourcehealth-2022-10-01&tabs=HTTP#eventstatusvalues
-class Issue{
-    TrackingId: string
-    LastUpdateTime: number //unix epoch
-    Status: string         // Active or Resolved
+export class Issue{
+    public TrackingId: string;
+    public LastUpdateTime: number;//unix epoch
+    public Status: string ;       // Active or Resolved
 }
 
 type Data = {
@@ -18,6 +18,7 @@ type Data = {
 // example
 // https://github.com/typicode/lowdb
 export class DB {
+
     private db: lowDb.Low<{issues: Issue[];}>;
 
     constructor() {
@@ -44,7 +45,7 @@ export class DB {
         this.db.write();
     }
 
-    updateissue(issue: Issue){
+    updateIssue(issue: Issue){
         this.db.update(() => issue);
         this.db.write();
     }
