@@ -1,9 +1,8 @@
-import { app, HttpRequest, HttpResponseInit, InvocationContext, InvocationHookContext } from "@azure/functions";
+import { app, HttpRequest, HttpResponseInit, InvocationContext } from "@azure/functions";
 import AppConfig from "./helpers/AppConfig";
-import { ClientSecretCredential, DefaultAzureCredential, OnBehalfOfCredential   } from "@azure/identity"
-import { MicrosoftResourceHealth } from "@azure/arm-resourcehealth"
-import { IssueRetriever } from "./helpers/IssueRetriever";
-import { ServiceIssue } from "./helpers/ServiceIssueModels";
+import { ClientSecretCredential   } from "@azure/identity"
+import { IssueRetriever } from "./helpers/issue-api/IssueRetriever";
+import { ServiceIssue } from "./helpers/issue-api/ServiceIssueModels";
 
 declare global {
     var appconfig: AppConfig;
