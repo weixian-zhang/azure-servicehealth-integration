@@ -3,9 +3,9 @@ import IIssueRetriever from "./IIssueRetriever";
 import { ClientSecretCredential  } from "@azure/identity"
 import { MicrosoftResourceHealth, EventsListByTenantIdOptionalParams, EventsListBySubscriptionIdOptionalParams } from "@azure/arm-resourcehealth"
 import {Update} from "@azure/arm-resourcehealth/types/arm-resourcehealth";
-import { ArrayHelper } from "../HelperFuncs";
 import { InvocationContext } from "@azure/functions";
 import AppConfig from "../AppConfig";
+import * as _ from 'lodash';
 
 //service issue json schema
 //https://learn.microsoft.com/en-us/rest/api/resourcehealth/events/list-by-tenant-id?view=rest-resourcehealth-2022-10-01&tabs=HTTP#listeventsbytenantid
@@ -39,7 +39,7 @@ export default class ApiIssueRetriever implements IIssueRetriever {
             let serviceIssues = await this.getServiceIssues();
 
 
-            if (ArrayHelper.isEmpty(serviceIssues)) {
+            if (_.isEmpty(serviceIssues)) {
                 return []
             }
 
@@ -106,7 +106,7 @@ export default class ApiIssueRetriever implements IIssueRetriever {
                         impactedSvc.LastUpdateTime = region.lastUpdateTime;
                         impactedSvc.ImpactUpdates = new Array();
                         
-                        if (!ArrayHelper.isEmpty(region.updates)) {
+                        if (!_.isEmpty(region.updates)) {
 
                             for (const u of region.updates) {
 
@@ -129,7 +129,7 @@ export default class ApiIssueRetriever implements IIssueRetriever {
             });
 
             // only include an issue when there is one or more SEA region impacted services 
-            if (!ArrayHelper.isEmpty(si.ImpactedServices)) {
+            if (!_.isEmpty(si.ImpactedServices)) {
                 serviceIssues.push(si);
             }
 
@@ -146,8 +146,8 @@ export default class ApiIssueRetriever implements IIssueRetriever {
     // https://github.com/Azure/azure-sdk-for-js/blob/%40azure/arm-resourcehealth_4.0.0/sdk/resourcehealth/arm-resourcehealth/samples/v4/typescript/src/impactedResourcesListByTenantIdAndEventIdSample.ts
     private async forEachIssueIncludeImpactedResources(issues: ServiceIssue[]) : Promise<ServiceIssue[]> {
         
-        if (ArrayHelper.isEmpty(issues)) {
-            return []
+        if (_.isEmpty(issues)) {
+            return [];
         }
 
         let result = new Array();
