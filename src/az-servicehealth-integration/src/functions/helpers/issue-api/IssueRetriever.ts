@@ -2,7 +2,7 @@ import IIssueRetriever from "./IIssueRetriever"
 import ApiIssueRetriever from "./ApiIssueRetriever";
 import MockIssueRetriever from "./MockIssueRetriever";
 import {ServiceIssue} from "./ServiceIssueModels";
-import AppConfig from "./AppConfig";
+import AppConfig from "../AppConfig";
 import { InvocationContext, InvocationHookContext } from "@azure/functions";
 import { ClientSecretCredential } from "@azure/identity";
 

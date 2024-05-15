@@ -3,10 +3,9 @@ import IIssueRetriever from "./IIssueRetriever";
 import { ClientSecretCredential  } from "@azure/identity"
 import { MicrosoftResourceHealth, EventsListByTenantIdOptionalParams, EventsListBySubscriptionIdOptionalParams } from "@azure/arm-resourcehealth"
 import {Update} from "@azure/arm-resourcehealth/types/arm-resourcehealth";
-import { ArrayHelper } from "./HelperFuncs";
+import { ArrayHelper } from "../HelperFuncs";
 import { InvocationContext } from "@azure/functions";
-import AppConfig from "./AppConfig";
-import {StaticTokenCredential, StringAccessToken} from './StaticTokenCredential';
+import AppConfig from "../AppConfig";
 
 //service issue json schema
 //https://learn.microsoft.com/en-us/rest/api/resourcehealth/events/list-by-tenant-id?view=rest-resourcehealth-2022-10-01&tabs=HTTP#listeventsbytenantid
