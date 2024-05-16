@@ -12,14 +12,18 @@ declare global {
     var wogAzCred: ClientSecretCredential;
     var techpassAzCred: ClientSecretCredential;
     var db: DB;
+    var wogTenantName: string;
+    var techpassTenantName: string;
 }
 
 
-export async function az_servicehealth_integration(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
+export async function func_service_health_issue_fetcher(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
 
     try {
 
         globalThis.db = new DB();
+        globalThis.wogTenantName = "WOG";
+        globalThis.techpassTenantName = "TechPass";
         
         const incidentQueryStartFromDate = request.query.get('incidentStartFromDate');
         
@@ -59,6 +63,7 @@ export async function az_servicehealth_integration(request: HttpRequest, context
 
 async function getTechPassIssues(context: InvocationContext) : Promise<ServiceIssue[]> {
     const techpassIR = new IssueFetcher(
+        globalThis.techpassTenantName,
         globalThis.appconfig.TechPassClientSecretCredential, 
         globalThis.appconfig.TechPassResidentSubscriptionId,
         appconfig, context);
@@ -70,6 +75,7 @@ async function getTechPassIssues(context: InvocationContext) : Promise<ServiceIs
 
 async function getWOGIssues(context: InvocationContext) : Promise<ServiceIssue[]> {
     const wogIR = new IssueFetcher(
+        globalThis.wogTenantName,
         globalThis.appconfig.wogClientSecretCredential,
         globalThis.appconfig.WogResidentSubscriptionId,
         appconfig, 
@@ -86,8 +92,8 @@ function getTrackingIds(issues: ServiceIssue[]): string[] {
     return result;
 }
 
-app.http('az_servicehealth_integration', {
+app.http('func_service_health_issue_fetcher', {
     methods: ['GET', 'POST'],
     authLevel: 'anonymous',
-    handler: az_servicehealth_integration
+    handler: func_service_health_issue_fetcher
 });

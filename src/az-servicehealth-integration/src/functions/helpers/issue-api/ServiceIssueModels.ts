@@ -1,5 +1,6 @@
 
 export class ServiceIssue {
+    TenantName: string
     TrackingId: string;
     Status: string;
     ImpactStartTime: Date;

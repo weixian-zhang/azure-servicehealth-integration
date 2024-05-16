@@ -15,7 +15,9 @@ export default class IssueSendStateManager {
         const issuesToSend = new Array();
         
         for (const issue of issues) {
-            const canSend = await this.canSendIssueOrMarkResolved(issue.TrackingId, issue.LastUpdateTimeEpoch, issue.Status);
+            
+            const canSend =
+                await this.canSendIssueOrMarkResolved(issue.TenantName, issue.TrackingId, issue.LastUpdateTimeEpoch, issue.Status);
 
             if (canSend) {
                 issuesToSend.push(issue);
@@ -26,19 +28,20 @@ export default class IssueSendStateManager {
     }
 
 
-    private async canSendIssueOrMarkResolved(trackingId: string, lastUpdateTime: number, status: string) : Promise<boolean> {
+    private async canSendIssueOrMarkResolved
+        (tenantName:string, trackingId: string, lastUpdateTime: number, status: string) : Promise<boolean> {
         
         const [isExist, existingIssue] = await globalThis.db.issueExist(trackingId);
 
         //is new issue, does not exist in DB
         if (!isExist) {
-            globalThis.db.addOrUpdateIssue(new Issue(trackingId, lastUpdateTime, status))
+            globalThis.db.addOrUpdateIssue(new Issue(tenantName, trackingId, lastUpdateTime, status))
             return true;
         }
 
         // issue exist in DB, check if there is update
         if (lastUpdateTime > existingIssue.LastUpdateTime ) {
-            globalThis.db.addOrUpdateIssue(new Issue(trackingId, lastUpdateTime, status))
+            globalThis.db.addOrUpdateIssue(new Issue(tenantName, trackingId, lastUpdateTime, status))
             return true;
         }
 
