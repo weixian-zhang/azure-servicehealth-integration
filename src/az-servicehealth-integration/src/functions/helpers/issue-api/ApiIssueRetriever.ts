@@ -1,5 +1,5 @@
 import { ServiceIssue, ImpactedService, ImpactUpdates, ImpactedResource } from "./ServiceIssueModels";
-import IIssueRetriever from "./IIssueRetriever";
+import IIssueFetcher from "./IIssueFetcher";
 import { ClientSecretCredential  } from "@azure/identity"
 import { MicrosoftResourceHealth, EventsListByTenantIdOptionalParams, EventsListBySubscriptionIdOptionalParams } from "@azure/arm-resourcehealth"
 import {Update} from "@azure/arm-resourcehealth/types/arm-resourcehealth";
@@ -19,7 +19,7 @@ import * as _ from 'lodash';
 // sample codes
 // https://github.com/Azure/azure-sdk-for-js/blob/%40azure/arm-resourcehealth_4.0.0/sdk/resourcehealth/arm-resourcehealth/samples/v4/typescript/src/eventsListByTenantIdSample.ts
 
-export default class ApiIssueRetriever implements IIssueRetriever {
+export default class ApiIssueFetcher implements IIssueFetcher {
     appconfig: AppConfig;
     resourceHealthClient : MicrosoftResourceHealth;
     context: InvocationContext;

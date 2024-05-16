@@ -1,5 +1,5 @@
 import {ServiceIssue} from "./ServiceIssueModels";
 
-export default interface IIssueRetriever {
+export default interface IIssueFetcher {
     getIssuesAndImpactedResourcesAtTenantLevel(): Promise<ServiceIssue[]>;
 }
