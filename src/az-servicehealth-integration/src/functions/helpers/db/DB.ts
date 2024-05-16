@@ -1,6 +1,8 @@
-import * as lowDb from 'lowdb';
-import * as FileAsync from 'lowdb/adapters/FileAsync';
-import { JSONFilePreset } from 'lowdb/node'
+// import Lowdb from 'lowdb';
+// import { JSONFilePreset } from 'lowdb/adapters/FileAsync'
+// import Lowdb from 'lowdb';
+// import { } from 'lowdb/adapters/FileSync'
+import { JsonDB, Config, FindCallback } from 'node-json-db';
 import * as _ from 'lodash';
 
 // status reference
@@ -9,6 +11,12 @@ export class Issue{
     public TrackingId: string;
     public LastUpdateTime: number;//unix epoch
     public Status: string ;       // Active or Resolved
+
+    constructor(trackingId: string, lastUpdateTime: number, status: string) {
+        this.TrackingId = trackingId;
+        this.LastUpdateTime = lastUpdateTime;
+        this.Status = status;
+    }
 }
 
 type Data = {
@@ -19,7 +27,7 @@ type Data = {
 // https://github.com/typicode/lowdb
 export class DB {
 
-    private db: lowDb.Low<{issues: Issue[];}>;
+    private db: JsonDB; //Low<{issues: Issue[];}>;
 
     constructor() {
         this.initDB();
@@ -27,26 +35,29 @@ export class DB {
 
     private async initDB() {
         const defaultData: Data = { issues: [] }
-        this.db = await JSONFilePreset('db.json', defaultData)
-
+        this.db =  new JsonDB(new Config("db", true, true));//await JSONFilePreset('./db.json', defaultData)
     }
 
     //exist and status is Active
-    issueExist(trackingId: string) : Issue {
-        const issue = this.db.data.issues.find((issue) => issue.TrackingId == trackingId && issue.Status == 'Active');
-        if (_.isEmpty(issue)) {
-            return issue;
+    async issueExist(trackingId: string) : Promise<[boolean, Issue]> {
+
+        const dataPath = '/' + trackingId;
+
+        const exist = await this.db.exists(dataPath);
+
+        // const issue = this.db.data.issues.find((issue) => issue.TrackingId == trackingId && issue.Status == 'Active');
+        if (exist) {
+            const issueStr = await this.db.getObject<string>(dataPath);
+            const existinIssue = JSON.parse(issueStr) as Issue;
+            return [true, existinIssue];
         }
-        return null;
+        return [false, null];
     }
 
-    addIssue(issue: Issue) {
-        this.db.data.issues.push(issue);
-        this.db.write();
+    async addOrUpdateIssue(issue: Issue) {
+        const dataPath = '/' + issue.TrackingId;
+        this.db.push(dataPath, JSON.stringify(issue))
+        await this.db.save();
     }
 
-    updateIssue(issue: Issue){
-        this.db.update(() => issue);
-        this.db.write();
-    }
 }
