@@ -1,6 +1,6 @@
 import IIssueFetcher from "./IIssueFetcher"
-import ApiIssueRetriever from "./ApiIssueRetriever";
-import MockIssueRetriever from "./MockIssueRetriever";
+import ApiIssueRetriever from "./ApiIssueFetcher";
+import MockIssueRetriever from "./MockIssueFetcher";
 import {ServiceIssue} from "./ServiceIssueModels";
 import AppConfig from "../AppConfig";
 import { InvocationContext, InvocationHookContext } from "@azure/functions";
@@ -12,7 +12,7 @@ export default class IssueFetcher {
     context: InvocationContext;
     appconfig: AppConfig;
 
-    constructor(azcred: ClientSecretCredential, subscriptionId: string, appconfig: AppConfig, context: InvocationContext) {
+    constructor(tenantName: string, azcred: ClientSecretCredential, subscriptionId: string, appconfig: AppConfig, context: InvocationContext) {
 
         this.appconfig = appconfig;
         this.context = context;
@@ -23,7 +23,7 @@ export default class IssueFetcher {
             this.issueFetcher = new MockIssueRetriever();
         }
         else {
-            this.issueFetcher = new ApiIssueRetriever(azcred,subscriptionId, this.appconfig, this.context);
+            this.issueFetcher = new ApiIssueRetriever(tenantName, azcred,subscriptionId, this.appconfig, this.context);
         }
     }
 

@@ -2,10 +2,10 @@ import { ServiceIssue, ImpactedService, ImpactUpdates, ImpactedResource } from "
 import IIssueFetcher from "./IIssueFetcher";
 import { ClientSecretCredential  } from "@azure/identity"
 import { MicrosoftResourceHealth, EventsListByTenantIdOptionalParams, EventsListBySubscriptionIdOptionalParams } from "@azure/arm-resourcehealth"
-import {Update} from "@azure/arm-resourcehealth/types/arm-resourcehealth";
 import { InvocationContext } from "@azure/functions";
 import AppConfig from "../AppConfig";
 import * as _ from 'lodash';
+import FetcherHelper from "./FetcherHelper";
 
 //service issue json schema
 //https://learn.microsoft.com/en-us/rest/api/resourcehealth/events/list-by-tenant-id?view=rest-resourcehealth-2022-10-01&tabs=HTTP#listeventsbytenantid
@@ -24,8 +24,10 @@ export default class ApiIssueFetcher implements IIssueFetcher {
     resourceHealthClient : MicrosoftResourceHealth;
     context: InvocationContext;
     regionToFilter = "Southeast Asia";
+    tenantName: string;
 
-    constructor(azcred: ClientSecretCredential, subscriptionId: string, appconfig: AppConfig, context: InvocationContext) {
+    constructor(tenantName: string, azcred: ClientSecretCredential, subscriptionId: string, appconfig: AppConfig, context: InvocationContext) {
+        this.tenantName = tenantName;
         this.appconfig = appconfig;
         this.context = context;
         this.resourceHealthClient = new MicrosoftResourceHealth(azcred, subscriptionId);
@@ -73,64 +75,11 @@ export default class ApiIssueFetcher implements IIssueFetcher {
 
         for await (let issue of this.resourceHealthClient.eventsOperations.listBySubscriptionId(options)) { //this.resourceHealthClient.eventsOperations.listByTenantId()) {
 
-            if (issue.eventType != 'ServiceIssue') {
-                continue;
-            }
-
-            let si = new ServiceIssue();
-
-            si.TrackingId = issue.name
-            si.Status = issue.status
-            si.Title = issue.title
-            si.Summary = issue.summary
-            si.Description =issue.description
-            si.ImpactStartTime = issue.impactStartTime;
-            si.ImpactMitigationTime = issue.impactMitigationTime;
-            si.LastUpdateTime = new Date(issue.lastUpdateTime);
-            si.LastUpdateTimeEpoch = si.LastUpdateTime.valueOf();
-            si.ImpactedServices = new Array();
-            si.ImpactedResources = new Array();
-
-            issue.impact.forEach(impact => {
-
-                impact.impactedRegions.forEach(region => {
-
-                    //if (region.impactedRegion == this.regionToFilter || region.impactedRegion == "Global") {
-
-                        const impactedSvc = new ImpactedService();
-
-                        impactedSvc.ImpactedService = impact.impactedService;
-                        impactedSvc.SoutheastAsiaRegionStatus = region.status;
-                        impactedSvc.ImpactedTenants = region.impactedTenants;
-                        impactedSvc.ImpactedSubscriptions = region.impactedSubscriptions;
-                        impactedSvc.LastUpdateTime = region.lastUpdateTime;
-                        impactedSvc.ImpactUpdates = new Array();
-                        
-                        if (!_.isEmpty(region.updates)) {
-
-                            for (const u of region.updates) {
-
-                                const iu = new ImpactUpdates();
-                                iu.Summary = u.summary;
-                                iu.UpdateDateTime = new Date(u.updateDateTime);
-                                iu.UpdateEpoch = iu.UpdateDateTime.valueOf();
-    
-                                impactedSvc.ImpactUpdates.push(iu);
-                            }
-                        }
-                        
-
-                        si.ImpactedServices.push(impactedSvc);
-
-                    //}
-
-                });
-
-            });
+            const [hasIssue, serviceIssue] = FetcherHelper.createServiceIssue(this.tenantName, issue);
 
             // only include an issue when there is one or more SEA region impacted services 
-            if (!_.isEmpty(si.ImpactedServices)) {
-                serviceIssues.push(si);
+            if (hasIssue && !_.isEmpty(serviceIssue.ImpactedServices)) {
+                serviceIssues.push(serviceIssue);
             }
 
         }

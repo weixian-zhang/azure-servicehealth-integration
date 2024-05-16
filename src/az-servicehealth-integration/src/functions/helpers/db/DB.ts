@@ -8,11 +8,13 @@ import * as _ from 'lodash';
 // status reference
 // https://learn.microsoft.com/en-us/rest/api/resourcehealth/events/list-by-subscription-id?view=rest-resourcehealth-2022-10-01&tabs=HTTP#eventstatusvalues
 export class Issue{
+    public TenantName: string;
     public TrackingId: string;
     public LastUpdateTime: number;//unix epoch
     public Status: string ;       // Active or Resolved
 
-    constructor(trackingId: string, lastUpdateTime: number, status: string) {
+    constructor(tenantName: string, trackingId: string, lastUpdateTime: number, status: string) {
+        this.TenantName = tenantName;
         this.TrackingId = trackingId;
         this.LastUpdateTime = lastUpdateTime;
         this.Status = status;

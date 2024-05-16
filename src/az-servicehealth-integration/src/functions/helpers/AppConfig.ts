@@ -4,13 +4,11 @@ export default class AppConfig {
     TechPassClientId: string;
     TechPassClientSecret: string;
     TechPassTenantId: string;
-    TechPassTenantName: string;
     TechPassResidentSubscriptionId: string;
     TechPassClientSecretCredential: ClientSecretCredential;
     WogClientId: string;
     WogClientSecret: string;
     WogTenantId: string;
-    WogTenantName: string;
     WogResidentSubscriptionId: string;
     wogClientSecretCredential: ClientSecretCredential;
     IsDevTest: boolean;
@@ -25,13 +23,11 @@ export default class AppConfig {
         appconfig.TechPassClientId  = process.env.GCC_TECHPASS_CLIENT_ID;
         appconfig.TechPassClientSecret  = process.env.GCC_TECHPASS_CLIENT_SECRET;
         appconfig.TechPassTenantId  = process.env.GCC_TECHPASS_TENANT_ID;
-        appconfig.TechPassTenantName  = process.env.GCC_TECHPASS_TENANT_NAME;
         appconfig.TechPassResidentSubscriptionId = process.env.GCC_TECHPASS_RESIDENT_SUBSCRIPTION_ID;
 
         appconfig.WogClientId  = process.env.GCC_WOG_CLIENT_ID;
         appconfig.WogClientSecret  = process.env.GCC_WOG_CLIENT_SECRET;
         appconfig.WogTenantId  = process.env.GCC_WOG_TENANT_ID;
-        appconfig.WogTenantName  = process.env.GCC_WOG_TENANT_NAME;
         appconfig.WogResidentSubscriptionId = process.env.GCC_WOG_RESIDENT_SUBSCRIPTION_ID;
 
         this.createAzureCredentials(appconfig);
