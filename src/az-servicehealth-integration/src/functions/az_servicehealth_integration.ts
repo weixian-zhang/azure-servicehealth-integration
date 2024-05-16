@@ -4,6 +4,9 @@ import { ClientSecretCredential   } from "@azure/identity"
 import { IssueRetriever } from "./helpers/issue-api/IssueRetriever";
 import { ServiceIssue } from "./helpers/issue-api/ServiceIssueModels";
 import { DB } from "./helpers/db/DB";
+import IssueSendStateManager from "./helpers/IssueSendStateManager";
+import * as _ from 'lodash';
+
 declare global {
     var appconfig: AppConfig;
     var wogAzCred: ClientSecretCredential;
@@ -22,15 +25,19 @@ export async function az_servicehealth_integration(request: HttpRequest, context
         
         globalThis.appconfig = AppConfig.loadFromEnvVar(incidentQueryStartFromDate);
 
+        const idm = new IssueSendStateManager();
+
         const tpIssues = await getTechPassIssues(context);
 
         const wogIssues = await getWOGIssues(context)
 
         const combinedIssues = tpIssues.concat(wogIssues)
 
+        const issuesToSend = await idm.issuesToSendOrMarkResolved(combinedIssues);
+
         return {
             status: 200,
-            body: JSON.stringify({combinedIssues}),
+            body: `Retrieved [${ getTrackingIds(combinedIssues) }] issues, new/updates issues sent [${getTrackingIds(issuesToSend)}]`, //JSON.stringify({combinedIssues}),
             headers: {
                 'Content-Type': 'application/json'
             }
@@ -48,6 +55,7 @@ export async function az_servicehealth_integration(request: HttpRequest, context
     }
     
 };
+
 
 async function getTechPassIssues(context: InvocationContext) : Promise<ServiceIssue[]> {
     const techpassIR = new IssueRetriever(
@@ -70,6 +78,12 @@ async function getWOGIssues(context: InvocationContext) : Promise<ServiceIssue[]
     const issues = await wogIR.getIssues();
 
     return issues
+}
+
+function getTrackingIds(issues: ServiceIssue[]): string[] {
+    const result = new Array();
+    issues.forEach((i) => {result.push(i.TrackingId)});
+    return result;
 }
 
 app.http('az_servicehealth_integration', {

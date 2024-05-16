@@ -16,14 +16,15 @@
     "@azure/functions": "^4.4.0",
     "@azure/identity": "^4.3.0-alpha.20240507.1",
     "@types/lodash": "^4.17.1",
-    "@types/lowdb": "^1.0.15",
+    "@types/node-json-db": "^0.9.3",
     "lodash": "^4.17.21",
-    "lowdb": "^7.0.1"
+    "node-json-db": "^2.3.0"
   },
   "devDependencies": {
     "@types/node": "^18.19.32",
     "azure-functions-core-tools": "^4.x",
     "rimraf": "^5.0.0",
+    "tsx": "^4.10.2",
     "typescript": "^5.4.5"
   }
 }
