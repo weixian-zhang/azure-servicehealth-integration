@@ -1,7 +1,7 @@
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from "@azure/functions";
 import AppConfig from "./helpers/AppConfig";
 import { ClientSecretCredential   } from "@azure/identity"
-import { IssueRetriever } from "./helpers/issue-api/IssueRetriever";
+import IssueFetcher from "./helpers/issue-api/IssueFetcher";
 import { ServiceIssue } from "./helpers/issue-api/ServiceIssueModels";
 import { DB } from "./helpers/db/DB";
 import IssueSendStateManager from "./helpers/IssueSendStateManager";
@@ -58,7 +58,7 @@ export async function az_servicehealth_integration(request: HttpRequest, context
 
 
 async function getTechPassIssues(context: InvocationContext) : Promise<ServiceIssue[]> {
-    const techpassIR = new IssueRetriever(
+    const techpassIR = new IssueFetcher(
         globalThis.appconfig.TechPassClientSecretCredential, 
         globalThis.appconfig.TechPassResidentSubscriptionId,
         appconfig, context);
@@ -69,7 +69,7 @@ async function getTechPassIssues(context: InvocationContext) : Promise<ServiceIs
 }
 
 async function getWOGIssues(context: InvocationContext) : Promise<ServiceIssue[]> {
-    const wogIR = new IssueRetriever(
+    const wogIR = new IssueFetcher(
         globalThis.appconfig.wogClientSecretCredential,
         globalThis.appconfig.WogResidentSubscriptionId,
         appconfig, 

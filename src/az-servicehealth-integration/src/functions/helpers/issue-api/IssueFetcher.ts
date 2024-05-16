@@ -1,4 +1,4 @@
-import IIssueRetriever from "./IIssueRetriever"
+import IIssueFetcher from "./IIssueFetcher"
 import ApiIssueRetriever from "./ApiIssueRetriever";
 import MockIssueRetriever from "./MockIssueRetriever";
 import {ServiceIssue} from "./ServiceIssueModels";
@@ -6,9 +6,9 @@ import AppConfig from "../AppConfig";
 import { InvocationContext, InvocationHookContext } from "@azure/functions";
 import { ClientSecretCredential } from "@azure/identity";
 
-export class IssueRetriever {
+export default class IssueFetcher {
 
-    issueRetriever: IIssueRetriever;
+    issueFetcher: IIssueFetcher;
     context: InvocationContext;
     appconfig: AppConfig;
 
@@ -20,15 +20,15 @@ export class IssueRetriever {
         const isDevTest = process.env.SERVICE_HEALTH_INTEGRATION_IS_DEVTEST
 
         if (appconfig.IsDevTest) {
-            this.issueRetriever = new MockIssueRetriever();
+            this.issueFetcher = new MockIssueRetriever();
         }
         else {
-            this.issueRetriever = new ApiIssueRetriever(azcred,subscriptionId, this.appconfig, this.context);
+            this.issueFetcher = new ApiIssueRetriever(azcred,subscriptionId, this.appconfig, this.context);
         }
     }
 
     async getIssues() : Promise<ServiceIssue[]> {
-        const issues = await this.issueRetriever.getIssuesAndImpactedResourcesAtTenantLevel();
+        const issues = await this.issueFetcher.getIssuesAndImpactedResourcesAtTenantLevel();
         return issues
     }
 
