@@ -2,7 +2,7 @@
 export class ServiceIssue {
     TenantName: string
     TrackingId: string;
-    Status: string;
+    OverallStatus: string;
     ImpactStartTime: Date;
     ImpactMitigationTime: Date;
     Title: string;
@@ -16,10 +16,11 @@ export class ServiceIssue {
 
 export class ImpactedService {
     ImpactedService: string;
-    SoutheastAsiaRegionStatus: string;
+    IsGlobal: boolean = false;
+    SEARegionOrGlobalStatus: string;
     ImpactedSubscriptions: string[];
     ImpactedTenants: string[];
-    LastUpdateTime: Date;
+    SEARegionOrGlobalLastUpdateTime: Date;
     ImpactUpdates: ImpactUpdates[]
 }
 

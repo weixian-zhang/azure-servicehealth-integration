@@ -33,15 +33,20 @@ export async function func_service_health_issue_fetcher(request: HttpRequest, co
 
         const tpIssues = await getTechPassIssues(context);
 
-        const wogIssues = await getWOGIssues(context)
+        const wogIssues = []; //await getWOGIssues(context)
 
         const combinedIssues = tpIssues.concat(wogIssues)
 
         const issuesToSend = await idm.issuesToSendOrMarkResolved(combinedIssues);
 
+        const respMsg = `
+        Service issues fetched: [${getTrackingIds(combinedIssues)}]
+        Service issues sent due is New issue, Change of Status from Active->Resolved or New updates: [${getTrackingIds(issuesToSend)}]
+        `
+
         return {
             status: 200,
-            body: `Retrieved [${ getTrackingIds(combinedIssues) }] issues, new/updates issues sent [${getTrackingIds(issuesToSend)}]`, //JSON.stringify({combinedIssues}),
+            body: respMsg, //JSON.stringify({combinedIssues}),
             headers: {
                 'Content-Type': 'application/json'
             }
