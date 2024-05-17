@@ -2,6 +2,14 @@ import {DB, Issue} from './db/DB';
 import * as _ from 'lodash';
 import { ServiceIssue } from './issue-api/ServiceIssueModels';
 
+// test cases
+// 1: send "Active" issues impacting "Southeast Asia" only
+// 2: ignore "Resolved" cases
+// 3: send Active issue  impacting "Southeast Asia" only, with new updates
+// 4: Ignore Active issues  impacting "Southeast Asia" only, with NO NEW updates
+
+// **Asumption: when service issue reaches this stage, ImpactedServices property will never be empty
+// impacted service region will either be Global or SEA
 export default class IssueSendStateManager {
     resolvedStatus: string = "Resolved";
     activeStatus: string = "Active";
@@ -15,9 +23,24 @@ export default class IssueSendStateManager {
         const issuesToSend = new Array();
         
         for (const issue of issues) {
+
+            if (_.isEmpty(issue.ImpactedServices)) {
+                throw new Error("ImpactedServices is empty at IssueSendStateManager");
+            }
+
+            let status ;
+            let lastUpdateTime: number;
             
-            const canSend =
-                await this.canSendIssueOrMarkResolved(issue.TenantName, issue.TrackingId, issue.LastUpdateTimeEpoch, issue.Status);
+            // issue impacted service in SEA or global
+            issue.ImpactedServices.forEach( (svc) => {
+                status = svc.SEARegionOrGlobalStatus;
+                lastUpdateTime = svc.SEARegionOrGlobalLastUpdateTime.valueOf()
+            });
+            
+
+            const canSend = await this.canSendIssueOrMarkResolved
+                (issue.TenantName, issue.TrackingId, lastUpdateTime, status);
+
 
             if (canSend) {
                 issuesToSend.push(issue);
@@ -46,9 +69,9 @@ export default class IssueSendStateManager {
         }
 
         // mark stored issue Resolved if there is a new issue update that status is Resolved 
-        this.tryResolveIssue(existingIssue, trackingId, status);
+        const issueResolved = this.tryResolveIssue(existingIssue, trackingId, status);
 
-        return false;
+        return issueResolved;
         
     }
 

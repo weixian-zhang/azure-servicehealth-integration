@@ -42,24 +42,36 @@ export class DB {
 
     //exist and status is Active
     async issueExist(trackingId: string) : Promise<[boolean, Issue]> {
+        try {
 
-        const dataPath = '/' + trackingId;
+            const dataPath = '/' + trackingId;
 
-        const exist = await this.db.exists(dataPath);
+            const exist = await this.db.exists(dataPath);
 
-        // const issue = this.db.data.issues.find((issue) => issue.TrackingId == trackingId && issue.Status == 'Active');
-        if (exist) {
-            const issueStr = await this.db.getObject<string>(dataPath);
-            const existinIssue = JSON.parse(issueStr) as Issue;
-            return [true, existinIssue];
+            // const issue = this.db.data.issues.find((issue) => issue.TrackingId == trackingId && issue.Status == 'Active');
+            if (exist) {
+                const issueStr = await this.db.getObject<string>(dataPath);
+                const existinIssue = JSON.parse(issueStr) as Issue;
+                return [true, existinIssue];
+            }
+            return [false, null];
+
+        } catch (error) {
+            await this.db.reload();
         }
-        return [false, null];
+        
     }
 
     async addOrUpdateIssue(issue: Issue) {
-        const dataPath = '/' + issue.TrackingId;
-        this.db.push(dataPath, JSON.stringify(issue))
-        await this.db.save();
+        try {
+            const dataPath = '/' + issue.TrackingId;
+            this.db.push(dataPath, JSON.stringify(issue))
+            await this.db.save();
+        } catch (error) {
+            await this.db.reload();
+        }
+        
+        
     }
 
 }
