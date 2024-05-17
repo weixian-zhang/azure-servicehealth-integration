@@ -8,6 +8,11 @@ export class ServiceIssue {
     Title: string;
     Summary: string;
     Description: string;
+    Level: string; 
+    // Error - Widespread issues accessing multiple services across multiple regions are impacting a broad set of customers.
+    // Warning - Issues accessing specific services and/or specific regions are impacting a subset of customers.
+    // Informational - Issues impacting management operations and/or latency, not impacting service availability.
+    LevelDescription: string; 
     ImpactedServices: ImpactedService[];
     ImpactedResources: ImpactedResource[];
     LastUpdateTime: Date;

@@ -5,6 +5,7 @@ import { MicrosoftResourceHealth, EventsListBySubscriptionIdOptionalParams } fro
 import { InvocationContext } from "@azure/functions";
 import AppConfig from "../AppConfig";
 import * as _ from 'lodash';
+import FetcherHelper from "./FetcherHelper";
 
 //service issue json schema
 //https://learn.microsoft.com/en-us/rest/api/resourcehealth/events/list-by-tenant-id?view=rest-resourcehealth-2022-10-01&tabs=HTTP#listeventsbytenantid
@@ -59,19 +60,14 @@ export default class ApiIssueFetcher implements IIssueFetcher {
 
         let serviceIssues = new Array();
 
-        const filter = "region eq 'Southeast Asia'";
         const queryStartTime = this.appconfig.incidentQueryStartFromDate;
-        // const options: EventsListByTenantIdOptionalParams = {
-        //     queryStartTime
-        // };
+
         const options: EventsListBySubscriptionIdOptionalParams = {
             queryStartTime
         };
 
-        // const iterator = this.resourceHealthClient.eventsOperations.listByTenantId(null)
-        // let next;
 
-        for await (let issue of this.resourceHealthClient.eventsOperations.listBySubscriptionId(options)) { //this.resourceHealthClient.eventsOperations.listByTenantId()) {
+        for await (let issue of this.resourceHealthClient.eventsOperations.listBySubscriptionId(options)) { 
 
             if (issue.eventType != 'ServiceIssue') {
                 continue;
@@ -89,6 +85,8 @@ export default class ApiIssueFetcher implements IIssueFetcher {
             si.ImpactMitigationTime = issue.impactMitigationTime;
             si.LastUpdateTime = new Date(issue.lastUpdateTime);
             si.LastUpdateTimeEpoch = si.LastUpdateTime.valueOf();
+            si.Level = si.Level;
+            si.LevelDescription = FetcherHelper.getLevelDescription(si.Level);
             si.ImpactedServices = new Array();
             si.ImpactedResources = new Array();
 
@@ -103,7 +101,7 @@ export default class ApiIssueFetcher implements IIssueFetcher {
                         impactedSvc.ImpactedService = impact.impactedService;
                         impactedSvc.IsGlobal = (region.impactedRegion == "Global") ? true : false;
                         impactedSvc.SEARegionOrGlobalStatus = region.status;
-                        impactedSvc.SEARegionOrGlobalLastUpdateTime = region.lastUpdateTime;
+                        impactedSvc.SEARegionOrGlobalLastUpdateTime = new Date(region.lastUpdateTime);
                         impactedSvc.ImpactedTenants = region.impactedTenants;
                         impactedSvc.ImpactedSubscriptions = region.impactedSubscriptions;
                         impactedSvc.ImpactUpdates = new Array();

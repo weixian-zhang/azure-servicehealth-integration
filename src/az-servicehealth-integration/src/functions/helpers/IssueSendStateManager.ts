@@ -1,6 +1,7 @@
 import {DB, Issue} from './db/DB';
 import * as _ from 'lodash';
 import { ServiceIssue } from './issue-api/ServiceIssueModels';
+import { InvocationContext } from '@azure/functions/types/InvocationContext';
 
 // test cases
 // 1: send "Active" issues impacting "Southeast Asia" only
@@ -13,9 +14,12 @@ import { ServiceIssue } from './issue-api/ServiceIssueModels';
 export default class IssueSendStateManager {
     resolvedStatus: string = "Resolved";
     activeStatus: string = "Active";
+    context: InvocationContext;
 
-    public async issuesToSendOrMarkResolved(issues: ServiceIssue[]) {
-        
+    public async issuesToSendOrMarkResolved(context: InvocationContext, issues: ServiceIssue[]) {
+
+        this.context = context;
+
         if (_.isEmpty(issues)) {
             return []
         }
@@ -30,18 +34,27 @@ export default class IssueSendStateManager {
 
             let status ;
             let lastUpdateTime: number;
+            let canSend: boolean;
             
             // issue impacted service in SEA or global
-            issue.ImpactedServices.forEach( (svc) => {
+            for (const svc of issue.ImpactedServices ) {
+
                 status = svc.SEARegionOrGlobalStatus;
-                lastUpdateTime = svc.SEARegionOrGlobalLastUpdateTime.valueOf()
-            });
+
+                //any new update, this region-level lastUpdateTime will also be updated to be the same
+                // datetime as latest update
+                lastUpdateTime = svc.SEARegionOrGlobalLastUpdateTime.valueOf();
+
+                canSend = await this.canSendIssueOrMarkResolved
+                    (new Issue(issue.TenantName, issue.TrackingId, svc.ImpactedService, lastUpdateTime, status));
+
+                if (canSend) {
+                    break;
+                }
+            };
             
 
-            const canSend = await this.canSendIssueOrMarkResolved
-                (issue.TenantName, issue.TrackingId, lastUpdateTime, status);
-
-
+            
             if (canSend) {
                 issuesToSend.push(issue);
             }
@@ -51,33 +64,41 @@ export default class IssueSendStateManager {
     }
 
 
-    private async canSendIssueOrMarkResolved
-        (tenantName:string, trackingId: string, lastUpdateTime: number, status: string) : Promise<boolean> {
+    private async canSendIssueOrMarkResolved(issue: Issue) : Promise<boolean> {
         
-        const [isExist, existingIssue] = await globalThis.db.issueExist(trackingId);
+        const [isExist, existingIssue] = await globalThis.db.issueExist(issue.TrackingId, issue.impactedService);
 
         //is new issue, does not exist in DB
         if (!isExist) {
-            globalThis.db.addOrUpdateIssue(new Issue(tenantName, trackingId, lastUpdateTime, status))
+            this.context.info(`Issue with Tracking Id ${issue.TrackingId} is a new issue, mark for sending`)
+            globalThis.db.addOrUpdateIssue(issue);
             return true;
         }
 
         // issue exist in DB, check if there is update
-        if (lastUpdateTime > existingIssue.LastUpdateTime ) {
-            globalThis.db.addOrUpdateIssue(new Issue(tenantName, trackingId, lastUpdateTime, status))
+        if (issue.impactedService == existingIssue.impactedService && issue.LastUpdateTime > existingIssue.LastUpdateTime ) {
+            this.context.info
+                (`
+                Issue with Tracking Id ${existingIssue.TrackingId} is an existing issue, with new update at ${new Date(issue.LastUpdateTime )}.
+                Previous update was at ${new Date(existingIssue.LastUpdateTime)}} mark for sending.
+                `)
+            
+            globalThis.db.addOrUpdateIssue(issue);
             return true;
         }
 
         // mark stored issue Resolved if there is a new issue update that status is Resolved 
-        const issueResolved = this.tryResolveIssue(existingIssue, trackingId, status);
+        const issueResolved = this.tryResolveIssue(existingIssue, issue.Status);
 
         return issueResolved;
         
     }
 
-    private tryResolveIssue(existingIssue: Issue, trackingId: string, status: string) {
+    private tryResolveIssue(existingIssue: Issue, status: string) {
 
         if (status == this.resolvedStatus && existingIssue.Status == this.activeStatus) {
+
+            this.context.info(`Issue with Tracking Id ${existingIssue.TrackingId} is Resolved, marking existing tracked issue as Resolved.`);
             
             existingIssue.Status = this.resolvedStatus;
             
@@ -86,6 +107,9 @@ export default class IssueSendStateManager {
             return true;
         }
 
+        //this.context.info(`Issue with Tracking Id ${trackingId} is not resolve, marking existing tracked issue as Resolved.`)
+
         return false;
     }
+
 }

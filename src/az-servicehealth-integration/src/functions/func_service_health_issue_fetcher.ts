@@ -37,7 +37,7 @@ export async function func_service_health_issue_fetcher(request: HttpRequest, co
 
         const combinedIssues = tpIssues.concat(wogIssues)
 
-        const issuesToSend = await idm.issuesToSendOrMarkResolved(combinedIssues);
+        const issuesToSend = await idm.issuesToSendOrMarkResolved(context, combinedIssues);
 
         const respMsg = `
         Service issues fetched: [${getTrackingIds(combinedIssues)}]
