@@ -1,7 +1,20 @@
 // import { ImpactUpdates, ImpactedService, ServiceIssue } from "./ServiceIssueModels";
 // import * as _ from 'lodash';
 
-// export default class FetcherHelper {
+export default class FetcherHelper {
+    static levelMap = {
+        'Error': 'Widespread issues accessing multiple services across multiple regions are impacting a broad set of customers',
+        'Warning': 'Issues accessing specific services and/or specific regions are impacting a subset of customers',
+        'Informational': 'Issues impacting management operations and/or latency, not impacting service availability'
+    }
+
+    static getLevelDescription(level: string) {
+        if (level in FetcherHelper.levelMap) {
+            return FetcherHelper.levelMap[level];
+        }
+        return '';
+    }
+}
 
 //     //issue type is @azure/arm-resourcehealth/Event_2
 //     static createServiceIssue(tenantName: string, issue: any) : [boolean, ServiceIssue] {

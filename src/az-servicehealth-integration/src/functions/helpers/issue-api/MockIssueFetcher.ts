@@ -1,3 +1,4 @@
+import FetcherHelper from "./FetcherHelper";
 import IIssueFetcher from "./IIssueFetcher";
 import { ServiceIssue, ImpactedService, ImpactUpdates, ImpactedResource } from "./ServiceIssueModels";
 import * as fs from 'fs';
@@ -40,6 +41,8 @@ export default class MockIssueGenerator implements IIssueFetcher {
             si.ImpactMitigationTime = issue.properties.impactMitigationTime;
             si.LastUpdateTime = new Date(issue.properties.lastUpdateTime);
             si.LastUpdateTimeEpoch = si.LastUpdateTime.valueOf();
+            si.Level = issue.properties.Level;
+            si.LevelDescription = FetcherHelper.getLevelDescription(si.Level);
             si.ImpactedServices = new Array();
             si.ImpactedResources = new Array();
 
@@ -54,7 +57,7 @@ export default class MockIssueGenerator implements IIssueFetcher {
                         impactedSvc.ImpactedService = impact.impactedService;
                         impactedSvc.IsGlobal = (region.impactedRegion == "Global") ? true : false;
                         impactedSvc.SEARegionOrGlobalStatus = region.status;
-                        impactedSvc.SEARegionOrGlobalLastUpdateTime = region.lastUpdateTime;
+                        impactedSvc.SEARegionOrGlobalLastUpdateTime = new Date(region.lastUpdateTime);
                         impactedSvc.ImpactedTenants = region.impactedTenants;
                         impactedSvc.ImpactedSubscriptions = region.impactedSubscriptions;
                         
@@ -73,7 +76,6 @@ export default class MockIssueGenerator implements IIssueFetcher {
                             }
                         }
                         
-
                         si.ImpactedServices.push(impactedSvc);
 
                     }
@@ -90,7 +92,9 @@ export default class MockIssueGenerator implements IIssueFetcher {
             curr++;
         };
 
-        return Promise.resolve(result);
+        const r = new Array();
+        r.push(result[0])
+        return Promise.resolve(r);
     }
     
 

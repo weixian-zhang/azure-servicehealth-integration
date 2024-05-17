@@ -10,12 +10,14 @@ import * as _ from 'lodash';
 export class Issue{
     public TenantName: string;
     public TrackingId: string;
+    public impactedService: string;
     public LastUpdateTime: number;//unix epoch
     public Status: string ;       // Active or Resolved
 
-    constructor(tenantName: string, trackingId: string, lastUpdateTime: number, status: string) {
+    constructor(tenantName: string, trackingId: string, impactedService: string, lastUpdateTime: number, status: string) {
         this.TenantName = tenantName;
         this.TrackingId = trackingId;
+        this.impactedService = impactedService;
         this.LastUpdateTime = lastUpdateTime;
         this.Status = status;
     }
@@ -30,6 +32,7 @@ type Data = {
 export class DB {
 
     private db: JsonDB; //Low<{issues: Issue[];}>;
+    private dbPath = process.cwd() + "\\src\\functions\\helpers\\db\\db";
 
     constructor() {
         this.initDB();
@@ -37,24 +40,26 @@ export class DB {
 
     private async initDB() {
         const defaultData: Data = { issues: [] }
-        this.db =  new JsonDB(new Config("db", true, true));//await JSONFilePreset('./db.json', defaultData)
+        this.db =  new JsonDB(new Config(this.dbPath, true, true));//await JSONFilePreset('./db.json', defaultData)
     }
 
     //exist and status is Active
-    async issueExist(trackingId: string) : Promise<[boolean, Issue]> {
+    async issueExist(trackingId: string, impactedService: string) : Promise<[boolean, Issue]> {
         try {
 
             const dataPath = '/' + trackingId;
 
-            const exist = await this.db.exists(dataPath);
-
-            // const issue = this.db.data.issues.find((issue) => issue.TrackingId == trackingId && issue.Status == 'Active');
-            if (exist) {
-                const issueStr = await this.db.getObject<string>(dataPath);
-                const existinIssue = JSON.parse(issueStr) as Issue;
-                return [true, existinIssue];
+            if (this.db.exists(dataPath)) {
+                const exist = await this.db.find(dataPath, (issue, index) => {
+                    if (issue.impactedService == impactedService) {
+                        return true;
+                    }
+                    return false;
+                });
             }
+
             return [false, null];
+
 
         } catch (error) {
             await this.db.reload();
@@ -65,7 +70,7 @@ export class DB {
     async addOrUpdateIssue(issue: Issue) {
         try {
             const dataPath = '/' + issue.TrackingId;
-            this.db.push(dataPath, JSON.stringify(issue))
+            this.db.push(dataPath, issue);
             await this.db.save();
         } catch (error) {
             await this.db.reload();
