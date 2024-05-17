@@ -1,3 +1,8 @@
 {
-    
+    "NKRF-1TG": {
+        "TrackingId": "NKRF-1TG",
+        "impactedService": "Event Hubs",
+        "LastUpdateTime": 1709438555000,
+        "Status": "Resolved"
+    }
 }
