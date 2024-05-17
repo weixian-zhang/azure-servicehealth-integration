@@ -49,13 +49,13 @@ export class DB {
 
             const dataPath = '/' + trackingId;
 
-            if (this.db.exists(dataPath)) {
-                const exist = await this.db.find(dataPath, (issue, index) => {
-                    if (issue.impactedService == impactedService) {
-                        return true;
-                    }
-                    return false;
-                });
+            if (await this.db.exists(dataPath)) {
+                const existingIssue = await this.db.getObject<Issue>(dataPath);
+
+                if (existingIssue.impactedService == impactedService) {
+                    return [true, existingIssue];
+                }
+                
             }
 
             return [false, null];
