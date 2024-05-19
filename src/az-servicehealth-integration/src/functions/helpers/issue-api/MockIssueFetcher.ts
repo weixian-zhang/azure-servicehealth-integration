@@ -32,6 +32,7 @@ export default class MockIssueGenerator implements IIssueFetcher {
 
             let si = new ServiceIssue();
 
+            si.TenantName = 'WOG';
             si.TrackingId = issue.name
             si.OverallStatus = issue.properties.status
             si.Title = issue.properties.title

@@ -34,7 +34,7 @@ export default class IssueSendStateManager {
 
             let status ;
             let lastUpdateTime: number;
-            let canSend: boolean;
+            let canSend = false;
             
             // issue impacted service in SEA or global
             for (const svc of issue.ImpactedServices ) {
@@ -45,11 +45,12 @@ export default class IssueSendStateManager {
                 // datetime as latest update
                 lastUpdateTime = svc.SEARegionOrGlobalLastUpdateTime.valueOf();
 
-                canSend = await this.canSendIssueOrMarkResolved
+                const canSendResult = await this.canSendIssueOrMarkResolved
                     (new Issue(issue.TenantName, issue.TrackingId, svc.ImpactedService, lastUpdateTime, status));
 
-                if (canSend) {
-                    break;
+                // set canSend to true only once and not let subsequent false result to override previous canSend=true
+                if (canSendResult && !canSend) {
+                    canSend = true;
                 }
             };
             
@@ -66,29 +67,29 @@ export default class IssueSendStateManager {
 
     private async canSendIssueOrMarkResolved(issue: Issue) : Promise<boolean> {
         
-        const [isExist, existingIssue] = await globalThis.db.issueExist(issue.TrackingId, issue.impactedService);
+        const [isExist, existingIssue] = await globalThis.db.issueExist(issue.TrackingId, issue.ImpactedService);
 
         //is new issue, does not exist in DB
         if (!isExist) {
             this.context.info(`Issue with Tracking Id ${issue.TrackingId} is a new issue, mark for sending`)
-            globalThis.db.addOrUpdateIssue(issue);
+            const result = await globalThis.db.addIssue(issue);
             return true;
         }
 
         // issue exist in DB, check if there is update
-        if (issue.impactedService == existingIssue.impactedService && issue.LastUpdateTime > existingIssue.LastUpdateTime ) {
+        if (issue.ImpactedService == existingIssue.ImpactedService && issue.LastUpdateTime > existingIssue.LastUpdateTime ) {
             this.context.info
                 (`
                 Issue with Tracking Id ${existingIssue.TrackingId} is an existing issue, with new update at ${new Date(issue.LastUpdateTime )}.
                 Previous update was at ${new Date(existingIssue.LastUpdateTime)}} mark for sending.
                 `)
             
-            globalThis.db.addOrUpdateIssue(issue);
+            await globalThis.db.updateIssueLastUpdateTime(issue);
             return true;
         }
 
         // mark stored issue Resolved if there is a new issue update that status is Resolved 
-        const issueResolved = this.tryResolveIssue(existingIssue, issue.Status);
+        const issueResolved = await this.tryResolveIssue(existingIssue, issue.Status);
 
         return issueResolved;
         
@@ -102,7 +103,7 @@ export default class IssueSendStateManager {
             
             existingIssue.Status = this.resolvedStatus;
             
-            globalThis.db.addOrUpdateIssue(existingIssue);
+            globalThis.db.setIssueResolved(existingIssue);
 
             return true;
         }
