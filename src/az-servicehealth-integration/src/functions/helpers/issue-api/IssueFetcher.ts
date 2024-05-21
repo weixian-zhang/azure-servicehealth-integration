@@ -1,9 +1,9 @@
 import IIssueFetcher from "./IIssueFetcher"
 import ApiIssueRetriever from "./ApiIssueFetcher";
 import MockIssueRetriever from "./MockIssueFetcher";
-import {ServiceIssue} from "./ServiceIssueModels";
+import {ServiceIssue, Subscription} from "./ServiceIssueModels";
 import AppConfig from "../AppConfig";
-import { InvocationContext, InvocationHookContext } from "@azure/functions";
+import { InvocationContext } from "@azure/functions";
 import { ClientSecretCredential } from "@azure/identity";
 
 export default class IssueFetcher {
@@ -12,7 +12,7 @@ export default class IssueFetcher {
     context: InvocationContext;
     appconfig: AppConfig;
 
-    constructor(tenantName: string, azcred: ClientSecretCredential, subscriptionId: string, appconfig: AppConfig, context: InvocationContext) {
+    constructor(tenantName: string, azcred: ClientSecretCredential, subscriptions: Subscription[], appconfig: AppConfig, context: InvocationContext) {
 
         this.appconfig = appconfig;
         this.context = context;
@@ -23,12 +23,12 @@ export default class IssueFetcher {
             this.issueFetcher = new MockIssueRetriever();
         }
         else {
-            this.issueFetcher = new ApiIssueRetriever(tenantName, azcred,subscriptionId, this.appconfig, this.context);
+            this.issueFetcher = new ApiIssueRetriever(tenantName, azcred, subscriptions, this.appconfig, this.context);
         }
     }
 
     async getIssues() : Promise<ServiceIssue[]> {
-        const issues = await this.issueFetcher.getIssuesAndImpactedResourcesAtTenantLevel();
+        const issues = await this.issueFetcher.fetchIssuesAndImpactedResources();
         return issues
     }
 

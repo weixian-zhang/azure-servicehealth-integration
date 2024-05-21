@@ -1,4 +1,12 @@
 
+export class Subscription {
+    Id: string;
+    Name: string
+    constructor(id: string, name: string) {
+        this.Id = id;
+        this.Name = name;
+    }
+}
 export class ServiceIssue {
     TenantName: string
     TrackingId: string;
