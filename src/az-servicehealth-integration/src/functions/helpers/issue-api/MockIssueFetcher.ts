@@ -10,7 +10,7 @@ export default class MockIssueGenerator implements IIssueFetcher {
     regionToFilter = "Southeast Asia";
     
     //reuse ApiIssueFetcher and add/edit/remove issue data
-    async getIssuesAndImpactedResourcesAtTenantLevel(): Promise<ServiceIssue[]> {
+    async fetchIssuesAndImpactedResources(): Promise<ServiceIssue[]> {
 
         const data = await fs.promises.readFile(this.dataPath, "utf8");
 
