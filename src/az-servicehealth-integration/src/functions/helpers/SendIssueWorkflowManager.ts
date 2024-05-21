@@ -17,7 +17,7 @@ export default class SendIssueWorkflowManager {
         this.appconfig = appconfig;
     }
 
-    public async sendServiceIssues(): Promise<string> {
+    public async sendIssues(): Promise<string> {
 
         
         //techpass

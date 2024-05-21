@@ -24,7 +24,7 @@ export async function func_service_health_issue_fetcher(request: HttpRequest, co
 
         const wfm = new SendIssueWorkflowManager(context, globalThis.appconfig);
 
-        const result = await wfm.sendServiceIssues();
+        const result = await wfm.sendIssues();
 
         //const idm = new IssueSendStateManager();
 
