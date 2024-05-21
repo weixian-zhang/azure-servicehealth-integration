@@ -89,8 +89,8 @@ export default class ApiIssueFetcher implements IIssueFetcher {
                 si.ImpactMitigationTime = issue.impactMitigationTime;
                 si.LastUpdateTime = new Date(issue.lastUpdateTime);
                 si.LastUpdateTimeEpoch = si.LastUpdateTime.valueOf();
-                si.Level = si.Level;
-                si.LevelDescription = FetcherHelper.getLevelDescription(si.Level);
+                si.Level = issue.level;
+                si.LevelDescription = FetcherHelper.getLevelDescription(issue.level);
                 si.ImpactedServices = new Array();
                 si.ImpactedResources = new Array();
     
