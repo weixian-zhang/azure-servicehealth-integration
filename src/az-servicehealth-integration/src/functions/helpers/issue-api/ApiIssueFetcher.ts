@@ -59,8 +59,9 @@ export default class ApiIssueFetcher implements IIssueFetcher {
 
     private async _fetchIssuesAndImpactedResources() : Promise<ServiceIssue[]> {
 
-        let serviceIssues = new Array();
-
+        let result = new Array<ServiceIssue>();
+        let serviceIssues = new Map<string, ServiceIssue>(); //new Array();
+        
         const queryStartTime = this.appconfig.incidentQueryStartFromDate;
 
         const options: EventsListBySubscriptionIdOptionalParams = {
@@ -124,27 +125,59 @@ export default class ApiIssueFetcher implements IIssueFetcher {
                             }
                             
                             si.ImpactedServices.push(impactedSvc);
-    
                         }
     
                     });
     
                 });
-    
-                // only include a service issue when there is either service is impacted Global or in SEA region 
-                if (!_.isEmpty(si.ImpactedServices)) {
-                    serviceIssues.push(si);
+                
+                // only include an issue when there is a service that is impacted Globally or in SEA region
+                // ignore issue in other regions or non global
+                if (_.isEmpty(si.ImpactedServices)) {
+                    continue;
                 }
-    
+
+                // is previously collected issue
+                if (si.TrackingId in serviceIssues) {
+
+                    this.groupImpactedServicesByTrackingId(si, serviceIssues);
+
+                }
+                else
+                {
+                    serviceIssues.set(si.TrackingId, si);
+                }
+
             }
             
+            
             // for each subscription, get impacted resources
-            serviceIssues = await this.forEachIssueIncludeImpactedResources(rhc, serviceIssues)
+            result = await this.forEachIssueIncludeImpactedResources(rhc, Array.from(serviceIssues.values()))
         }
 
     
-        return serviceIssues
+        return result
     }
+
+    //as List by Subscription Id is called multiple by the number of subscription Id this app's service principal has access to
+    //issues retrieved will have duplicates, but the impacted services could be different as different services exist in different subscriptions
+    // this function groups up or merge impacted services by same tracking id.
+    private groupImpactedServicesByTrackingId(currIssue: ServiceIssue, serviceIssues: Map<string, ServiceIssue>) {
+
+        currIssue.ImpactedServices.forEach(cisvc => {
+           
+            const prevImpactedServices: ImpactedService[] = serviceIssues[currIssue.TrackingId].ImpactedServices;
+
+            const index = prevImpactedServices.findIndex((previsvc) => previsvc.ImpactedService == cisvc.ImpactedService)
+
+            if (index == -1) {
+                serviceIssues[currIssue.TrackingId].ImpactedServices.push(cisvc);
+            }
+
+        })
+        
+    }
+
 
     // sample code
     // https://github.com/Azure/azure-sdk-for-js/blob/%40azure/arm-resourcehealth_4.0.0/sdk/resourcehealth/arm-resourcehealth/samples/v4/typescript/src/impactedResourcesListByTenantIdAndEventIdSample.ts
