@@ -11,12 +11,12 @@ import { InvocationContext } from '@azure/functions/types/InvocationContext';
 
 // **Asumption: when service issue reaches this stage, ImpactedServices property will never be empty
 // impacted service region will either be Global or SEA
-export default class IssueSendStateManager {
+export default class IssueSendOnceStateManager {
     resolvedStatus: string = "Resolved";
     activeStatus: string = "Active";
     context: InvocationContext;
 
-    public async issuesToSendOrMarkResolved(context: InvocationContext, issues: ServiceIssue[]) {
+    public async collectIssuesToSendOrMarkResolved(context: InvocationContext, issues: ServiceIssue[]) {
 
         this.context = context;
 

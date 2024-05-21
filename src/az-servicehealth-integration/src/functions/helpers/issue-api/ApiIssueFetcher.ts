@@ -1,4 +1,4 @@
-import { ServiceIssue, ImpactedService, ImpactUpdates, ImpactedResource } from "./ServiceIssueModels";
+import { ServiceIssue, ImpactedService, ImpactUpdates, ImpactedResource, Subscription } from "./ServiceIssueModels";
 import IIssueFetcher from "./IIssueFetcher";
 import { ClientSecretCredential  } from "@azure/identity"
 import { MicrosoftResourceHealth, EventsListBySubscriptionIdOptionalParams } from "@azure/arm-resourcehealth"
@@ -21,30 +21,31 @@ import FetcherHelper from "./FetcherHelper";
 
 export default class ApiIssueFetcher implements IIssueFetcher {
     appconfig: AppConfig;
-    resourceHealthClient : MicrosoftResourceHealth;
     context: InvocationContext;
     regionToFilter = "Southeast Asia";
     tenantName: string;
+    subscriptions: Subscription[];
+    azcred: ClientSecretCredential;
 
-    constructor(tenantName: string, azcred: ClientSecretCredential, subscriptionId: string, appconfig: AppConfig, context: InvocationContext) {
+    constructor(tenantName: string, azcred: ClientSecretCredential, subscriptions: Subscription[], appconfig: AppConfig, context: InvocationContext) {
+        this.tenantName = tenantName;
         this.appconfig = appconfig;
         this.context = context;
-        this.resourceHealthClient = new MicrosoftResourceHealth(azcred, subscriptionId);
+        this.subscriptions = subscriptions;
+        this.azcred = azcred;
     }
     
 
-    async getIssuesAndImpactedResourcesAtTenantLevel() : Promise<ServiceIssue[]> {
+    async fetchIssuesAndImpactedResources() : Promise<ServiceIssue[]> {
         
         try {
             
-            let serviceIssues = await this.getServiceIssues();
+            let serviceIssues = await this._fetchIssuesAndImpactedResources();
 
 
             if (_.isEmpty(serviceIssues)) {
                 return []
             }
-
-            serviceIssues = await this.forEachIssueIncludeImpactedResources(serviceIssues);
 
             return serviceIssues
         
@@ -56,7 +57,7 @@ export default class ApiIssueFetcher implements IIssueFetcher {
     }
 
 
-    private async getServiceIssues() : Promise<ServiceIssue[]> {
+    private async _fetchIssuesAndImpactedResources() : Promise<ServiceIssue[]> {
 
         let serviceIssues = new Array();
 
@@ -66,94 +67,96 @@ export default class ApiIssueFetcher implements IIssueFetcher {
             queryStartTime
         };
 
+        for (const sub of this.subscriptions) {
 
-        for await (let issue of this.resourceHealthClient.eventsOperations.listBySubscriptionId(options)) { 
+            const rhc = new MicrosoftResourceHealth(this.azcred, sub.Id);
 
-            if (issue.eventType != 'ServiceIssue') {
-                continue;
-            }
+            for await (let issue of rhc.eventsOperations.listBySubscriptionId(options)) { 
 
-            let si = new ServiceIssue();
-
-            si.TenantName = this.tenantName;
-            si.TrackingId = issue.name;
-            si.OverallStatus = issue.status;
-            si.Title = issue.title;
-            si.Summary = issue.summary;
-            si.Description =issue.description;
-            si.ImpactStartTime = issue.impactStartTime;
-            si.ImpactMitigationTime = issue.impactMitigationTime;
-            si.LastUpdateTime = new Date(issue.lastUpdateTime);
-            si.LastUpdateTimeEpoch = si.LastUpdateTime.valueOf();
-            si.Level = si.Level;
-            si.LevelDescription = FetcherHelper.getLevelDescription(si.Level);
-            si.ImpactedServices = new Array();
-            si.ImpactedResources = new Array();
-
-            issue.impact.forEach(impact => {
-
-                impact.impactedRegions.forEach(region => {
-
-                    if (region.impactedRegion == this.regionToFilter || region.impactedRegion == "Global") {
-
-                        const impactedSvc = new ImpactedService();
-
-                        impactedSvc.ImpactedService = impact.impactedService;
-                        impactedSvc.IsGlobal = (region.impactedRegion == "Global") ? true : false;
-                        impactedSvc.SEARegionOrGlobalStatus = region.status;
-                        impactedSvc.SEARegionOrGlobalLastUpdateTime = new Date(region.lastUpdateTime);
-                        impactedSvc.ImpactedTenants = region.impactedTenants;
-                        impactedSvc.ImpactedSubscriptions = region.impactedSubscriptions;
-                        impactedSvc.ImpactUpdates = new Array();
-                        
-                        if (!_.isEmpty(region.updates)) {
-
-                            for (const u of region.updates) {
-
-                                const iu = new ImpactUpdates();
-                                iu.Summary = u.summary;
-                                iu.UpdateDateTime = new Date(u.updateDateTime);
-                                iu.UpdateEpoch = iu.UpdateDateTime.valueOf();
+                if (issue.eventType != 'ServiceIssue') {
+                    continue;
+                }
     
-                                impactedSvc.ImpactUpdates.push(iu);
+                let si = new ServiceIssue();
+    
+                si.TenantName = this.tenantName;
+                si.TrackingId = issue.name;
+                si.OverallStatus = issue.status;
+                si.Title = issue.title;
+                si.Summary = issue.summary;
+                si.Description =issue.description;
+                si.ImpactStartTime = issue.impactStartTime;
+                si.ImpactMitigationTime = issue.impactMitigationTime;
+                si.LastUpdateTime = new Date(issue.lastUpdateTime);
+                si.LastUpdateTimeEpoch = si.LastUpdateTime.valueOf();
+                si.Level = issue.level;
+                si.LevelDescription = FetcherHelper.getLevelDescription(issue.level);
+                si.ImpactedServices = new Array();
+                si.ImpactedResources = new Array();
+    
+                issue.impact.forEach(impact => {
+    
+                    impact.impactedRegions.forEach(region => {
+    
+                        if (region.impactedRegion == this.regionToFilter || region.impactedRegion == "Global") {
+    
+                            const impactedSvc = new ImpactedService();
+    
+                            impactedSvc.ImpactedService = impact.impactedService;
+                            impactedSvc.IsGlobal = (region.impactedRegion == "Global") ? true : false;
+                            impactedSvc.SEARegionOrGlobalStatus = region.status;
+                            impactedSvc.SEARegionOrGlobalLastUpdateTime = new Date(region.lastUpdateTime);
+                            impactedSvc.ImpactedTenants = region.impactedTenants;
+                            impactedSvc.ImpactedSubscriptions = region.impactedSubscriptions;
+                            impactedSvc.ImpactUpdates = new Array();
+                            
+                            if (!_.isEmpty(region.updates)) {
+    
+                                for (const u of region.updates) {
+    
+                                    const iu = new ImpactUpdates();
+                                    iu.Summary = u.summary;
+                                    iu.UpdateDateTime = new Date(u.updateDateTime);
+                                    iu.UpdateEpoch = iu.UpdateDateTime.valueOf();
+        
+                                    impactedSvc.ImpactUpdates.push(iu);
+                                }
                             }
+                            
+                            si.ImpactedServices.push(impactedSvc);
+    
                         }
-                        
-                        si.ImpactedServices.push(impactedSvc);
-
-                    }
-
+    
+                    });
+    
                 });
-
-            });
-
-            // only include a service issue when there is either service is impacted Global or in SEA region 
-            if (!_.isEmpty(si.ImpactedServices)) {
-                serviceIssues.push(si);
+    
+                // only include a service issue when there is either service is impacted Global or in SEA region 
+                if (!_.isEmpty(si.ImpactedServices)) {
+                    serviceIssues.push(si);
+                }
+    
             }
-
+            
+            // for each subscription, get impacted resources
+            serviceIssues = await this.forEachIssueIncludeImpactedResources(rhc, serviceIssues)
         }
 
-
-        serviceIssues = await this.forEachIssueIncludeImpactedResources(serviceIssues)
-
-
+    
         return serviceIssues
     }
 
     // sample code
     // https://github.com/Azure/azure-sdk-for-js/blob/%40azure/arm-resourcehealth_4.0.0/sdk/resourcehealth/arm-resourcehealth/samples/v4/typescript/src/impactedResourcesListByTenantIdAndEventIdSample.ts
-    private async forEachIssueIncludeImpactedResources(issues: ServiceIssue[]) : Promise<ServiceIssue[]> {
+    private async forEachIssueIncludeImpactedResources(rhc: MicrosoftResourceHealth, issues: ServiceIssue[]) : Promise<ServiceIssue[]> {
         
         if (_.isEmpty(issues)) {
             return [];
         }
 
-        let result = new Array();
-
         issues.forEach(async issue => {
         
-            for await (let resource of this.resourceHealthClient.impactedResources.listBySubscriptionIdAndEventId(issue.TrackingId)) {//this.resourceHealthClient.impactedResources.listByTenantIdAndEventId(issue.TrackingId)) {
+            for await (let resource of rhc.impactedResources.listBySubscriptionIdAndEventId(issue.TrackingId)) {//this.resourceHealthClient.impactedResources.listByTenantIdAndEventId(issue.TrackingId)) {
 
                 const ir = new ImpactedResource();
                 const rscArr = resource.targetResourceId.split("/");

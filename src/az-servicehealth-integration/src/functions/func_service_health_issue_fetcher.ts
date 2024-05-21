@@ -1,11 +1,10 @@
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from "@azure/functions";
 import AppConfig from "./helpers/AppConfig";
 import { ClientSecretCredential   } from "@azure/identity"
-import IssueFetcher from "./helpers/issue-api/IssueFetcher";
 import { ServiceIssue } from "./helpers/issue-api/ServiceIssueModels";
 import { DB } from "./helpers/db/DB";
-import IssueSendStateManager from "./helpers/IssueSendStateManager";
 import * as _ from 'lodash';
+import SendIssueWorkflowManager from "./helpers/SendIssueWorkflowManager";
 
 declare global {
     var appconfig: AppConfig;
@@ -21,32 +20,30 @@ export async function func_service_health_issue_fetcher(request: HttpRequest, co
 
     try {
 
-        globalThis.db = new DB();
-        globalThis.wogTenantName = "WOG";
-        globalThis.techpassTenantName = "TechPass";
-        
-        const incidentQueryStartFromDate = request.query.get('incidentStartFromDate');
-        
-        globalThis.appconfig = AppConfig.loadFromEnvVar(incidentQueryStartFromDate);
+        initGlobalAppConfig(request);
 
-        const idm = new IssueSendStateManager();
+        const wfm = new SendIssueWorkflowManager(context, globalThis.appconfig);
 
-        const tpIssues = await getTechPassIssues(context);
+        const result = await wfm.sendIssues();
 
-        const wogIssues = []; //await getWOGIssues(context)
+        //const idm = new IssueSendStateManager();
 
-        const combinedIssues = tpIssues.concat(wogIssues)
+        // const tpIssues = await getTechPassIssues(context);
 
-        const issuesToSend = await idm.issuesToSendOrMarkResolved(context, combinedIssues);
+        // const wogIssues = []; //await getWOGIssues(context)
 
-        const respMsg = `
-        Service issues fetched: [${getTrackingIds(combinedIssues)}]
-        Service issues sent due is New issue, Change of Status from Active->Resolved or New updates: [${getTrackingIds(issuesToSend)}]
-        `
+        // const combinedIssues = tpIssues.concat(wogIssues)
+
+        // const issuesToSend = await idm.issuesToSendOrMarkResolved(context, combinedIssues);
+
+        // const respMsg = `
+        // Service issues fetched: [${getTrackingIds(combinedIssues)}]
+        // Service issues sent due is New issue, Change of Status from Active->Resolved or New updates: [${getTrackingIds(issuesToSend)}]
+        // `
 
         return {
             status: 200,
-            body: respMsg, //JSON.stringify({combinedIssues}),
+            body: result, //JSON.stringify({combinedIssues}),
             headers: {
                 'Content-Type': 'application/json'
             }
@@ -65,31 +62,42 @@ export async function func_service_health_issue_fetcher(request: HttpRequest, co
     
 };
 
+function initGlobalAppConfig(request: HttpRequest) {
 
-async function getTechPassIssues(context: InvocationContext) : Promise<ServiceIssue[]> {
-    const techpassIR = new IssueFetcher(
-        globalThis.techpassTenantName,
-        globalThis.appconfig.TechPassClientSecretCredential, 
-        globalThis.appconfig.TechPassResidentSubscriptionId,
-        appconfig, context);
-
-    const issues = await techpassIR.getIssues();
-
-    return issues;
+    globalThis.db = new DB();
+    globalThis.wogTenantName = "WOG";
+    globalThis.techpassTenantName = "TechPass";
+    
+    const incidentQueryStartFromDate = request.query.get('incidentStartFromDate');
+    
+    globalThis.appconfig = AppConfig.loadFromEnvVar(incidentQueryStartFromDate);
 }
 
-async function getWOGIssues(context: InvocationContext) : Promise<ServiceIssue[]> {
-    const wogIR = new IssueFetcher(
-        globalThis.wogTenantName,
-        globalThis.appconfig.wogClientSecretCredential,
-        globalThis.appconfig.WogResidentSubscriptionId,
-        appconfig, 
-        context);
 
-    const issues = await wogIR.getIssues();
+// async function getTechPassIssues(context: InvocationContext) : Promise<ServiceIssue[]> {
+//     const techpassIR = new IssueFetcher(
+//         globalThis.techpassTenantName,
+//         globalThis.appconfig.TechPassClientSecretCredential, 
+//         globalThis.appconfig.TechPassResidentSubscriptionId,
+//         appconfig, context);
 
-    return issues
-}
+//     const issues = await techpassIR.getIssues();
+
+//     return issues;
+// }
+
+// async function getWOGIssues(context: InvocationContext) : Promise<ServiceIssue[]> {
+//     const wogIR = new IssueFetcher(
+//         globalThis.wogTenantName,
+//         globalThis.appconfig.wogClientSecretCredential,
+//         globalThis.appconfig.WogResidentSubscriptionId,
+//         appconfig, 
+//         context);
+
+//     const issues = await wogIR.getIssues();
+
+//     return issues
+// }
 
 function getTrackingIds(issues: ServiceIssue[]): string[] {
     const result = new Array();
