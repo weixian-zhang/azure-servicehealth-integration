@@ -4,6 +4,7 @@ import IssueFetcher from "./issue-api/IssueFetcher";
 import { ServiceIssue, Subscription } from "./issue-api/ServiceIssueModels";
 import AppConfig from "./AppConfig";
 import { SubscriptionClient } from "@azure/arm-resources-subscriptions";
+import { ClientSecretCredential } from "@azure/identity";
 
 export default class SendIssueWorkflowManager {
     isosm: IssueSendOnceStateManager;
@@ -20,21 +21,21 @@ export default class SendIssueWorkflowManager {
 
         
         //techpass
-        const tpSubs = await this.getSubscriptionsForTechPass()
+        const tpSubs = await this.getSubscriptionsByServicePrincipalRBAC(globalThis.appconfig.TechPassClientSecretCredential)
 
         const tpIssues = await this.getTechPassIssues(tpSubs, this.context);
 
-        this.isosm.collectIssuesToSendOrMarkResolved(this.context, tpIssues)
+        const tpIssuesToSend = this.isosm.collectIssuesToSendOrMarkResolved(this.context, tpIssues)
 
         //wog
 
-        const wogSubs = await this.getSubscriptionsForWOG()
+        const wogSubs = await this.getSubscriptionsByServicePrincipalRBAC(globalThis.appconfig.wogClientSecretCredential)
 
         const wogIssues = await this.getWOGIssues(wogSubs, this.context)
 
         //merge imapacted service by same issue tracking Id
 
-        this.isosm.collectIssuesToSendOrMarkResolved(this.context, tpIssues)
+        const wogIssuesToSend = this.isosm.collectIssuesToSendOrMarkResolved(this.context, wogIssues)
 
         //issue to HTML template and send email
 
@@ -66,18 +67,8 @@ export default class SendIssueWorkflowManager {
         return issues
     }
 
-    async getSubscriptionsForWOG(): Promise<Subscription[]> {
-        const subClient = new SubscriptionClient(globalThis.appconfig.wogClientSecretCredential);
-        const result = new Array<Subscription>();
-
-        for await (const s of subClient.subscriptions.list()) {
-            result.push(new Subscription(s.id, s.displayName))
-        }
-        return result;
-    }
-
-    async getSubscriptionsForTechPass(): Promise<Subscription[]> {
-        const subClient = new SubscriptionClient(globalThis.appconfig.TechPassClientSecretCredential);
+    async getSubscriptionsByServicePrincipalRBAC(sp: ClientSecretCredential): Promise<Subscription[]> {
+        const subClient = new SubscriptionClient(sp);
         const result = new Array<Subscription>();
 
         for await (const s of subClient.subscriptions.list()) {
