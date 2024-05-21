@@ -21,11 +21,11 @@ export default class SendIssueWorkflowManager {
 
         
         //techpass
-        const tpSubs = await this.getSubscriptionsByServicePrincipalRBAC(globalThis.appconfig.TechPassClientSecretCredential)
+        //const tpSubs = await this.getSubscriptionsByServicePrincipalRBAC(globalThis.appconfig.TechPassClientSecretCredential)
 
-        const tpIssues = await this.getTechPassIssues(tpSubs, this.context);
+        //const tpIssues = await this.getTechPassIssues(tpSubs, this.context);
 
-        const tpIssuesToSend = this.isosm.collectIssuesToSendOrMarkResolved(this.context, tpIssues)
+        //const tpIssuesToSend = this.isosm.collectIssuesToSendOrMarkResolved(this.context, tpIssues)
 
         //wog
 
