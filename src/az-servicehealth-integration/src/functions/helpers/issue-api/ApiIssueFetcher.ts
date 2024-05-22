@@ -60,7 +60,7 @@ export default class ApiIssueFetcher implements IIssueFetcher {
     private async _fetchIssuesAndImpactedResources() : Promise<ServiceIssue[]> {
 
         let result = new Array<ServiceIssue>();
-        let serviceIssues = new Map<string, ServiceIssue>(); //new Array();
+        let issueBag = new Map<string, ServiceIssue>();
         
         const queryStartTime = this.appconfig.incidentQueryStartFromDate;
 
@@ -72,140 +72,155 @@ export default class ApiIssueFetcher implements IIssueFetcher {
 
             const rhc = new MicrosoftResourceHealth(this.azcred, sub.Id);
 
-            for await (let issue of rhc.eventsOperations.listBySubscriptionId(options)) { 
-
-                if (issue.eventType != 'ServiceIssue') {
-                    continue;
-                }
-    
-                let si = new ServiceIssue();
-    
-                si.TenantName = this.tenantName;
-                si.TrackingId = issue.name;
-                si.OverallStatus = issue.status;
-                si.Title = issue.title;
-                si.Summary = issue.summary;
-                si.Description =issue.description;
-                si.ImpactStartTime = issue.impactStartTime;
-                si.ImpactMitigationTime = issue.impactMitigationTime;
-                si.LastUpdateTime = new Date(issue.lastUpdateTime);
-                si.LastUpdateTimeEpoch = si.LastUpdateTime.valueOf();
-                si.Level = issue.level;
-                si.LevelDescription = FetcherHelper.getLevelDescription(issue.level);
-                si.ImpactedServices = new Array();
-                si.ImpactedResources = new Array();
-    
-                issue.impact.forEach(impact => {
-    
-                    impact.impactedRegions.forEach(region => {
-    
-                        if (region.impactedRegion == this.regionToFilter || region.impactedRegion == "Global") {
-    
-                            const impactedSvc = new ImpactedService();
-    
-                            impactedSvc.ImpactedService = impact.impactedService;
-                            impactedSvc.IsGlobal = (region.impactedRegion == "Global") ? true : false;
-                            impactedSvc.SEARegionOrGlobalStatus = region.status;
-                            impactedSvc.SEARegionOrGlobalLastUpdateTime = new Date(region.lastUpdateTime);
-                            impactedSvc.ImpactedTenants = region.impactedTenants;
-                            impactedSvc.ImpactedSubscriptions = region.impactedSubscriptions;
-                            impactedSvc.ImpactUpdates = new Array();
-                            
-                            if (!_.isEmpty(region.updates)) {
-    
-                                for (const u of region.updates) {
-    
-                                    const iu = new ImpactUpdates();
-                                    iu.Summary = u.summary;
-                                    iu.UpdateDateTime = new Date(u.updateDateTime);
-                                    iu.UpdateEpoch = iu.UpdateDateTime.valueOf();
-        
-                                    impactedSvc.ImpactUpdates.push(iu);
-                                }
-                            }
-                            
-                            si.ImpactedServices.push(impactedSvc);
-                        }
-    
-                    });
-    
-                });
+            for await (const currIssue of rhc.eventsOperations.listBySubscriptionId(options)) {
                 
-                // only include an issue when there is a service that is impacted Globally or in SEA region
-                // ignore issue in other regions or non global
-                if (_.isEmpty(si.ImpactedServices)) {
-                    continue;
-                }
+                const trackingId = currIssue.name;
 
-                // is previously collected issue
-                if (si.TrackingId in serviceIssues) {
+                FetcherHelper.createIssueInIssueBag(this.tenantName, currIssue, issueBag);
 
-                    this.groupImpactedServicesByTrackingId(si, serviceIssues);
-
-                }
-                else
-                {
-                    serviceIssues.set(si.TrackingId, si);
+                if (trackingId in issueBag) {
+                    // get impacted resources
+                    await this.fetchImpactedResourcesForIssue(rhc, trackingId, issueBag);
                 }
 
             }
+
             
-            
-            // for each subscription, get impacted resources
-            result = await this.forEachIssueIncludeImpactedResources(rhc, Array.from(serviceIssues.values()))
-        }
+
+            //await this.forEachIssueIncludeImpactedResources(rhc, Array.from(serviceIssues.values()));
+
+            // for await (let issue of rhc.eventsOperations.listBySubscriptionId(options)) { 
+
+            //     if (issue.eventType != 'ServiceIssue') {
+            //         continue;
+            //     }
+
+            //     const [seaRegionImpacted, si] = FetcherHelper.createServiceIssue(this.tenantName, issue);
+
+            //     if (!seaRegionImpacted) {
+            //         continue;
+            //     }
+
+            //     // is previously collected issue
+            //     if (si.TrackingId in serviceIssues) {
+
+            //         FetcherHelper.groupImpactedServicesByTrackingId(si, serviceIssues);
+            //     }
+            //     else
+            //     {
+            //         serviceIssues.set(si.TrackingId, si);
+            //     }
 
     
-        return result
+            //     // let si = new ServiceIssue();
+    
+            //     // si.TenantName = this.tenantName;
+            //     // si.TrackingId = issue.name;
+            //     // si.OverallStatus = issue.status;
+            //     // si.Title = issue.title;
+            //     // si.Summary = issue.summary;
+            //     // si.Description =issue.description;
+            //     // si.ImpactStartTime = issue.impactStartTime;
+            //     // si.ImpactMitigationTime = issue.impactMitigationTime;
+            //     // si.LastUpdateTime = new Date(issue.lastUpdateTime);
+            //     // si.LastUpdateTimeEpoch = si.LastUpdateTime.valueOf();
+            //     // si.Level = issue.level;
+            //     // si.LevelDescription = FetcherHelper.getLevelDescription(issue.level);
+            //     // si.ImpactedServices = new Array();
+            //     // si.ImpactedResources = new Array();
+    
+            //     // issue.impact.forEach(impact => {
+    
+            //     //     impact.impactedRegions.forEach(region => {
+    
+            //     //         if (region.impactedRegion == this.regionToFilter || region.impactedRegion == "Global") {
+    
+            //     //             const impactedSvc = new ImpactedService();
+    
+            //     //             impactedSvc.ImpactedService = impact.impactedService;
+            //     //             impactedSvc.IsGlobal = (region.impactedRegion == "Global") ? true : false;
+            //     //             impactedSvc.SEARegionOrGlobalStatus = region.status;
+            //     //             impactedSvc.SEARegionOrGlobalLastUpdateTime = new Date(region.lastUpdateTime);
+            //     //             impactedSvc.ImpactedTenants = region.impactedTenants;
+            //     //             impactedSvc.ImpactedSubscriptions = region.impactedSubscriptions;
+            //     //             impactedSvc.ImpactUpdates = new Array();
+                            
+            //     //             if (!_.isEmpty(region.updates)) {
+    
+            //     //                 for (const u of region.updates) {
+    
+            //     //                     const iu = new ImpactUpdates();
+            //     //                     iu.Summary = u.summary;
+            //     //                     iu.UpdateDateTime = new Date(u.updateDateTime);
+            //     //                     iu.UpdateEpoch = iu.UpdateDateTime.valueOf();
+        
+            //     //                     impactedSvc.ImpactUpdates.push(iu);
+            //     //                 }
+            //     //             }
+                            
+            //     //             si.ImpactedServices.push(impactedSvc);
+            //     //         }
+    
+            //     //     });
+    
+            //     // });
+                
+            //     // // only include an issue when there is a service that is impacted Globally or in SEA region
+            //     // // ignore issue that are non-global or other regions
+            //     // if (_.isEmpty(si.ImpactedServices)) {
+            //     //     continue;
+            //     // }
+
+            // }
+            
+            
+            
+        }
+
+        return Array.from(issueBag.values());
+
     }
 
     //as List by Subscription Id is called multiple by the number of subscription Id this app's service principal has access to
     //issues retrieved will have duplicates, but the impacted services could be different as different services exist in different subscriptions
     // this function groups up or merge impacted services by same tracking id.
-    private groupImpactedServicesByTrackingId(currIssue: ServiceIssue, serviceIssues: Map<string, ServiceIssue>) {
+    // private groupImpactedServicesByTrackingId(currIssue: ServiceIssue, serviceIssues: Map<string, ServiceIssue>) {
 
-        currIssue.ImpactedServices.forEach(cisvc => {
+    //     currIssue.ImpactedServices.forEach(cisvc => {
            
-            const prevImpactedServices: ImpactedService[] = serviceIssues[currIssue.TrackingId].ImpactedServices;
+    //         const prevImpactedServices: ImpactedService[] = serviceIssues[currIssue.TrackingId].ImpactedServices;
 
-            const index = prevImpactedServices.findIndex((previsvc) => previsvc.ImpactedService == cisvc.ImpactedService)
+    //         const index = prevImpactedServices.findIndex((previsvc) => previsvc.ImpactedService == cisvc.ImpactedService)
 
-            if (index == -1) {
-                serviceIssues[currIssue.TrackingId].ImpactedServices.push(cisvc);
-            }
+    //         if (index == -1) {
+    //             serviceIssues[currIssue.TrackingId].ImpactedServices.push(cisvc);
+    //         }
 
-        })
-        
-    }
+    //     })
+    // }
 
 
     // sample code
     // https://github.com/Azure/azure-sdk-for-js/blob/%40azure/arm-resourcehealth_4.0.0/sdk/resourcehealth/arm-resourcehealth/samples/v4/typescript/src/impactedResourcesListByTenantIdAndEventIdSample.ts
-    private async forEachIssueIncludeImpactedResources(rhc: MicrosoftResourceHealth, issues: ServiceIssue[]) : Promise<ServiceIssue[]> {
-        
-        if (_.isEmpty(issues)) {
+    private async fetchImpactedResourcesForIssue
+        (rhc: MicrosoftResourceHealth, trackingId: string, issueBag: Map<string, ServiceIssue>) {
+            
+        if (_.isEmpty(issueBag)) {
             return [];
         }
 
-        issues.forEach(async issue => {
-        
-            for await (let resource of rhc.impactedResources.listBySubscriptionIdAndEventId(issue.TrackingId)) {//this.resourceHealthClient.impactedResources.listByTenantIdAndEventId(issue.TrackingId)) {
+        for await (let resource of rhc.impactedResources.listBySubscriptionIdAndEventId(trackingId)) {//this.resourceHealthClient.impactedResources.listByTenantIdAndEventId(issue.TrackingId)) {
 
-                const ir = new ImpactedResource();
-                const rscArr = resource.targetResourceId.split("/");
-                ir.SubscriptionId =  (rscArr[1]) ? rscArr[1] : "";
-                ir.ResourceGroup = resource.resourceGroup;
-                ir.ResourceType = resource.targetResourceType;
-                ir.ResourceName =  resource.resourceName;
-                
-                issue.ImpactedResources.push(ir);
-            }
+            //FetcherHelper.createImpactedResourceInIssueBag(trackingId, rhc.subscriptionId, resource, issueBag);
 
-        });
-
-        return issues;
+            const ir = new ImpactedResource();
+            ir.Id = resource.id;
+            ir.SubscriptionId =  rhc.subscriptionId;
+            ir.ResourceGroup = resource.resourceGroup;
+            ir.ResourceType = resource.targetResourceType;
+            ir.ResourceName =  resource.resourceName;
+            issueBag[trackingId].ImpactedResources.push(ir);
+        }
     }
-
-
 
 }
