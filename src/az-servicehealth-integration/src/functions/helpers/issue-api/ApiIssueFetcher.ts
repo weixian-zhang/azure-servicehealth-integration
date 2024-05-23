@@ -82,9 +82,28 @@ export default class ApiIssueFetcher implements IIssueFetcher {
                     // get impacted resources
                     await this.fetchImpactedResourcesForIssue(rhc, trackingId, issueBag);
                 }
+            } 
+        }
 
-            }
+        return Array.from(issueBag.values());
+    }
 
+    // sample code
+    // https://github.com/Azure/azure-sdk-for-js/blob/%40azure/arm-resourcehealth_4.0.0/sdk/resourcehealth/arm-resourcehealth/samples/v4/typescript/src/impactedResourcesListByTenantIdAndEventIdSample.ts
+    private async fetchImpactedResourcesForIssue
+        (rhc: MicrosoftResourceHealth, trackingId: string, issueBag: Map<string, ServiceIssue>) {
+            
+        if (_.isEmpty(issueBag)) {
+            return [];
+        }
+
+        for await (let resource of rhc.impactedResources.listBySubscriptionIdAndEventId(trackingId)) {//this.resourceHealthClient.impactedResources.listByTenantIdAndEventId(issue.TrackingId)) {
+
+            FetcherHelper.createImpactedResourceInIssueBag(resource, trackingId, issueBag);
+        }
+    }
+
+    
             
 
             //await this.forEachIssueIncludeImpactedResources(rhc, Array.from(serviceIssues.values()));
@@ -172,14 +191,6 @@ export default class ApiIssueFetcher implements IIssueFetcher {
             //     // }
 
             // }
-            
-            
-            
-        }
-
-        return Array.from(issueBag.values());
-
-    }
 
     //as List by Subscription Id is called multiple by the number of subscription Id this app's service principal has access to
     //issues retrieved will have duplicates, but the impacted services could be different as different services exist in different subscriptions
@@ -200,27 +211,6 @@ export default class ApiIssueFetcher implements IIssueFetcher {
     // }
 
 
-    // sample code
-    // https://github.com/Azure/azure-sdk-for-js/blob/%40azure/arm-resourcehealth_4.0.0/sdk/resourcehealth/arm-resourcehealth/samples/v4/typescript/src/impactedResourcesListByTenantIdAndEventIdSample.ts
-    private async fetchImpactedResourcesForIssue
-        (rhc: MicrosoftResourceHealth, trackingId: string, issueBag: Map<string, ServiceIssue>) {
-            
-        if (_.isEmpty(issueBag)) {
-            return [];
-        }
-
-        for await (let resource of rhc.impactedResources.listBySubscriptionIdAndEventId(trackingId)) {//this.resourceHealthClient.impactedResources.listByTenantIdAndEventId(issue.TrackingId)) {
-
-            //FetcherHelper.createImpactedResourceInIssueBag(trackingId, rhc.subscriptionId, resource, issueBag);
-
-            const ir = new ImpactedResource();
-            ir.Id = resource.id;
-            ir.SubscriptionId =  rhc.subscriptionId;
-            ir.ResourceGroup = resource.resourceGroup;
-            ir.ResourceType = resource.targetResourceType;
-            ir.ResourceName =  resource.resourceName;
-            issueBag[trackingId].ImpactedResources.push(ir);
-        }
-    }
+    
 
 }

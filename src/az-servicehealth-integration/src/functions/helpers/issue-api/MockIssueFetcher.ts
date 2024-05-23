@@ -38,7 +38,36 @@ export default class MockIssueGenerator implements IIssueFetcher {
                 await this.fetchImpactedResourcesForIssue(trackingId, issueBag);
             }
 
-            // if (issue.properties.eventType != 'ServiceIssue') {
+            curr++;
+        }
+
+        return Array.from(issueBag.values());
+    }
+
+    private async fetchImpactedResourcesForIssue(trackingId: string, issueBag: Map<string, ServiceIssue>) {
+            
+        const data = await fs.promises.readFile(this.impactedResourcesDataPath, "utf8");
+        let ips = JSON.parse(data) as any[];
+        ips = ips['value'];
+
+        for (let ip of ips) {
+
+            if (_.isEmpty(ip.properties.targetResourceId)) {
+                continue;
+            }
+
+            FetcherHelper.createImpactedResourceInIssueBag(ip, trackingId, issueBag)
+        }
+    }
+
+    private async listIssuesBySubscriptionIds() : Promise<any[]> {
+        const data = await fs.promises.readFile(this.issuesDataPath, "utf8");
+        let issues = JSON.parse(data) as any[];
+        return issues;
+    }
+}
+
+// if (issue.properties.eventType != 'ServiceIssue') {
             //     continue;
             // }
             
@@ -57,11 +86,8 @@ export default class MockIssueGenerator implements IIssueFetcher {
             // {
             //     serviceIssues.set(si.TrackingId, si);
             // }
-
-            curr++;
-        }
-
-            // let si = new ServiceIssue();
+            
+// let si = new ServiceIssue();
 
             // si.TenantName = 'WOG';
             // si.TrackingId = issue.name
@@ -126,36 +152,3 @@ export default class MockIssueGenerator implements IIssueFetcher {
         // const r = new Array();
         // r.push(result[0])
         // return Promise.resolve(r);
-    }
-
-    private async fetchImpactedResourcesForIssue(trackingId: string, issueBag: Map<string, ServiceIssue>) {
-            
-        const data = await fs.promises.readFile(this.impactedResourcesDataPath, "utf8");
-        let ips = JSON.parse(data) as any[];
-        ips = ips['value'];
-
-        for (let ip of ips) {//this.resourceHealthClient.impactedResources.listByTenantIdAndEventId(issue.TrackingId)) {
-
-            if (_.isEmpty(ip.properties.targetResourceId)) {
-                continue;
-            }
-
-            const ir = new ImpactedResource();
-            const rArr: any[] = ip.properties.targetResourceId.split("/");
-            ir.SubscriptionId =  rArr[1];
-            ir.ResourceGroup = rArr.reverse()[4];
-            ir.ResourceType = _.isEmpty(ip.properties.targetResourceType) ? '' : ip.properties.targetResourceType;
-            ir.ResourceName =  _.last(rArr);
-            
-            issueBag[trackingId].ImpactedResources.push(ir);
-            //issue.ImpactedResources.push(ir);
-        }
-    }
-
-    private async listIssuesBySubscriptionIds() : Promise<any[]> {
-        const data = await fs.promises.readFile(this.issuesDataPath, "utf8");
-        let issues = JSON.parse(data) as any[];
-        return issues;
-    }
-    
-}
