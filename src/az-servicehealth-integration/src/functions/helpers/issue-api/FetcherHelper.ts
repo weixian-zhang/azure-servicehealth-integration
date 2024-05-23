@@ -1,3 +1,4 @@
+import { serialize } from "v8";
 import { ImpactUpdates, ImpactedResource, ImpactedService, ServiceIssue } from "./ServiceIssueModels";
 import * as _ from 'lodash';
 
@@ -89,7 +90,7 @@ export default class FetcherHelper {
         }
 
         // is previously collected issue
-        if (si.TrackingId in issueBag) {
+        if (issueBag.has(si.TrackingId)) {
 
             FetcherHelper.groupImpactedServicesByTrackingId(si, issueBag);
         }
@@ -103,30 +104,40 @@ export default class FetcherHelper {
     //as List by Subscription Id is called multiple by the number of subscription Id this app's service principal has access to
     //issues retrieved will have duplicates, but the impacted services could be different as different services exist in different subscriptions
     // this function groups up or merge impacted services by same tracking id.
-    static groupImpactedServicesByTrackingId(currIssue: ServiceIssue, serviceIssues: Map<string, ServiceIssue>) {
+    static groupImpactedServicesByTrackingId(currIssue: ServiceIssue, issueBag: Map<string, ServiceIssue>) {
 
         currIssue.ImpactedServices.forEach(cisvc => {
            
-            const prevImpactedServices: ImpactedService[] = serviceIssues[currIssue.TrackingId].ImpactedServices;
+            const prevIssue: ServiceIssue = issueBag.get(currIssue.TrackingId);
     
-            const index = prevImpactedServices.findIndex((previsvc) => previsvc.ImpactedService == cisvc.ImpactedService)
+            const index = prevIssue.ImpactedServices.findIndex((previsvc) => previsvc.ImpactedService == cisvc.ImpactedService)
     
             if (index == -1) {
-                serviceIssues[currIssue.TrackingId].ImpactedServices.push(cisvc);
+                prevIssue.ImpactedServices.push(cisvc);
+                //issueBag.set(currIssue.TrackingId, prevIssue);
             }
     
         })
     }
 
     static createImpactedResourceInIssueBag
-        (trackingId: string, subscriptionId: string, resource: any, issueBag: Map<string, ServiceIssue>) {
+        (impactedRsc: any, trackingId: string, issueBag: Map<string, ServiceIssue>) {
+        
+        const id = _.isEmpty(impactedRsc.properties.targetResourceId) ? impactedRsc.id : impactedRsc.properties.targetResourceId;
+        
+        if (_.isEmpty(id)) {
+            return;
+        }
+
+        const rArr: any[] = id.split("/");
+        
         const ir = new ImpactedResource();
-        ir.Id = resource.id;
-        ir.SubscriptionId =  subscriptionId;
-        ir.ResourceGroup = resource.resourceGroup;
-        ir.ResourceType = resource.targetResourceType;
-        ir.ResourceName =  resource.resourceName;
-        issueBag[trackingId].ImpactedResources.push(ir);
+        ir.SubscriptionId =  rArr[2];
+        ir.ResourceType = _.isEmpty(impactedRsc.properties.targetResourceType) ? impactedRsc.targetResourceType : impactedRsc.properties.targetResourceType;
+        ir.ResourceName =  _.last(rArr);
+        ir.ResourceGroup = rArr.reverse()[4];
+        
+        issueBag.get(trackingId).ImpactedResources.push(ir);
     }
 }
 
