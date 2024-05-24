@@ -33,9 +33,7 @@ export default class SendIssueWorkflowManager {
 
         const wogIssues = await this.getWOGIssues(wogSubs, this.context)
 
-        //merge imapacted service by same issue tracking Id
-
-        const wogIssuesToSend = this.isosm.collectIssuesToSendOrMarkResolved(this.context, wogIssues)
+        const wogIssuesToSend = await this.isosm.determineShouldSendIssues(this.context, wogIssues)
 
         //issue to HTML template and send email
 

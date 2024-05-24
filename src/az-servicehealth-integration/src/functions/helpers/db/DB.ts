@@ -43,7 +43,7 @@ export class DB {
 
     private async initDB() {
 
-        const createTableTSQL = `
+        const createTableIssue = `
             CREATE TABLE IF NOT EXISTS Issue (
                 Id INTEGER PRIMARY KEY AUTOINCREMENT,
                 Tenant_Name TEXT NOT NULL,
@@ -51,10 +51,12 @@ export class DB {
                 LastUpdateTime INTEGER NOT NULL,
                 Status TEXT NOT NULL
             );
+        `;
+
+        const createTableImpactedService = `
             
-            CREATE TABLE IF NOT EXISTS Impacted_Services (
+            CREATE TABLE IF NOT EXISTS Impacted_Service (
                 Id INTEGER PRIMARY KEY AUTOINCREMENT,
-                TenantName TEXT NOT NULL,
                 TrackingId TEXT NOT NULL,
                 ImpactedService TEXT NOT NULL,
                 LastUpdateTime INTEGER NOT NULL,
@@ -66,9 +68,10 @@ export class DB {
             filename: this.dbPath,
             driver: sqlite3.Database
         });
+        
+        await this.db.run(createTableIssue);
 
-        await this.db.run(createTableTSQL);
-
+        await this.db.run(createTableImpactedService);
     }
 
     async issueExist(trackingId: string) : Promise<[boolean, TrackedIssue]> {
@@ -99,12 +102,12 @@ export class DB {
     async getImpactedServices(trackingId: string) : Promise<Map<string, TrackedImpactedService>> {
         try {
 
-            const impactedServices = await this.db.get(`
+            const impactedServices: TrackedIssue[] = await this.db.all(`
                 SELECT 
                     ImpactedService,
                     LastUpdateTime,
                     Status 
-                FROM Impacted_Services
+                FROM Impacted_Service
                 WHERE TrackingId = '${trackingId}';
             `);
 
@@ -133,7 +136,7 @@ export class DB {
     //     try {
 
     //         const serviceLastUpdateTimes = await this.db.get(`
-    //             SELECT ImpactedService, LastUpdateTime FROM Impacted_Services
+    //             SELECT ImpactedService, LastUpdateTime FROM Impacted_Service
     //             WHERE TrackingId = '${trackingId}';`);
 
     //         if (!_.isEmpty(serviceLastUpdateTimes)) {
@@ -153,7 +156,7 @@ export class DB {
 
     //         const existingIssue = await this.db.get(`
     //             SELECT ImpactedService, Status 
-    //             FROM Impacted_Services WHERE TrackingId = '${trackingId}' AND ImpactedService = '${impactedService}' `);
+    //             FROM Impacted_Service WHERE TrackingId = '${trackingId}' AND ImpactedService = '${impactedService}' `);
 
     //         if (!_.isEmpty(existingIssue)) {
     //             return [true, existingIssue];
@@ -173,7 +176,7 @@ export class DB {
                 // save impacted services
                 for (const isvc of issue.ImpactedServices) {
                     await this.db.run(`
-                        INSERT INTO Impacted_Services (
+                        INSERT INTO Impacted_Service (
                             TrackingId,
                             ImpactedService,
                             LastUpdateTime,
@@ -232,7 +235,7 @@ export class DB {
         
         try {
                 await this.db.run(`
-                    UPDATE Impacted_Services
+                    UPDATE Impacted_Service
                     SET LastUpdateTime = ${lastUpdatedTime.valueOf()}
                     WHERE TrackingId = '${trackingId}' AND ImpactedService = '${impactedService}'
                 `
@@ -247,7 +250,7 @@ export class DB {
 
         try {
                 await this.db.run(`
-                    UPDATE Impacted_Services
+                    UPDATE Impacted_Service
                     SET 
                         Status = 'Resolved',
                         LastUpdateTime = ${lastUpdatedTime.valueOf()}
