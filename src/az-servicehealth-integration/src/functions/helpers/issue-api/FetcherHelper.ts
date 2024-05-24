@@ -47,8 +47,6 @@ export default class FetcherHelper {
 
         impact.forEach(impact => {
 
-            //const regions = _.isEmpty(impact.impactedRegions) ? impact. : currIssue.impactedRegions;
-
             impact.impactedRegions.forEach(region => {
 
                 if (region.impactedRegion == this.regionToFilter || region.impactedRegion == "Global") {
