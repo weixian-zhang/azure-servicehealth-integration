@@ -1,10 +1,11 @@
 import sqlite3 from 'sqlite3';
 import { open, Database } from 'sqlite'
 import * as _ from 'lodash';
+import { ImpactedService, ServiceIssue } from '../issue-api/ServiceIssueModels';
 
 // status reference
 // https://learn.microsoft.com/en-us/rest/api/resourcehealth/events/list-by-subscription-id?view=rest-resourcehealth-2022-10-01&tabs=HTTP#eventstatusvalues
-export class Issue{
+export class TrackedIssue{
     public TenantName: string;
     public TrackingId: string;
     public ImpactedService: string;
@@ -20,8 +21,13 @@ export class Issue{
     }
 }
 
-type Data = {
-    issues: Issue[]
+export class TrackedImpactedService {
+    LastUpdateTime: number;
+    Status: string
+    constructor(lastUpdateTime: number, status: string) {
+        this.LastUpdateTime = lastUpdateTime;
+        this.Status = status;
+    }
 }
 
 // example
@@ -36,16 +42,24 @@ export class DB {
     }
 
     private async initDB() {
-        const defaultData: Data = { issues: [] }
+
         const createTableTSQL = `
-        CREATE TABLE IF NOT EXISTS Issue_History (
-            Id INTEGER PRIMARY KEY AUTOINCREMENT,
-            TenantName TEXT NOT NULL,
-            TrackingId TEXT NOT NULL,
-            ImpactedService TEXT NOT NULL,
-            LastUpdateTime INTEGER NOT NULL,
-            Status TEXT NOT NULL
-        )
+            CREATE TABLE IF NOT EXISTS Issue (
+                Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                Tenant_Name TEXT NOT NULL,
+                Tracking_Id TEXT NOT NULL,
+                LastUpdateTime INTEGER NOT NULL,
+                Status TEXT NOT NULL
+            );
+            
+            CREATE TABLE IF NOT EXISTS Impacted_Services (
+                Id INTEGER PRIMARY KEY AUTOINCREMENT,
+                TenantName TEXT NOT NULL,
+                TrackingId TEXT NOT NULL,
+                ImpactedService TEXT NOT NULL,
+                LastUpdateTime INTEGER NOT NULL,
+                Status TEXT NOT NULL
+            );
         `;
         
         this.db = await open({
@@ -57,15 +71,18 @@ export class DB {
 
     }
 
-
-
-    //exist and status is Active
-    async issueExist(trackingId: string, impactedService: string) : Promise<[boolean, Issue]> {
+    async issueExist(trackingId: string) : Promise<[boolean, TrackedIssue]> {
         try {
 
-            const dataPath = '/' + trackingId;
-
-            const existingIssue = await this.db.get(`SELECT * FROM Issue_History WHERE TrackingId = '${trackingId}' AND ImpactedService = '${impactedService}' `);
+            const existingIssue = await this.db.get(`
+                SELECT 
+                    TenantName,
+                    TrackingId,
+                    LastUpdateTime,
+                    Status 
+                FROM Issue
+                WHERE TrackingId = '${trackingId}';
+            `);
 
             if (!_.isEmpty(existingIssue)) {
                 return [true, existingIssue];
@@ -77,26 +94,130 @@ export class DB {
         } catch (error) {
             throw new Error(`Error at DB.issueExist: ${error.message}`);
         }
-        
     }
 
-    async addIssue(issue: Issue) {
+    async getImpactedServices(trackingId: string) : Promise<Map<string, TrackedImpactedService>> {
         try {
-                const result = await this.db.run(`
-                    INSERT INTO Issue_History (
+
+            const impactedServices = await this.db.get(`
+                SELECT 
+                    ImpactedService,
+                    LastUpdateTime,
+                    Status 
+                FROM Impacted_Services
+                WHERE TrackingId = '${trackingId}';
+            `);
+
+            if (!_.isEmpty(impactedServices)) {
+
+                const map = new Map<string, TrackedImpactedService>();
+                impactedServices.forEach(isvc => {
+                    map.set(isvc.ImpactedService, new TrackedImpactedService(isvc.LastUpdateTime, isvc.Status))
+                });
+
+                return map;
+            }
+
+            return new Map<string, TrackedImpactedService>;
+
+
+        } catch (error) {
+            throw new Error(`Error at DB.issueExist: ${error.message}`);
+        }
+    }
+
+
+
+    //exist and status is Active
+    // async getImpactedServiceLastUpdateTime(trackingId: string) : Promise<[boolean, number[]]> {
+    //     try {
+
+    //         const serviceLastUpdateTimes = await this.db.get(`
+    //             SELECT ImpactedService, LastUpdateTime FROM Impacted_Services
+    //             WHERE TrackingId = '${trackingId}';`);
+
+    //         if (!_.isEmpty(serviceLastUpdateTimes)) {
+    //             return [true, serviceLastUpdateTimes];
+    //         }
+
+    //         return [false, []];
+
+
+    //     } catch (error) {
+    //         throw new Error(`Error at DB.issueExist: ${error.message}`);
+    //     } 
+    // }
+
+    // async getImpactedServiceStatus(trackingId: string, impactedService: string) : Promise<[boolean, Issue]> {
+    //     try {
+
+    //         const existingIssue = await this.db.get(`
+    //             SELECT ImpactedService, Status 
+    //             FROM Impacted_Services WHERE TrackingId = '${trackingId}' AND ImpactedService = '${impactedService}' `);
+
+    //         if (!_.isEmpty(existingIssue)) {
+    //             return [true, existingIssue];
+    //         }
+
+    //         return [false, null];
+
+
+    //     } catch (error) {
+    //         throw new Error(`Error at DB.issueExist: ${error.message}`);
+    //     } 
+    // }
+
+    async addIssue(issue: ServiceIssue) {
+        try {
+
+                // save impacted services
+                for (const isvc of issue.ImpactedServices) {
+                    await this.db.run(`
+                        INSERT INTO Impacted_Services (
+                            TrackingId,
+                            ImpactedService,
+                            LastUpdateTime,
+                            Status
+                        )
+                        VALUES(
+                            '${issue.TrackingId}',
+                            '${isvc.ImpactedService}',
+                            '${isvc.SEARegionOrGlobalLastUpdateTime.valueOf()}',
+                            '${isvc.SEARegionOrGlobalStatus}'
+                        )`
+                    );
+                };
+
+                await this.db.run(`
+                    INSERT INTO Issue (
                         TenantName,
                         TrackingId,
-                        ImpactedService,
                         LastUpdateTime,
                         Status
                     )
                     VALUES(
                         '${issue.TenantName}',
                         '${issue.TrackingId}',
-                        '${issue.ImpactedService}',
-                        '${issue.LastUpdateTime}',
-                        '${issue.Status}'
+                        '${issue.LastUpdateTime.valueOf()}',
+                        '${issue.OverallStatus}'
                     )`
+                );
+
+        } catch (error) {
+            throw new Error(`Error at DB.addIssue: ${error.message}`);
+        }
+    }
+
+    async updateIssueResolved(trackingId: string, lastUpdatedTime: Date) {
+        
+        try {
+                await this.db.run(`
+                    UPDATE Issue
+                    SET
+                        Status = 'Resolved',
+                        LastUpdateTime = ${lastUpdatedTime.valueOf()}
+                    WHERE TrackingId = '${trackingId}';
+                `
                 );
 
         } catch (error) {
@@ -106,14 +227,14 @@ export class DB {
 
     // explicitly add update function for LastUpdateTime and Status to highlight importance of 
     // Last-Update-Time changes when new updates get added and Status change from Active to Resolved
-    // App use LastUpdateTime and Status to decide whether or not to send out an issue again
-    async updateIssueLastUpdateTime(issue: Issue) {
+    // App use LastUpdateTime and Status at SEA region level, to decide whether or not to send out an issue again
+    async updateImpactedServiceLastUpdateTime(trackingId: string, impactedService: string, lastUpdatedTime: Date) {
         
         try {
                 await this.db.run(`
-                    UPDATE Issue_History
-                    SET LastUpdateTime = '${issue.LastUpdateTime}'
-                    WHERE TrackingId = '${issue.TrackingId}' AND ImpactedService = '${issue.ImpactedService}'
+                    UPDATE Impacted_Services
+                    SET LastUpdateTime = ${lastUpdatedTime.valueOf()}
+                    WHERE TrackingId = '${trackingId}' AND ImpactedService = '${impactedService}'
                 `
                 );
 
@@ -122,20 +243,20 @@ export class DB {
         }
     }
 
-    async setIssueResolved(issue: Issue) {
+    async updateImpactedServiceResolved(trackingId: string, impactedService: string, lastUpdatedTime: Date) {
 
         try {
                 await this.db.run(`
-                    UPDATE Issue_History
-                    SET Status = '${issue.Status}'
-                    WHERE TrackingId = '${issue.TrackingId}' AND ImpactedService = '${issue.ImpactedService}'
+                    UPDATE Impacted_Services
+                    SET 
+                        Status = 'Resolved',
+                        LastUpdateTime = ${lastUpdatedTime.valueOf()}
+                    WHERE TrackingId = '${trackingId}' AND ImpactedService = '${impactedService}'
                 `
                 );
 
         } catch (error) {
             throw new Error(`Error at DB.addIssue: ${error.message}`);
         }
-
     }
-
 }
