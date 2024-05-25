@@ -17,6 +17,7 @@
     "@azure/arm-resources-subscriptions": "^2.1.0",
     "@azure/functions": "^4.4.0",
     "@azure/identity": "^4.3.0-alpha.20240507.1",
+    "@azure/storage-queue": "^12.17.0",
     "@types/lodash": "^4.17.1",
     "lodash": "^4.17.21",
     "sqlite": "^5.1.1",
