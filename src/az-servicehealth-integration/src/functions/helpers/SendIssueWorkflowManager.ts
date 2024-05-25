@@ -6,7 +6,7 @@ import AppConfig from "./AppConfig";
 import { SubscriptionClient } from "@azure/arm-resources-subscriptions";
 import { ClientSecretCredential } from "@azure/identity";
 
-export default class SendIssueWorkflowManager {
+export default class IssueReportGenerationWorkflow {
     isosm: IssueSendOnceStateManager;
     context: InvocationContext;
     appconfig: AppConfig;
@@ -17,7 +17,7 @@ export default class SendIssueWorkflowManager {
         this.appconfig = appconfig;
     }
 
-    public async sendIssues(): Promise<string> {
+    public async generateIssueReport(): Promise<string> {
 
         
         //techpass

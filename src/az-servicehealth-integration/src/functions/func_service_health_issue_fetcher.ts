@@ -1,7 +1,6 @@
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from "@azure/functions";
 import AppConfig from "./helpers/AppConfig";
 import { ClientSecretCredential   } from "@azure/identity"
-import { ServiceIssue } from "./helpers/issue-api/ServiceIssueModels";
 import { DB } from "./helpers/db/DB";
 import * as _ from 'lodash';
 import SendIssueWorkflowManager from "./helpers/SendIssueWorkflowManager";
@@ -15,24 +14,23 @@ declare global {
     var techpassTenantName: string;
 }
 
+class QueueData {
+    incidentStartFromDate: string
+}
 
-export async function func_service_health_issue_fetcher(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
+const queueConnStringEnvName = 'AZURE_STORAGE_CONNECTION_STRING';
+
+
+export async function func_service_health_issue_fetcher(data: QueueData, context: InvocationContext): Promise<HttpResponseInit> {
 
     try {
 
-        initGlobalAppConfig(request);
+        
+        initGlobalAppConfig(data.incidentStartFromDate);
 
         const wfm = new SendIssueWorkflowManager(context, globalThis.appconfig);
 
-        const result = await wfm.sendIssues();
-
-        return {
-            status: 200,
-            body: result,
-            headers: {
-                'Content-Type': 'application/json'
-            }
-        };
+        const result = await wfm.generateIssueReport();
 
     }
     catch(e){
@@ -40,58 +38,42 @@ export async function func_service_health_issue_fetcher(request: HttpRequest, co
         const errMsg = e.message; // error under useUnknownInCatchVariables
         context.error(errMsg)
         return {
-            status: 400,
+            status: 500,
             body: errMsg
         };
     }
     
 };
 
-function initGlobalAppConfig(request: HttpRequest) {
+function initGlobalAppConfig(incidentStartFromDate: string) {
 
     globalThis.db = new DB();
     globalThis.wogTenantName = "WOG";
     globalThis.techpassTenantName = "TechPass";
     
-    const incidentQueryStartFromDate = request.query.get('incidentStartFromDate');
-    
-    globalThis.appconfig = AppConfig.loadFromEnvVar(incidentQueryStartFromDate);
+    globalThis.appconfig = AppConfig.loadFromEnvVar(incidentStartFromDate);
+}
+
+function getValidDate(val: string) {
+    try {
+        return new Date(val);
+    } catch (error) {
+        const d = new Date();
+        const dateSubstract3Days = d.setDate(d.getDate() - 3);
+        return dateSubstract3Days;
+    }
 }
 
 
-// async function getTechPassIssues(context: InvocationContext) : Promise<ServiceIssue[]> {
-//     const techpassIR = new IssueFetcher(
-//         globalThis.techpassTenantName,
-//         globalThis.appconfig.TechPassClientSecretCredential, 
-//         globalThis.appconfig.TechPassResidentSubscriptionId,
-//         appconfig, context);
-
-//     const issues = await techpassIR.getIssues();
-
-//     return issues;
-// }
-
-// async function getWOGIssues(context: InvocationContext) : Promise<ServiceIssue[]> {
-//     const wogIR = new IssueFetcher(
-//         globalThis.wogTenantName,
-//         globalThis.appconfig.wogClientSecretCredential,
-//         globalThis.appconfig.WogResidentSubscriptionId,
-//         appconfig, 
-//         context);
-
-//     const issues = await wogIR.getIssues();
-
-//     return issues
-// }
-
-function getTrackingIds(issues: ServiceIssue[]): string[] {
-    const result = new Array();
-    issues.forEach((i) => {result.push(i.TrackingId)});
-    return result;
-}
-
-app.http('func_service_health_issue_fetcher', {
-    methods: ['GET', 'POST'],
-    authLevel: 'anonymous',
+app.storageQueue('func_service_health_issue_fetcher', {
+    queueName: 'incident-fetcher-in',
+    connection: queueConnStringEnvName,
     handler: func_service_health_issue_fetcher
 });
+
+
+// app.http('func_service_health_issue_fetcher', {
+//     methods: ['GET', 'POST'],
+//     authLevel: 'anonymous',
+//     handler: func_service_health_issue_fetcher
+// });

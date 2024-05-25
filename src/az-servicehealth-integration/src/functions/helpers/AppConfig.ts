@@ -13,6 +13,8 @@ export default class AppConfig {
     wogClientSecretCredential: ClientSecretCredential;
     IsDevTest: boolean;
     incidentQueryStartFromDate: string = '';
+    AzureStorageConnString: string = '';
+
 
     static loadFromEnvVar(incidentQueryStartFromDate: string) {
 
@@ -29,6 +31,8 @@ export default class AppConfig {
         appconfig.WogClientSecret  = process.env.GCC_WOG_CLIENT_SECRET;
         appconfig.WogTenantId  = process.env.GCC_WOG_TENANT_ID;
         appconfig.WogResidentSubscriptionId = process.env.GCC_WOG_RESIDENT_SUBSCRIPTION_ID;
+
+        appconfig.AzureStorageConnString = process.env.AZURE_STORAGE_CONNECTION_STRING;
 
         this.createAzureCredentials(appconfig);
 
