@@ -19,7 +19,9 @@
     "@azure/identity": "^4.3.0-alpha.20240507.1",
     "@azure/storage-queue": "^12.17.0",
     "@types/lodash": "^4.17.1",
+    "@types/nunjucks": "^3.2.6",
     "lodash": "^4.17.21",
+    "nunjucks": "^3.2.4",
     "sqlite": "^5.1.1",
     "sqlite3": "^5.1.7"
   },
