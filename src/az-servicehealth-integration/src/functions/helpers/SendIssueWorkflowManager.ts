@@ -5,6 +5,9 @@ import { ServiceIssue, Subscription } from "./issue-api/ServiceIssueModels";
 import AppConfig from "./AppConfig";
 import { SubscriptionClient } from "@azure/arm-resources-subscriptions";
 import { ClientSecretCredential } from "@azure/identity";
+import HTMLIncidentReportRenderer from "./template-engine/HTMLIncidentReportRenderer";
+
+import * as fs from 'fs'; //testing only
 
 export default class IssueReportGenerationWorkflow {
     isosm: IssueSendOnceStateManager;
@@ -33,9 +36,21 @@ export default class IssueReportGenerationWorkflow {
 
         const wogIssues = await this.getWOGIssues(wogSubs, this.context)
 
-        const wogIssuesToSend = await this.isosm.determineShouldSendIssues(this.context, wogIssues)
+        //const wogIssuesToSend = await this.isosm.determineShouldSendIssues(this.context, wogIssues)
 
         //issue to HTML template and send email
+        const htmlRenderer = new HTMLIncidentReportRenderer();
+        await htmlRenderer.init();
+
+        for (const wogi of wogIssues) {
+           const html: string = htmlRenderer.render(wogi);
+
+           //TODO: send email
+           await fs.promises.writeFile('C:\\Users\\weixzha\\Desktop\\a.html', html);
+
+           return;
+        }
+        
 
         return '';
     }

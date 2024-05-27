@@ -1,7 +1,7 @@
 import sqlite3 from 'sqlite3';
 import { open, Database } from 'sqlite'
 import * as _ from 'lodash';
-import { ImpactedService, ServiceIssue } from '../issue-api/ServiceIssueModels';
+import { ServiceIssue } from '../issue-api/ServiceIssueModels';
 
 // status reference
 // https://learn.microsoft.com/en-us/rest/api/resourcehealth/events/list-by-subscription-id?view=rest-resourcehealth-2022-10-01&tabs=HTTP#eventstatusvalues

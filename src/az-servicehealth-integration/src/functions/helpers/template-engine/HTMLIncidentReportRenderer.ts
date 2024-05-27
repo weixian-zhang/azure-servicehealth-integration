@@ -1,0 +1,34 @@
+import * as nunjucks from 'nunjucks'
+import {Environment} from 'nunjucks';
+import * as fs from 'fs';
+import { ServiceIssue } from '../issue-api/ServiceIssueModels';
+
+// https://mozilla.github.io/nunjucks/templating.html
+export default class HTMLIncidentReportRenderer {
+    private tplPath = process.cwd() + "\\src\\functions\\helpers\\template-engine\\";
+    private tplMain = "incident-report-tpl.njk";
+    private nunjucksEnv: Environment = null;
+    private tplMainIncidentReport: string = '';
+
+    constructor() {
+        
+    }
+    
+    public async init() {
+        this.tplMainIncidentReport = await fs.promises.readFile(this.tplPath + this.tplMain, "utf8");
+        //this.tplMainIncidentReport = this.tplMainIncidentReport.replace(/\r|\n/g, '');
+
+        this.nunjucksEnv = nunjucks.configure(this.tplPath, {
+            autoescape: false,
+            trimBlocks: true
+          });
+    }
+
+    render(issue: ServiceIssue) {
+        let htmlReport = this.nunjucksEnv.renderString(this.tplMainIncidentReport, issue);
+      return htmlReport;
+    }
+}
+
+
+
