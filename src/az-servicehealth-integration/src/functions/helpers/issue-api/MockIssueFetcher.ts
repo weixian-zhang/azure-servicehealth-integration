@@ -1,6 +1,6 @@
 import FetcherHelper from "./FetcherHelper";
 import IIssueFetcher from "./IIssueFetcher";
-import { ServiceIssue, ImpactedService, ImpactUpdates, ImpactedResource } from "./ServiceIssueModels";
+import { ServiceIssue, ImpactedService, ImpactUpdates, ImpactedResource, Subscription } from "./ServiceIssueModels";
 import * as fs from 'fs';
 import * as _ from 'lodash';
 export default class MockIssueGenerator implements IIssueFetcher {
@@ -23,15 +23,20 @@ export default class MockIssueGenerator implements IIssueFetcher {
         const result = new Array<ServiceIssue>();
         let serviceIssues = new Map<string, ServiceIssue>();
 
-        for (const issue of issues) {
+        for (const currIssue of issues) {
 
             if (curr == numOfIssuesToReturn) {
                 return Promise.resolve(result);
             }
 
-            const trackingId = issue.name;
+            const trackingId = currIssue.name;
 
-            FetcherHelper.createIssueInIssueBag(wogTenantName, issue, issueBag);
+            FetcherHelper.createIssueInIssueBag(
+                wogTenantName, 
+                new Subscription('213-axx-000001-xxaa222333', 
+                'mesos001-11-sub-name'), 
+                currIssue, 
+                issueBag);
             
             if (issueBag.has(trackingId)) {
                 // get impacted resources

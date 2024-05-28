@@ -1,4 +1,4 @@
-
+import * as _ from 'lodash';
 export class Subscription {
     Id: string;
     Name: string
@@ -21,10 +21,45 @@ export class ServiceIssue {
     // Warning - Issues accessing specific services and/or specific regions are impacting a subset of customers.
     // Informational - Issues impacting management operations and/or latency, not impacting service availability.
     LevelDescription: string; 
+    ImpactedSubscriptions: Subscription[];
     ImpactedServices: ImpactedService[];
+    ImpactedServicesNames: string[] = [];
     ImpactedResources: ImpactedResource[];
     LastUpdateTime: Date;
     LastUpdateTimeEpoch: number;
+
+    getImpactedServiceNames(): string {
+        const n = new Array<string>();
+        if (_.isEmpty(this.ImpactedServices)) {
+            return '';
+        }
+
+        this.ImpactedServices.forEach((s) => {
+            n.push(s.ImpactedService)
+        });
+
+        return n.join(', ');
+    }
+
+    addImpactedSubscription(subscription: Subscription) {
+
+        if (_.isEmpty(this.ImpactedSubscriptions)) {
+            this.ImpactedSubscriptions.push(subscription);
+            return;
+        }
+
+        let exist = false;
+        for (const sub of this.ImpactedSubscriptions) {
+            if (sub.Id  == subscription.Id) {
+                exist = true;
+                break;
+            }
+        }
+
+        if (exist) {
+            this.ImpactedSubscriptions.push(subscription);
+        }
+    }
 }
 
 export class ImpactedService {

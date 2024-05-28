@@ -76,7 +76,7 @@ export default class ApiIssueFetcher implements IIssueFetcher {
                 
                 const trackingId = currIssue.name;
 
-                FetcherHelper.createIssueInIssueBag(this.tenantName, currIssue, issueBag);
+                FetcherHelper.createIssueInIssueBag(this.tenantName, sub, currIssue, issueBag);
 
                 if (trackingId in issueBag) {
                     // get impacted resources

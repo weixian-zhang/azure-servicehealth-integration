@@ -1,6 +1,7 @@
 import { serialize } from "v8";
-import { ImpactUpdates, ImpactedResource, ImpactedService, ServiceIssue } from "./ServiceIssueModels";
+import { ImpactUpdates, ImpactedResource, ImpactedService, ServiceIssue, Subscription } from "./ServiceIssueModels";
 import * as _ from 'lodash';
+import { SubscriptionsGetOptionalParams } from "@azure/arm-resources-subscriptions";
 
 export default class FetcherHelper {
     static regionToFilter = "Southeast Asia";
@@ -18,7 +19,7 @@ export default class FetcherHelper {
     }
 
     //issue type is @azure/arm-resourcehealth/PagedAsyncIterableIterator<Event_2, Event_2[], PageSettings> or | any (mock Json data)
-    static createIssueInIssueBag(tenantName: string, currIssue: any, issueBag: Map<string, ServiceIssue>) {
+    static createIssueInIssueBag(tenantName: string, subscription: Subscription, currIssue: any, issueBag: Map<string, ServiceIssue>) {
 
         const eventType = _.isEmpty(currIssue.eventType) ? currIssue.properties.eventType : currIssue.eventType;
 
@@ -42,6 +43,7 @@ export default class FetcherHelper {
         si.LevelDescription = FetcherHelper.getLevelDescription(si.Level);
         si.ImpactedServices = new Array();
         si.ImpactedResources = new Array();
+        si.ImpactedSubscriptions = new Array<Subscription>();
 
         const impact = _.isEmpty(currIssue.impact) ? currIssue.properties.impact : currIssue.impact;
 
@@ -73,6 +75,8 @@ export default class FetcherHelper {
                             impactedSvc.ImpactUpdates.push(iu);
                         }
                     }
+
+                    si.ImpactedServicesNames.push(impact.impactedService);
                     
                     si.ImpactedServices.push(impactedSvc);
                 }
@@ -86,6 +90,8 @@ export default class FetcherHelper {
         if (_.isEmpty(si.ImpactedServices)) {
             return;
         }
+
+        si.addImpactedSubscription(subscription);
 
         // is previously collected issue
         if (issueBag.has(si.TrackingId)) {
