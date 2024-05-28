@@ -50,8 +50,7 @@ export default class IssueReportGenerationWorkflow {
 
            return;
         }
-        
-
+    
         return '';
     }
 
