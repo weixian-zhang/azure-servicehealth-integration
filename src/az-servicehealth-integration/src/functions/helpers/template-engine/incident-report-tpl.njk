@@ -19,26 +19,56 @@
 
 .form-container {
     background-color: #fff;
-    padding: 40px;
+    padding: 20px;
     border-radius: 10px;
-    box-shadow: 0 0 15px rgba(0, 0, 0, 0.2);
-    width: 85%;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
+    width: 96%;
     height: 95%;
     /* max-width: 600px; */
 }
+
+.impacted-service-form-container {
+    background-color: #fff;
+    padding: 10px;
+    border: 1px solid #00008B;
+    border-radius: 5px;
+    box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    height: 100%;
+    margin-bottom: 20px;
+}
+
+.impacted-service-form-group-label-left {
+    flex-basis: 20%;
+    text-align: left;
+    font-weight: bold;
+    font-size: 16px;
+    color: #000000;
+}
+
 
 .form-group {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 20px;
+    margin-top: 5px;
+    margin-bottom: 5px;
+}
+
+.form-group-label {
+    flex-basis: 20%;
+    text-align: left;
+    font-weight: bold;
+    color: black;
+    margin-bottom:20px;
 }
 
 .form-group-label-left {
     flex-basis: 20%;
     text-align: left;
     font-weight: bold;
-    color: black;
+    font-size: 16px;
+    color: #4527A0;
 }
 
 .form-group-label-right {
@@ -49,12 +79,9 @@
     color: black
 }
 
-{# .form-group input, textarea {
-    flex-basis: 80%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 2px;
-} #}
+.impacted-service-container {
+    margin-bottom: 20px;
+}
 
 .textarea-short {
   overflow-y: scroll;
@@ -62,7 +89,7 @@
   resize: none;
   flex-basis: 100%;
   padding: 5px;
-  border: 1px solid #ccc;
+  border: 0px solid #ccc;
   border-radius: 2px;
 }
 .textarea-long {
@@ -75,13 +102,27 @@
   border-radius: 2px;
 }
 
+.status-active {
+    color: #A21515;
+    font-weight: bold;
+}
+.status-resolved {
+    color: #15A22D;
+    font-weight: bold;
+}
+
 table {
     width: 100%;
     border-collapse: collapse;
 }
-th, td {
+th {
+    text-align: center;
     border: 1px solid black;
-    padding: 8px;
+    padding: 5px;
+}
+td {
+    border: 1px solid black;
+    padding: 5px;
     text-align: left;
 }
 th {
@@ -95,48 +136,98 @@ th {
             <form>
                 <div class="form-group">
                     <label class="form-group-label-left">Title</label>
-                    <textarea class='textarea-short'  rows="5" cols="33" readonly>{{ Title }}</textarea>
+                    <div class='textarea-short'>{{ Title }}</div>
                 </div>
                 <div class="form-group">
                     <label class="form-group-label-left">Affected Services</label>
                     <label class="form-group-label-right">{{ ImpactedServicesNames | join(', ') }}</label>
                 </div>
+
+                <div class="form-group">
+                    <label class="form-group-label-left">Status</label>
+                    {% if OverallStatus == 'Active' %}
+                        <label class="form-group-label-right status-active"> Active </label>
+                    {% else %}
+                        <label class="form-group-label-right status-resolved"> Resolved </label>
+                    {% endif %}
+                </div>
+
                 <div class="form-group">
                     <label class="form-group-label-left">Impact Start Time</label>
-                    <label class="form-group-label-right">{{ ImpactStartTime }}</label>
+                    <label class="form-group-label-right">{{ formatDateTimeFriendly(ImpactStartTime) }}</label>
                 </div>
                 <div class="form-group">
                     <label class="form-group-label-left">Impact Mitigation Time</label>
-                    <label class="form-group-label-right">{{ ImpactMitigationTime }} </label>
+                    <label class="form-group-label-right">{{ formatDateTimeFriendly(ImpactMitigationTime) }} </label>
                 </div>
+
+                <label class="form-group-label-left">Summary</label>
                 <div class="form-group">
-                    <label class="form-group-label-left">Summary</label>
                     <div class='textarea-long'>
                         {{ Description }}
                     </div>
                 </div>
 
-                {% for svc in ImpactedServices %}
-                <div class="form-group">
-                    
-                    <table>
-                        <tr>
-                            <th colspan="3">{{ svc.ImpactedService }}</th>
-                        </tr>
-                        <tr>
-
-                            <th />
-                            <th />
-                        <tr>
-                        {% for update in ImpactUpdates %}
-                        <tr>
-                            <td>{{ update.Summary }}</th>
-                            <td>{{ update.UpdateDateTime }}</th>
-                        </tr>
-                        {% endfor %}
-                    </table>
+                <div style="margin-bottom:15px;margin-top:20px;">
+                    <label class="form-group-label-left" >Impacted Services</label>
                 </div>
+
+                {% for svc in ImpactedServices %}
+                <div class="impacted-service-form-container">
+                    <form>
+                        <div class="form-group">
+                            <label class="impacted-service-form-group-label-left"><b>Impact Service</b></label>
+                            <label class="form-group-label-right"> {{ svc.ImpactedService }} </label>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="impacted-service-form-group-label-left">Status</label>
+                            {% if svc.SEARegionOrGlobalStatus == 'Active' %}
+                                <label class="form-group-label-right status-active"> Active </label>
+                            {% else %}
+                                <label class="form-group-label-right status-resolved"> Resolved </label>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <label class="impacted-service-form-group-label-left">Is globally impacted?</label>
+                            {% if svc.IsGlobal %}
+                                <label class="form-group-label-right"> Yes </label>
+                            {% else %}
+                                <label class="form-group-label-right"> Only Southeast Asia is impacted </label>
+                            {% endif %}
+                        </div>
+
+                        <div class="form-group">
+                            <label class="impacted-service-form-group-label-left">Last Update Time</label>
+                            <div class='textarea-short'>{{ formatDateTimeFriendly(svc.SEARegionOrGlobalLastUpdateTime) }}</div>
+                        </div>
+                        
+                        <label class="impacted-service-form-group-label-left" >Updates</label>
+
+                        <table style="margin-top: 15px;">
+                            <tbody>
+                                {% for update in svc.ImpactUpdates %}
+                                    <tr>
+                                        <td width="110px">{{ formatDateTimeFriendly(update.UpdateDateTime) }}</td>
+                                        <td>{{ update.Summary }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </form>
+                </div>
+
                 {% endfor %}
+
+                <div style="margin-bottom:15px;margin-top:20px;">
+                    <label class="form-group-label-left" >Impacted Subscriptions</label>
+                </div>
+
+                <div style="margin-bottom:15px;margin-top:20px;">
+                    <label class="form-group-label-left" >Impacted Resources</label>
+                </div>
+                
             </form>
         </div>
     </body>
