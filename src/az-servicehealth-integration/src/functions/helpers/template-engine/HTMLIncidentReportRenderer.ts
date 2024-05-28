@@ -22,7 +22,21 @@ export default class HTMLIncidentReportRenderer {
             autoescape: false,
             trimBlocks: true
           });
+
+          this.nunjucksEnv.addGlobal('formatDateTimeFriendly', this.formatDateTimeFriendly)
     }
+
+    formatDateTimeFriendly(date: Date): string {
+      const options: Intl.DateTimeFormatOptions = { 
+        year: 'numeric', 
+        month: 'long', 
+        day: 'numeric', 
+        hour: 'numeric', 
+        minute: 'numeric',
+        hour12: true 
+    };
+      return date.toLocaleString('en-US', options);
+  }
 
     render(issue: ServiceIssue) {
         let htmlReport = this.nunjucksEnv.renderString(this.tplMainIncidentReport, issue);
