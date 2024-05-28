@@ -111,9 +111,16 @@
     font-weight: bold;
 }
 
-table {
+.impacted-subscription-table {
+    max-height: 500px; /* Adjust the height as needed */
+    overflow-y: auto;
+    width: 50%;
+}
+
+.update-table {
     width: 100%;
     border-collapse: collapse;
+    margin-top:20px;
 }
 th {
     text-align: center;
@@ -126,7 +133,7 @@ td {
     text-align: left;
 }
 th {
-    background-color: #f2f2f2;
+    background-color: #fff;
 }
 
 </style>
@@ -205,7 +212,7 @@ th {
                         
                         <label class="impacted-service-form-group-label-left" >Updates</label>
 
-                        <table style="margin-top: 15px;">
+                        <table class="update-table">
                             <tbody>
                                 {% for update in svc.ImpactUpdates %}
                                     <tr>
@@ -224,10 +231,27 @@ th {
                     <label class="form-group-label-left" >Impacted Subscriptions</label>
                 </div>
 
+                <div class="impacted-service-form-container">
+                    <table class="impacted-subscription-table">
+                        <thead>
+                            <th>Name</th>
+                            <th>Id</th>
+                        </thead>
+                        <tbody>
+                            {% for sub in ImpactedSubscriptions %}
+                                <tr>
+                                    <td width="50%">{{ sub.Name }}</td>
+                                    <td>{{ sub.Id }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
                 <div style="margin-bottom:15px;margin-top:20px;">
                     <label class="form-group-label-left" >Impacted Resources</label>
                 </div>
-                
+
             </form>
         </div>
     </body>
