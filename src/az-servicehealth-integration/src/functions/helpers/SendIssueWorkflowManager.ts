@@ -52,7 +52,7 @@ export default class IssueReportGenerationWorkflow {
 
            const emailSink : IEmailSink = EmailSinkCreator.create(this.appconfig);
 
-           await emailSink.send(html);
+           //await emailSink.send(html);
 
            return;
         }

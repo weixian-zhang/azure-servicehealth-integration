@@ -27,15 +27,29 @@
     /* max-width: 600px; */
 }
 
-.impacted-service-form-container {
+.section-container {
     background-color: #fff;
-    padding: 10px;
+    padding: 8px;
     border: 1px solid #00008B;
     border-radius: 5px;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
     width: 100%;
     height: 100%;
     margin-bottom: 20px;
+}
+
+.section-title {
+    font-size:18px;
+    font-weight: bold;
+    color: #4527A0;
+    text-align: left;
+}
+
+.section-sub-title {
+    font-size:15px;
+    font-weight: bold;
+    color: #000000;
+    text-align: left;
 }
 
 .impacted-service-form-group-label-left {
@@ -63,35 +77,17 @@
 }
 
 .form-group-label-left {
-    flex-basis: 20%;
     text-align: left;
     font-weight: bold;
-    font-size: 12px;
-    color: #4527A0;
+    font-size: 13px;
+    color: #00008B;
 }
 
 .form-group-label-right {
-    flex-basis: 100%;
-    padding: 10px;
-    border: 0px solid #ccc;
-    border-radius: 2px;
     color: black
-    font-size: 12px
+    font-size: 13px
 }
 
-.impacted-service-container {
-    margin-bottom: 20px;
-}
-
-.textarea-short {
-  overflow-y: scroll;
-  height: 30px;
-  resize: none;
-  flex-basis: 100%;
-  padding: 5px;
-  border: 0px solid #ccc;
-  border-radius: 2px;
-}
 
 .textarea-long {
   overflow-y: scroll;
@@ -105,7 +101,7 @@
 
 .update-summary {
   overflow-y: scroll;
-  height: 450px;
+  height: 380px;
   flex-basis: 100%;
   padding: 5px;
 }
@@ -126,12 +122,23 @@
     width: 50%;
 }
 
-.update-table {
+table {
     width: 100%;
     border-collapse: collapse;
     margin-top:20px;
 }
-th {
+
+.table-update {
+    border: 1px solid black;
+    border-collapse: collapse;
+    max-width:100%;
+}
+
+.table-left-col {
+    width: 150px;
+}
+
+{# th {
     text-align: center;
     border: 1px solid black;
     padding: 5px;
@@ -148,55 +155,168 @@ th {
 .sub-section {
     margin-bottom:15px;
     margin-top:20px;
-}
+} #}
 
 </style>
 
     <body>
         <div class="form-container">
-            <form>
-                <div class="form-group">
-                    <label class="form-group-label-left">Title</label>
-                    <div class='textarea-short'>{{ Title }}</div>
-                </div>
-                <div class="form-group">
-                    <label class="form-group-label-left">Affected Services</label>
-                    <label class="form-group-label-right">{{ ImpactedServicesNames | join(', ') }}</label>
-                </div>
+            <div class="section-container">
+                <table>
+                    <tr>
+                        <td class="table-left-col"><label class="form-group-label-left">Title</label></td>
+                        <td><label class="form-group-label-right">{{ Title }}</label></td>
+                    </tr>
+                    <tr><td/><td/></tr>
+                    <tr><td/><td/></tr>
+                    <tr><td/><td/></tr>
+                    <tr>
+                        <td class="table-left-col"><label class="form-group-label-left">Affected Services</label></td>
+                        <td><label class="form-group-label-right">{{ ImpactedServicesNames | join(', ') }}</label></td>
+                    </tr>
+                    <tr><td/><td/></tr>
+                    <tr><td/><td/></tr>
+                    <tr><td/><td/></tr>
+                    <tr>
+                        <td class="table-left-col"><label class="form-group-label-left">Status</label></td>
+                        <td>
+                            {% if OverallStatus == 'Active' %}
+                                <label class="form-group-label-right status-active"> Active </label>
+                            {% else %}
+                                <label class="form-group-label-right status-resolved"> Resolved </label>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr><td/><td/></tr>
+                    <tr><td/><td/></tr>
+                    <tr><td/><td/></tr>
+                    <tr>
+                        <td class="table-left-col"><label class="form-group-label-left">Impact Start Time</label></td>
+                        <td>
+                            <label class="form-group-label-right">{{ formatDateTimeFriendly(ImpactStartTime) }}</label>
+                        </td>
+                    </tr>
+                    <tr><td/><td/></tr>
+                    <tr><td/><td/></tr>
+                    <tr><td/><td/></tr>
+                    <tr>
+                        <td class="table-left-col"><label class="form-group-label-left">Impact Mitigation Time</label></td>
+                        <td>
+                            <label class="form-group-label-right">{{ formatDateTimeFriendly(ImpactMitigationTime) }} </label>
+                        </td>
+                    </tr>
+                </table>
+            {# <div class="form-group">
+                <label class="form-group-label-left">Title</label>
+                <div class='textarea-short'>{{ Title }}</div>
+            </div>
+            <div class="form-group">
+                <label class="form-group-label-left">Affected Services</label>
+                <label class="form-group-label-right">{{ ImpactedServicesNames | join(', ') }}</label>
+            </div>
 
-                <div class="form-group">
-                    <label class="form-group-label-left">Status</label>
-                    {% if OverallStatus == 'Active' %}
-                        <label class="form-group-label-right status-active"> Active </label>
-                    {% else %}
-                        <label class="form-group-label-right status-resolved"> Resolved </label>
-                    {% endif %}
-                </div>
+            <div class="form-group">
+                <label class="form-group-label-left">Status</label>
+                {% if OverallStatus == 'Active' %}
+                    <label class="form-group-label-right status-active"> Active </label>
+                {% else %}
+                    <label class="form-group-label-right status-resolved"> Resolved </label>
+                {% endif %}
+            </div>
 
-                <div class="form-group">
-                    <label class="form-group-label-left">Impact Start Time</label>
-                    <label class="form-group-label-right">{{ formatDateTimeFriendly(ImpactStartTime) }}</label>
-                </div>
-                <div class="form-group">
-                    <label class="form-group-label-left">Impact Mitigation Time</label>
-                    <label class="form-group-label-right">{{ formatDateTimeFriendly(ImpactMitigationTime) }} </label>
-                </div>
+            <div class="form-group">
+                <label class="form-group-label-left">Impact Start Time</label>
+                <label class="form-group-label-right">{{ formatDateTimeFriendly(ImpactStartTime) }}</label>
+            </div>
+            <div class="form-group">
+                <label class="form-group-label-left">Impact Mitigation Time</label>
+                <label class="form-group-label-right">{{ formatDateTimeFriendly(ImpactMitigationTime) }} </label>
+            </div>
 
-                <label class="form-group-label-left">Summary</label>
-                <div class="form-group">
-                    <div class='textarea-long'>
-                        {{ Description }}
-                    </div>
+            <label class="form-group-label-left">Summary</label>
+            <div class="form-group">
+                <div class='textarea-long'>
+                    {{ Description }}
                 </div>
+            </div>
 
-                <div class="sub-section">
-                    <label class="form-group-label-left" >Impacted Services</label>
-                </div>
+            <div class="sub-section">
+                <label class="form-group-label-left" >Impacted Services</label>
+            </div> #}
+            </div>
 
-                {% for svc in ImpactedServices %}
-                <div class="impacted-service-form-container">
+            <div class="section-container">
+                <label class="section-title">Impacted Services</label>
+
+                <div style="height: 700px;overflow-y: auto">
+
+                    {# Impacted Services #}
+
+                    {% for svc in ImpactedServices %}
+                    <table>
+                        <tr>
+                            <td class="table-left-col"><label class="form-group-label-left">Impacted Service</label></td>
+                            <td><label class="form-group-label-right"> {{ svc.ImpactedService }} </label></td>
+                        </tr>
+                        <tr><td/><td/></tr>
+                        <tr><td/><td/></tr>
+                        <tr><td/><td/></tr>
+                        <tr>
+                            <td class="table-left-col"><label class="form-group-label-left">Status</label></td>
+                            <td>
+
+                                {% if svc.SEARegionOrGlobalStatus == 'Active' %}
+                                    <label class="form-group-label-right status-active"> Active </label>
+                                {% else %}
+                                    <label class="form-group-label-right status-resolved"> Resolved </label>
+                                {% endif %}
+                            </td>
+                        </tr>
+                        <tr><td/><td/></tr>
+                        <tr><td/><td/></tr>
+                        <tr><td/><td/></tr>
+                        <tr>
+                            <td class="table-left-col"><label class="form-group-label-left">Last Update Time</label></td>
+                            <td><label class="form-group-label-right">{{ formatDateTimeFriendly(svc.SEARegionOrGlobalLastUpdateTime) }}</label></td>
+                        </tr>
+
+                        <tr><td/><td/></tr>
+                        <tr><td/><td/></tr>
+                        <tr><td/><td/></tr>
+                        <tr><td/><td/></tr>
+                        <tr><td/><td/></tr>
+
+                        <tr>
+                            <td colspan="2">
+                                {# updates #}
+                                <label class="form-group-label-left" >Updates</label>
+                                <table class="table-update">
+                                    <tbody>
+                                        {% for update in svc.ImpactUpdates %}
+                                            <tr>
+                                                <td width="110px" style="border: 1px solid black;">{{ formatDateTimeFriendly(update.UpdateDateTime) }}</td>
+                                                <td style="border: 1px solid black;">
+                                                    <div class="update-summary">
+                                                    {{ update.Summary }}
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                        {% endfor %}
+                                    </tbody>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+                    {% endfor %}
+                </label>
+            </div>
+                
+
+                {#
+                {% for svc in ImpactedServices %} 
+                <div class="section-container">
                     <form>
-                        <div class="form-group">
+                        {# <div class="form-group">
                             <label class="impacted-service-form-group-label-left"><b>Impact Service</b></label>
                             <label class="form-group-label-right"> {{ svc.ImpactedService }} </label>
                         </div>
@@ -208,23 +328,23 @@ th {
                             {% else %}
                                 <label class="form-group-label-right status-resolved"> Resolved </label>
                             {% endif %}
-                        </div>
+                        </div> #}
 
-                        <div class="form-group">
+                        {# <div class="form-group">
                             <label class="impacted-service-form-group-label-left">Is globally impacted?</label>
                             {% if svc.IsGlobal %}
                                 <label class="form-group-label-right"> Yes </label>
                             {% else %}
                                 <label class="form-group-label-right"> Only Southeast Asia is impacted </label>
                             {% endif %}
-                        </div>
+                        </div> #}
 
-                        <div class="form-group">
+                        {# <div class="form-group">
                             <label class="impacted-service-form-group-label-left">Last Update Time</label>
                             <div class='textarea-short'>{{ formatDateTimeFriendly(svc.SEARegionOrGlobalLastUpdateTime) }}</div>
-                        </div>
+                        </div> #}
                         
-                        <label class="impacted-service-form-group-label-left" >Updates</label>
+                        {# <label class="impacted-service-form-group-label-left" >Updates</label>
 
                         <table class="update-table">
                             <tbody>
@@ -239,17 +359,17 @@ th {
                                     </tr>
                                 {% endfor %}
                             </tbody>
-                        </table>
+                        </table> 
                     </form>
                 </div>
 
-                {% endfor %}
+                {% endfor %} #}
 
-                <div class="sub-section">
+                {# <div class="sub-section">
                     <label class="form-group-label-left" >Impacted Subscriptions</label>
                 </div>
 
-                <div class="impacted-service-form-container">
+                <div class="section-container">
                     <table class="impacted-subscription-table">
                         <thead>
                             <th>Name</th>
@@ -268,9 +388,7 @@ th {
 
                 <div class="sub-section">
                     <label class="form-group-label-left" >Impacted Resources</label>
-                </div>
-
-            </form>
+                </div> #}
         </div>
     </body>
 </html>
