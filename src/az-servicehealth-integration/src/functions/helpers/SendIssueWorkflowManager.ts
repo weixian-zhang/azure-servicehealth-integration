@@ -8,6 +8,8 @@ import { ClientSecretCredential } from "@azure/identity";
 import HTMLIncidentReportRenderer from "./template-engine/HTMLIncidentReportRenderer";
 
 import * as fs from 'fs'; //testing only
+import EmailSinkCreator from "./send-sink/EmailSinkCreator";
+import { IEmailSink } from "./send-sink/IEmailSink";
 
 export default class IssueReportGenerationWorkflow {
     isosm: IssueSendOnceStateManager;
@@ -47,6 +49,10 @@ export default class IssueReportGenerationWorkflow {
 
            //TODO: send email
            await fs.promises.writeFile('C:\\Users\\weixzha\\Desktop\\a.html', html);
+
+           const emailSink : IEmailSink = EmailSinkCreator.create(this.appconfig);
+
+           await emailSink.send(html);
 
            return;
         }
