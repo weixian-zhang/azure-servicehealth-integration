@@ -29,11 +29,11 @@
 
 .section-container {
     background-color: #fff;
-    padding: 8px;
+    padding: 15px;
     border: 1px solid #00008B;
     border-radius: 5px;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-    width: 100%;
+    width: 99%;
     height: 100%;
     margin-bottom: 20px;
 }
@@ -43,24 +43,18 @@
     font-weight: bold;
     color: #4527A0;
     text-align: left;
+    margin-bottom: 10px;
 }
 
 .section-sub-title {
     font-size:15px;
     font-weight: bold;
-    color: #000000;
+    color: #00008B;
     text-align: left;
 }
 
-.impacted-service-form-group-label-left {
-    flex-basis: 20%;
-    text-align: left;
-    font-weight: bold;
-    font-size: 12px;
-    color: #000000;
-}
 
-.form-group {
+{# .form-group {
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -74,20 +68,19 @@
     font-weight: bold;
     color: black;
     margin-bottom:20px;
-}
+} #}
 
 .form-group-label-left {
     text-align: left;
     font-weight: bold;
     font-size: 13px;
-    color: #00008B;
+    color: #000000;
 }
 
 .form-group-label-right {
-    color: black
+    color: #000000;
     font-size: 13px
 }
-
 
 .textarea-long {
   overflow-y: scroll;
@@ -289,8 +282,12 @@ th {
                         <tr>
                             <td colspan="2">
                                 {# updates #}
-                                <label class="form-group-label-left" >Updates</label>
+                                <label class="form-group-label-left">Incident Updates</label>
                                 <table class="table-update">
+                                    <thead>
+                                        <th>Last Update time</th>
+                                        <th>Summary</th>
+                                    </thead>
                                     <tbody>
                                         {% for update in svc.ImpactUpdates %}
                                             <tr>
