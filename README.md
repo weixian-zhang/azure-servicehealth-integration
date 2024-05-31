@@ -46,6 +46,36 @@
 <br />
 <br />  
 
+### Environment Variables
+* APPLICATIONINSIGHTS_CONNECTION_STRING
+* GCC_WOG_CLIENT_ID
+* GCC_WOG_CLIENT_SECRET
+* GCC_WOG_TENANT_ID
+* GCC_WOG_TENANT_NAME
+* GCC_TECHPASS_CLIENT_ID
+* GCC_TECHPASS_CLIENT_SECRET
+* GCC_TECHPASS_TENANT_ID
+* GCC_TECHPASS_TENANT_NAME
+* AZURE_STORAGE_CONNECTION_STRING (AZure Function required storage account)
+* AZURE_COMM_SERVICE_CONN_STRING (using Azure Communication Service - email for local testing only)
+* SERVICE_HEALTH_INTEGRATION_EMAIL_CONFIG (email config in Json format)
+  e.g:
+  <code>
+      {
+          &nbsp;"host": "",
+          &nbsp;"port": 587,
+          &nbsp;"username": "",
+          &nbsp;"password": "",
+          &nbsp;"subject": "Azure Incident Report",
+          &nbsp;"senderAddress": "674edb48-246c-4119-ac71-7eabf6c96aa5.azurecomm.net",
+          &nbsp;"recipients": {
+            &nbsp;&nbsp;&nbsp;&nbsp;"to": ["weixzha@microsoft.com"],
+            &nbsp;&nbsp;&nbsp;&nbsp;"cc": [],
+            &nbsp;&nbsp;&nbsp;&nbsp;"bcc": []
+          &nbsp;&nbsp;}
+      }
+    </code>   
+
 ### Email/Slack Message Template  
 
 ![image](https://github.com/weixian-zhang/azure-servicehealth-integration/assets/43234101/36f7f2f6-805b-442c-a549-54c11a44ee45)
