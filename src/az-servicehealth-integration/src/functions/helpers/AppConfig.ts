@@ -28,6 +28,7 @@ export default class AppConfig {
     incidentQueryStartFromDate: string = '';
     AzureStorageConnString: string = '';
     EMailConfig: EMailConfig;
+    AzureAppInsightsConnString: string = '';
 
     //use for local testing only, using Azure Communication Service email
     AzureCommunicationServiceConnString: string = '';
@@ -50,6 +51,8 @@ export default class AppConfig {
         appconfig.WogResidentSubscriptionId = process.env.GCC_WOG_RESIDENT_SUBSCRIPTION_ID;
 
         appconfig.AzureStorageConnString = process.env.AZURE_STORAGE_CONNECTION_STRING;
+
+        appconfig.AzureAppInsightsConnString = process.env.APPLICATIONINSIGHTS_CONNECTION_STRING;
 
         this.createAzureCredentials(appconfig);
 

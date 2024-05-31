@@ -38,6 +38,7 @@ export default class IssueToSendDecisionTree {
                     // lastUpdatedTime to latest updated time from issue
                 // mark-issue-to-send
     public async determineShouldSendIssues(context: InvocationContext, issues: ServiceIssue[]): Promise<ServiceIssue[]> {
+        
 
         this.context = context;
 
