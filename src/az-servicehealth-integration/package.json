@@ -16,9 +16,11 @@
     "@azure/arm-resources": "^5.2.0",
     "@azure/arm-resources-subscriptions": "^2.1.0",
     "@azure/communication-email": "^1.0.0",
-    "@azure/functions": "^4.4.0",
+    "@azure/functions": "^4.0.0-alpha.13",
     "@azure/identity": "^4.3.0-alpha.20240507.1",
+
     "@azure/storage-queue": "^12.17.0",
+    "@opentelemetry/api": "^1.8.0",
     "@types/lodash": "^4.17.1",
     "@types/nodemailer": "^6.4.15",
     "@types/nunjucks": "^3.2.6",

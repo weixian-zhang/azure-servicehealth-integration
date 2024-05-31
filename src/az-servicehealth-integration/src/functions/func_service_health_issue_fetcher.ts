@@ -34,16 +34,18 @@ export async function func_service_health_issue_fetcher(data: QueueData, context
 
     }
     catch(e){
-     
-        const errMsg = e.message; // error under useUnknownInCatchVariables
-        context.error(errMsg)
+        
+        // if app insights is enabled at function, will log to app insights.Traces
+        context.error(e.message)
+
         return {
             status: 500,
-            body: errMsg
+            body: e.message
         };
     }
     
 };
+
 
 function initGlobalAppConfig(incidentStartFromDate: string) {
 
@@ -54,26 +56,9 @@ function initGlobalAppConfig(incidentStartFromDate: string) {
     globalThis.appconfig = AppConfig.loadFromEnvVar(incidentStartFromDate);
 }
 
-function getValidDate(val: string) {
-    try {
-        return new Date(val);
-    } catch (error) {
-        const d = new Date();
-        const dateSubstract3Days = d.setDate(d.getDate() - 3);
-        return dateSubstract3Days;
-    }
-}
-
 
 app.storageQueue('func_service_health_issue_fetcher', {
     queueName: 'incident-fetcher-in',
     connection: queueConnStringEnvName,
     handler: func_service_health_issue_fetcher
 });
-
-
-// app.http('func_service_health_issue_fetcher', {
-//     methods: ['GET', 'POST'],
-//     authLevel: 'anonymous',
-//     handler: func_service_health_issue_fetcher
-// });
