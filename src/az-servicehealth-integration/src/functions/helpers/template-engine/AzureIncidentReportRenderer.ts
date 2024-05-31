@@ -4,9 +4,9 @@ import * as fs from 'fs';
 import { ServiceIssue } from '../issue-api/ServiceIssueModels';
 
 // https://mozilla.github.io/nunjucks/templating.html
-export default class HTMLIncidentReportRenderer {
+export default class AzureIncidentReportRenderer {
     private tplPath = process.cwd() + "\\src\\functions\\helpers\\template-engine\\";
-    private tplMain = "incident-report-tpl.njk";
+    private tplMain = "html-incident-report.njk";
     private nunjucksEnv: Environment = null;
     private tplMainIncidentReport: string = '';
 

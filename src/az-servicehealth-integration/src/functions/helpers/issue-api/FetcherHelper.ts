@@ -136,6 +136,7 @@ export default class FetcherHelper {
         const rArr: any[] = id.split("/");
         
         const ir = new ImpactedResource();
+        ir.Id = id;
         ir.SubscriptionId =  rArr[2];
         ir.ResourceType = _.isEmpty(impactedRsc.properties.targetResourceType) ? impactedRsc.targetResourceType : impactedRsc.properties.targetResourceType;
         ir.ResourceName =  _.last(rArr);

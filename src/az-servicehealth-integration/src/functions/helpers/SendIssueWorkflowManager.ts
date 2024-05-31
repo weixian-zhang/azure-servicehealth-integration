@@ -5,7 +5,7 @@ import { ServiceIssue, Subscription } from "./issue-api/ServiceIssueModels";
 import AppConfig from "./AppConfig";
 import { SubscriptionClient } from "@azure/arm-resources-subscriptions";
 import { ClientSecretCredential } from "@azure/identity";
-import HTMLIncidentReportRenderer from "./template-engine/HTMLIncidentReportRenderer";
+import AzureIncidentReportRenderer from "./template-engine/AzureIncidentReportRenderer";
 
 import * as fs from 'fs'; //testing only
 import EmailSinkCreator from "./send-sink/EmailSinkCreator";
@@ -41,10 +41,11 @@ export default class IssueReportGenerationWorkflow {
         //const wogIssuesToSend = await this.isosm.determineShouldSendIssues(this.context, wogIssues)
 
         //issue to HTML template and send email
-        const htmlRenderer = new HTMLIncidentReportRenderer();
+        const htmlRenderer = new AzureIncidentReportRenderer();
         await htmlRenderer.init();
 
         for (const wogi of wogIssues) {
+           wogi.ImpactedResources = [];
            const html: string = htmlRenderer.render(wogi);
 
            //TODO: send email
