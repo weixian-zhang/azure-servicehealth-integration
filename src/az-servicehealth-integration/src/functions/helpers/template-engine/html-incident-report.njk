@@ -22,7 +22,7 @@
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
-    width: 96%;
+    width: 98%;
     height: 100%;
     /* max-width: 600px; */
 }
@@ -34,41 +34,24 @@
     border-radius: 5px;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
     width: 99%;
-    height: 100%;
+    max-height: 100%;
     margin-bottom: 20px;
 }
 
 .section-title {
     font-size:18px;
     font-weight: bold;
-    color: #4527A0;
+    color: #006FB9;
     text-align: left;
     margin-bottom: 15px;
 }
 
-{# .section-sub-title {
-    font-size:15px;
-    font-weight: bold;
-    color: #00008B;
-    text-align: left;
-} #}
-
-
-{# .form-group {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-top: 5px;
-    margin-bottom: 5px;
+#report-title {
+    font-size:24px;
+    margin-bottom: 25px;
+    color: #1167b1;
+    text-align: center
 }
-
-.form-group-label {
-    flex-basis: 20%;
-    text-align: left;
-    font-weight: bold;
-    color: black;
-    margin-bottom:20px;
-} #}
 
 .col-label-left {
     text-align: left;
@@ -82,23 +65,6 @@
     font-size: 15px
 }
 
-{# .textarea-long {
-  overflow-y: scroll;
-  height: 700px;
-  resize: none;
-  flex-basis: 100%;
-  padding: 5px;
-  border: 1px solid #ccc;
-  border-radius: 2px;
-} #}
-{# 
-.update-summary {
-  overflow-y: auto;
-  max-height: 350px;
-  flex-basis: 100%;
-  padding: 5px;
-} #}
-
 
 .status-active {
     color: #A21515;
@@ -108,14 +74,7 @@
     color: #15A22D;
     font-weight: bold;
 }
-{# 
-.impacted-subscription-table {
-    max-height: 500px; /* Adjust the height as needed */
-    overflow-y: auto;
-    width: 50%;
-    border-collapse:collapse;
-    border: 1px solid black;
-} #}
+
 
 table {
     width: 100%;
@@ -129,7 +88,8 @@ table {
     border: 1px solid #000;
     border-collapse: collapse;
     max-width:100%;
-    max-height: 250px;
+    max-height: 350px;
+    text-align: left;
 }
 
 .inner-table td,  .inner-table th {
@@ -137,6 +97,17 @@ table {
    padding: 10px;
 }
 
+.tbl-col-ten {
+  width: 10%;
+}
+
+.tbl-col-twenty {
+  width: 20%;
+}
+
+.tbl-col-thirty {
+  width: 30%;
+}
 
 .table-left-col {
     width: 160px;
@@ -146,33 +117,29 @@ table {
     width: 50%;
 }
 
-#table-resources {
-    width: 100%;
+.scrolling-table {
+    max-height: 600px;
+    overflow-y: auto;
 }
 
-{# th {
-    text-align: center;
-    border: 1px solid black;
-    padding: 5px;
+#update-summary {
+    overflow-y: auto;
+    max-height: 350px;
 }
-td {
-    border: 1px solid black;
-    padding: 5px;
-    text-align: left;
-}
-th {
-    background-color: #fff;
-}
-
-.sub-section {
-    margin-bottom:15px;
-    margin-top:20px;
-} #}
 
 </style>
 
     <body>
         <div class="form-container">
+            <div class="section-title" id="report-title">
+                Azure Incident Report Test </br>
+                {% if OverallStatus == 'Active' %}
+                    <div style="font-size: 16px;"><div style="color: red;">{{ OverallStatus}}</div> | {{ formatDateTimeFriendly(LastUpdateTime) }}</div>
+                {% else %}
+                    <div style="font-size: 16px;"><span style="color: green;">{{ OverallStatus}}</span> | {{ formatDateTimeFriendly(LastUpdateTime) }}</div>
+                {% endif %}
+
+            </div>
             <div class="section-container">
                 <label class="section-title">Summary</label>
 
@@ -277,7 +244,7 @@ th {
                                 <tr>
                                     <td width="110px" style="border: 1px solid black;">{{ formatDateTimeFriendly(update.UpdateDateTime) }}</td>
                                     <td style="border: 1px solid black;">
-                                        <div class="update-summary">
+                                        <div id="update-summary">
                                         {{ update.Summary }}
                                         </div>
                                     </td>
@@ -292,20 +259,22 @@ th {
             {# Impacted Subscriptions #}
             <div class="section-container">
                 <label class="section-title">Impacted Subscriptions</label>
-                <table class="inner-table" id="table-subscriptions">
-                    <thead style="text-align:left;">
-                        <th>Name</th>
-                        <th>Id</th>
-                    </thead>
-                    <tbody>
-                        {% for sub in ImpactedSubscriptions %}
-                            <tr>
-                                <td width="50%">{{ sub.Name }}</td>
-                                <td>{{ sub.Id }}</td>
-                            </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                <div class="scrolling-table">
+                    <table class="inner-table">
+                        <thead style="text-align:left;">
+                            <th>Name</th>
+                            <th>Id</th>
+                        </thead>
+                        <tbody>
+                            {% for sub in ImpactedSubscriptions %}
+                                <tr>
+                                    <td width="50%">{{ sub.Name }}</td>
+                                    <td>{{ sub.Id }}</td>
+                                </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
             </div>
 
             {# Impacted Resources #}
@@ -316,26 +285,35 @@ th {
                     </br >
                     <div>No resource is impacted</div>
                 {% else %}
-                    <table class="inner-table" id="table-resources">
-                        <thead>
-                            <th>Id</th>
-                            <th>Name</th>
-                            <th>Resource Group</th>
-                            <th>Resource Type</th>
-                            <th>Name</th>
-                        </thead>
-                        <tbody>
-                            {% for rsc in ImpactedResources %}
-                            <tr>
-                                <td width="30%">{{ rsc.Id }}</td>
-                                <td>{{ rsc.SubscriptionId }}</td>
-                                <td>{{ rsc.ResourceGroup }}</td>
-                                <td>{{ rsc.ResourceType }}</td>
-                                <td>{{ rsc.ResourceName }}</td>
-                            </tr>
-                            {% endfor %}
-                        </tbody>
-                    </table>
+                    <div class="scrolling-table">
+                        <table class="inner-table">
+                            <colgroup>
+                                <col class="tbl-col-thirty" />
+                                <col class="tbl-col-twenty" />
+                                <col class="tbl-col-ten" />
+                                <col class="tbl-col-ten" />
+                                <col class="tbl-col-ten" />
+                            </colgroup>
+                            <thead>
+                                <th>Resource Id</th>
+                                <th>Subscription Id</th>
+                                <th>Resource Group</th>
+                                <th>Resource Type</th>
+                                <th>Name</th>
+                            </thead>
+                            <tbody>
+                                {% for rsc in ImpactedResources %}
+                                <tr>
+                                    <td>{{ rsc.Id }}</td>
+                                    <td>{{ rsc.SubscriptionId }}</td>
+                                    <td>{{ rsc.ResourceGroup }}</td>
+                                    <td>{{ rsc.ResourceType }}</td>
+                                    <td>{{ rsc.ResourceName }}</td>
+                                </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
                 {% endif %}
             </div>
         </div>

@@ -391,7 +391,7 @@
                         },
                         {
                             "impactedRegion": "Southeast Asia",
-                            "status": "Active",
+                            "status": "Resolved",
                             "impactedSubscriptions": [
                                 "d8732e82-febd-4b92-b1ed-8fbce80a9ad8"
                             ],
