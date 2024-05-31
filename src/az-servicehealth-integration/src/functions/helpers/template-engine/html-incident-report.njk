@@ -14,7 +14,7 @@
     justify-content: center;
     align-items: center;
     height: 100vh;
-    width: 90vw;
+    width: 100vw;
 }
 
 .form-container {
@@ -22,7 +22,7 @@
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
-    width: 98%;
+    width: 80%;
     height: 100%;
     /* max-width: 600px; */
 }
@@ -33,7 +33,7 @@
     border: 1px solid #00008B;
     border-radius: 5px;
     box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
-    width: 99%;
+    width: 95%;
     max-height: 100%;
     margin-bottom: 20px;
 }
@@ -136,7 +136,7 @@ table {
                 {% if OverallStatus == 'Active' %}
                     <div style="font-size: 16px;"><div style="color: red;">{{ OverallStatus}}</div> | {{ formatDateTimeFriendly(LastUpdateTime) }}</div>
                 {% else %}
-                    <div style="font-size: 16px;"><span style="color: green;">{{ OverallStatus}}</span> | {{ formatDateTimeFriendly(LastUpdateTime) }}</div>
+                    <div style="font-size: 16px;">{{ TenantName }} | <span style="color: green;">{{ OverallStatus}}</span> | {{ formatDateTimeFriendly(LastUpdateTime) }}</div>
                 {% endif %}
 
             </div>
