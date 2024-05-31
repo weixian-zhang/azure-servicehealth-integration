@@ -45,7 +45,7 @@ export default class IssueReportGenerationWorkflow {
         await htmlRenderer.init();
 
         for (const wogi of wogIssues) {
-           wogi.ImpactedResources = [];
+
            const html: string = htmlRenderer.render(wogi);
 
            //TODO: send email
