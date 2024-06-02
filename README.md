@@ -46,6 +46,11 @@
 <br />
 <br />  
 
+### Azure Function Configurations  
+* Stack = Node.js
+* Node.Js version = Node.js 18 LTA
+* platform = <b>64 Bit</b>
+
 ### Environment Variables
 * AZURE_STORAGE_QUEUE_CONNECTION_STRING
 * APPLICATIONINSIGHTS_CONNECTION_STRING
