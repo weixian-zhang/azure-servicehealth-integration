@@ -6,10 +6,10 @@ import AppConfig from "./AppConfig";
 import { SubscriptionClient } from "@azure/arm-resources-subscriptions";
 import { ClientSecretCredential } from "@azure/identity";
 import AzureIncidentReportRenderer from "./template-engine/AzureIncidentReportRenderer";
-
 import * as fs from 'fs'; //testing only
 import EmailSinkCreator from "./send-sink/EmailSinkCreator";
 import { IEmailSink } from "./send-sink/IEmailSink";
+import * as opentelemetry from "@opentelemetry/api";
 
 export default class IssueReportGenerationWorkflow {
     isosm: IssueSendOnceStateManager;
@@ -22,7 +22,12 @@ export default class IssueReportGenerationWorkflow {
         this.appconfig = appconfig;
     }
 
-    public async generateIssueReport(): Promise<string> {
+    public async generateIssueReport() {
+
+         // Start another span. In this example, the main method already started a
+        // span, so that'll be the parent span, and this will be a child span.
+        const ctx = opentelemetry.trace.setSpan(opentelemetry.context.active(), globalThis.funcRootSpan);
+        const worfkflowSpan = tracer.startSpan('IssueReportGenerationWorkflow.generateIssueReport', undefined, ctx);
 
         
         //techpass
@@ -55,10 +60,13 @@ export default class IssueReportGenerationWorkflow {
 
            //await emailSink.send(html);
 
+           worfkflowSpan.end();
+           
            return;
         }
-    
-        return '';
+
+        
+
     }
 
     async getTechPassIssues(subscriptions: Subscription[], context: InvocationContext) : Promise<ServiceIssue[]> {

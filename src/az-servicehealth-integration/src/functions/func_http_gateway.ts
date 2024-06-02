@@ -41,19 +41,9 @@ export async function func_http_gateway(request: HttpRequest, context: Invocatio
     
 };
 
-function getValidDate(val: string) {
-    try {
-        return new Date(val);
-    } catch (error) {
-        const d = new Date();
-        const dateSubstract3Days = d.setDate(d.getDate() - 3);
-        return dateSubstract3Days;
-    }
-}
-
 
 function createQueueClient(): QueueClient {
-    const q = new QueueClient(process.env.AZURE_STORAGE_CONNECTION_STRING, queueName);
+    const q = new QueueClient(process.env.AZURE_STORAGE_QUEUE_CONNECTION_STRING, queueName);
     return q;
 }
 

@@ -3,6 +3,9 @@
   "version": "1.0.0",
   "description": "",
   "main": "dist/src/functions/*.js",
+  "engines": {
+    "node": ">=18.0"
+  },
   "scripts": {
     "build": "tsc",
     "watch": "tsc -w",
@@ -16,11 +19,15 @@
     "@azure/arm-resources": "^5.2.0",
     "@azure/arm-resources-subscriptions": "^2.1.0",
     "@azure/communication-email": "^1.0.0",
-    "@azure/functions": "^4.0.0-alpha.13",
+    "@azure/functions": "^4.5.0",
     "@azure/identity": "^4.3.0-alpha.20240507.1",
-
+    "@azure/monitor-opentelemetry": "^1.5.0",
+    "@azure/monitor-opentelemetry-exporter": "^1.0.0-beta.23",
     "@azure/storage-queue": "^12.17.0",
     "@opentelemetry/api": "^1.8.0",
+    "@opentelemetry/auto-instrumentations-node": "^0.46.1",
+    "@opentelemetry/sdk-trace-base": "^1.24.1",
+    "@opentelemetry/sdk-trace-node": "^1.24.1",
     "@types/lodash": "^4.17.1",
     "@types/nodemailer": "^6.4.15",
     "@types/nunjucks": "^3.2.6",
