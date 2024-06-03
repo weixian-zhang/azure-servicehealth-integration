@@ -23,31 +23,41 @@ export default class IssueReportGenerationWorkflow {
     }
 
     public async generateIssueReport() {
+      
+        //techpass incidents
+        const tpSubs = await this.getSubscriptionsByServicePrincipalRBAC(globalThis.appconfig.TechPassClientSecretCredential)
 
-         // Start another span. In this example, the main method already started a
-        // span, so that'll be the parent span, and this will be a child span.
-        const ctx = opentelemetry.trace.setSpan(opentelemetry.context.active(), globalThis.funcRootSpan);
-        const worfkflowSpan = tracer.startSpan('IssueReportGenerationWorkflow.generateIssueReport', undefined, ctx);
+        const tpIssues = await this.getTechPassIssues(tpSubs, this.context);
 
-        
-        //techpass
-        //const tpSubs = await this.getSubscriptionsByServicePrincipalRBAC(globalThis.appconfig.TechPassClientSecretCredential)
+        const tpIssuesToSend = await this.isosm.determineShouldSendIssues(this.context, tpIssues)
 
-        //const tpIssues = await this.getTechPassIssues(tpSubs, this.context);
-
-        //const tpIssuesToSend = this.isosm.collectIssuesToSendOrMarkResolved(this.context, tpIssues)
-
-        //wog
+        //wog incidents
 
         const wogSubs = await this.getSubscriptionsByServicePrincipalRBAC(globalThis.appconfig.wogClientSecretCredential)
 
         const wogIssues = await this.getWOGIssues(wogSubs, this.context)
 
-        //const wogIssuesToSend = await this.isosm.determineShouldSendIssues(this.context, wogIssues)
+        const wogIssuesToSend = await this.isosm.determineShouldSendIssues(this.context, wogIssues)
 
         //issue to HTML template and send email
         const htmlRenderer = new AzureIncidentReportRenderer();
         await htmlRenderer.init();
+
+        const emailSink : IEmailSink = EmailSinkCreator.create(this.appconfig);
+
+        for(const tpi of tpIssuesToSend) {
+            
+            const html: string = htmlRenderer.render(tpi);
+
+            //TODO: local testing only
+           if (fs.existsSync('C:\\Users\\weixzha\\Desktop\\a.html')) {
+                await fs.promises.writeFile('C:\\Users\\weixzha\\Desktop\\a.html', html);
+           }
+
+           globalThis.funcContext.info(`At ${new Date}, sending email with HTML report for WOG related incidents ${tpi.TrackingId}`);
+
+           await emailSink.send(html);
+        }
 
         for (const wogi of wogIssues) {
 
@@ -58,13 +68,10 @@ export default class IssueReportGenerationWorkflow {
                 await fs.promises.writeFile('C:\\Users\\weixzha\\Desktop\\a.html', html);
            }
            
-
-           const emailSink : IEmailSink = EmailSinkCreator.create(this.appconfig);
+           globalThis.funcContext.info(`At ${new Date}, sending email with HTML report for WOG related incidents ${wogi.TrackingId}`);
 
            await emailSink.send(html);
 
-           worfkflowSpan.end();
-           
            return;
         }
     }

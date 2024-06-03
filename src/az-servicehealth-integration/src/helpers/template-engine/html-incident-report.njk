@@ -136,7 +136,7 @@ table {
                 {% if OverallStatus == 'Active' %}
                     <div style="font-size: 16px;"><div style="color: red;">{{ OverallStatus}}</div> | {{ formatDateTimeFriendly(LastUpdateTime) }}</div>
                 {% else %}
-                    <div style="font-size: 16px;">{{ TenantName }} | <span style="color: green;">{{ OverallStatus}}</span> | {{ formatDateTimeFriendly(LastUpdateTime) }}</div>
+                    <div style="font-size: 16px;">{{ TenantName }} | Incident Id: {{ TrackingId }} | <span style="color: green;">{{ OverallStatus}}</span> | {{ formatDateTimeFriendly(LastUpdateTime) }}</div>
                 {% endif %}
 
             </div>
