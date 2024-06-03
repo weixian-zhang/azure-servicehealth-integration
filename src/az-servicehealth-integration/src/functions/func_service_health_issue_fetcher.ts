@@ -22,6 +22,7 @@ declare global {
     var techpassTenantName: string;
     var tracer: opentelemetry.Tracer;
     var funcRootSpan: opentelemetry.Span;
+    var funcContext: InvocationContext;
 }
 
 class QueueData {
@@ -40,9 +41,11 @@ const queueConnStringEnvName = 'AZURE_STORAGE_QUEUE_CONNECTION_STRING';
 // https://github.com/Azure-Samples/azure-functions-nodejs-stream/tree/main/src
 export async function func_service_health_issue_fetcher(data: QueueData, context: InvocationContext): Promise<HttpResponseInit> {
 
-    
-
     try {
+
+        context.log(`At ${new Date}, received queue data to fetch incidents if any`);
+
+        globalThis.funcContext = context;
         
         initGlobalAppConfig(data.incidentStartFromDate);
 
@@ -57,7 +60,9 @@ export async function func_service_health_issue_fetcher(data: QueueData, context
     catch(e){
         
         // if app insights is enabled at function, will log to app insights.Traces
-        context.error(e.message)
+        context.error(`error message: ${e.message},
+        ${e.stack}
+        `)
 
         return {
             status: 500,

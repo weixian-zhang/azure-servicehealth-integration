@@ -6,8 +6,8 @@ import * as _ from 'lodash';
 export default class MockIssueGenerator implements IIssueFetcher {
     wogTenantName = "WOG";
     techpassTenantName = "TechPass";
-    issuesDataPath: string = "src/functions/helpers/issue-api/mock-data/sea_issues_only.json";
-    impactedResourcesDataPath: string = "src/functions/helpers/issue-api/mock-data/impacted_resources.json";
+    issuesDataPath: string = __dirname + "\\mock-data\\sea_issues_only.json";
+    impactedResourcesDataPath: string = __dirname + "\\mock-data\\impacted_resources.json";
     regionToFilter = "Southeast Asia";
     
     //reuse ApiIssueFetcher and add/edit/remove issue data

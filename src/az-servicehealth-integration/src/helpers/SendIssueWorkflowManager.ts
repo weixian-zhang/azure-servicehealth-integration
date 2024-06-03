@@ -53,20 +53,20 @@ export default class IssueReportGenerationWorkflow {
 
            const html: string = htmlRenderer.render(wogi);
 
-           //TODO: send email
-           await fs.promises.writeFile('C:\\Users\\weixzha\\Desktop\\a.html', html);
+           //TODO: local testing only
+           if (fs.existsSync('C:\\Users\\weixzha\\Desktop\\a.html')) {
+                await fs.promises.writeFile('C:\\Users\\weixzha\\Desktop\\a.html', html);
+           }
+           
 
            const emailSink : IEmailSink = EmailSinkCreator.create(this.appconfig);
 
-           //await emailSink.send(html);
+           await emailSink.send(html);
 
            worfkflowSpan.end();
            
            return;
         }
-
-        
-
     }
 
     async getTechPassIssues(subscriptions: Subscription[], context: InvocationContext) : Promise<ServiceIssue[]> {

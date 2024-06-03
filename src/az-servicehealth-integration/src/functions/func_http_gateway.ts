@@ -50,7 +50,7 @@ function createQueueClient(): QueueClient {
 
 app.http('func_http_gateway', {
     methods: ['GET', 'POST'],
-    authLevel: 'anonymous',
+    authLevel: 'function',
     handler: func_http_gateway,
     route: 'azure-incident-report/generate'
 });

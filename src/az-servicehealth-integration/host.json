@@ -1,5 +1,8 @@
 {
   "version": "2.0",
+  "queues": {
+    "maxDequeueCount": 1
+  },
   "logging": {
     "applicationInsights": {
       "samplingSettings": {
@@ -7,8 +10,13 @@
           "excludedTypes": "Request"
       },
       "enableLiveMetricsFilters": true
+    },
+    "logLevel": {
+      "default": "Error",
+      "Host.Results": "Error"
     }
   },
+  "telemetryMode": "openTelemetry",
   "extensionBundle": {
     "id": "Microsoft.Azure.Functions.ExtensionBundle",
     "version": "[4.*, 5.0.0)"

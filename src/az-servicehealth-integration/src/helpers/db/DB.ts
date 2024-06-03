@@ -35,7 +35,8 @@ export class TrackedImpactedService {
 export class DB {
 
     private db: Database; //Low<{issues: Issue[];}>;
-    private dbPath = process.cwd() + "\\src\\functions\\helpers\\db\\db.sqlite";
+    
+    private dbPath = __dirname + '\\db.sqlite';//process.cwd() + "\\src\\functions\\helpers\\db\\db.sqlite";
 
     constructor() {
         this.initDB();
