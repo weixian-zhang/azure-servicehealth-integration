@@ -35,13 +35,13 @@ export default class AppConfig {
     AzureCommunicationServiceConnString: string = '';
 
 
-    static loadFromEnvVar(incidentQueryStartFromDate: string) {
+    static loadFromEnvVar() {//(incidentQueryStartFromDate: string) {
 
         var appconfig = new AppConfig()
 
         try {
             
-            appconfig.incidentQueryStartFromDate = incidentQueryStartFromDate;
+            //appconfig.incidentQueryStartFromDate = incidentQueryStartFromDate;
 
             appconfig.TechPassClientId  = process.env.GCC_TECHPASS_CLIENT_ID;
             appconfig.TechPassClientSecret  = process.env.GCC_TECHPASS_CLIENT_SECRET;
