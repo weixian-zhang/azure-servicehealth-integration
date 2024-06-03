@@ -5,8 +5,8 @@ import { ServiceIssue } from '../issue-api/ServiceIssueModels';
 
 // https://mozilla.github.io/nunjucks/templating.html
 export default class AzureIncidentReportRenderer {
-    private tplPath = process.cwd() + "\\src\\functions\\helpers\\template-engine\\";
-    private tplMain = "html-incident-report.njk";
+    private tplPath = __dirname;
+    private tplMain = "\\html-incident-report.njk";
     private nunjucksEnv: Environment = null;
     private tplMainIncidentReport: string = '';
 

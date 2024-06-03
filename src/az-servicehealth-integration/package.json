@@ -7,12 +7,15 @@
     "node": ">=18.0"
   },
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && npm run cp:sqlite && npm run cp:nunjuckstpl && npm run cp:mockdata",
     "watch": "tsc -w",
     "clean": "rimraf dist",
     "prestart": "npm run clean && npm run build",
     "start": "func start",
-    "test": "echo \"No tests yet...\""
+    "test": "echo \"No tests yet...\"",
+    "cp:sqlite": "xcopy src\\helpers\\db\\db.sqlite dist\\src\\helpers\\db /I /Y",
+    "cp:nunjuckstpl": "xcopy src\\helpers\\template-engine\\html-incident-report.njk dist\\src\\helpers\\template-engine /I /Y",
+    "cp:mockdata": "if not exist dist\\src\\helpers\\issue-api\\mock-data mkdir dist\\src\\helpers\\issue-api\\mock-data && xcopy src\\helpers\\issue-api\\mock-data\\*.json dist\\src\\helpers\\issue-api\\mock-data /E /I /Y"
   },
   "dependencies": {
     "@azure/arm-resourcehealth": "^4.1.0-alpha.20240507.1",

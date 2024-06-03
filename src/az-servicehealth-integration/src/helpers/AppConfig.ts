@@ -1,4 +1,5 @@
 import { ClientSecretCredential } from "@azure/identity";
+import { context } from "@opentelemetry/api";
 import * as _ from 'lodash';
 
 export class EMailConfig {
@@ -38,37 +39,43 @@ export default class AppConfig {
 
         var appconfig = new AppConfig()
 
-        appconfig.incidentQueryStartFromDate = incidentQueryStartFromDate;
+        try {
+            
+            appconfig.incidentQueryStartFromDate = incidentQueryStartFromDate;
 
-        appconfig.TechPassClientId  = process.env.GCC_TECHPASS_CLIENT_ID;
-        appconfig.TechPassClientSecret  = process.env.GCC_TECHPASS_CLIENT_SECRET;
-        appconfig.TechPassTenantId  = process.env.GCC_TECHPASS_TENANT_ID;
-        appconfig.TechPassResidentSubscriptionId = process.env.GCC_TECHPASS_RESIDENT_SUBSCRIPTION_ID;
+            appconfig.TechPassClientId  = process.env.GCC_TECHPASS_CLIENT_ID;
+            appconfig.TechPassClientSecret  = process.env.GCC_TECHPASS_CLIENT_SECRET;
+            appconfig.TechPassTenantId  = process.env.GCC_TECHPASS_TENANT_ID;
+            appconfig.TechPassResidentSubscriptionId = process.env.GCC_TECHPASS_RESIDENT_SUBSCRIPTION_ID;
 
-        appconfig.WogClientId  = process.env.GCC_WOG_CLIENT_ID;
-        appconfig.WogClientSecret  = process.env.GCC_WOG_CLIENT_SECRET;
-        appconfig.WogTenantId  = process.env.GCC_WOG_TENANT_ID;
-        appconfig.WogResidentSubscriptionId = process.env.GCC_WOG_RESIDENT_SUBSCRIPTION_ID;
+            appconfig.WogClientId  = process.env.GCC_WOG_CLIENT_ID;
+            appconfig.WogClientSecret  = process.env.GCC_WOG_CLIENT_SECRET;
+            appconfig.WogTenantId  = process.env.GCC_WOG_TENANT_ID;
+            appconfig.WogResidentSubscriptionId = process.env.GCC_WOG_RESIDENT_SUBSCRIPTION_ID;
 
-        appconfig.AzureStorageConnString = process.env.AZURE_STORAGE_CONNECTION_STRING;
+            appconfig.AzureStorageConnString = process.env.AZURE_STORAGE_CONNECTION_STRING;
 
-        appconfig.AzureAppInsightsConnString = process.env.APPLICATIONINSIGHTS_CONNECTION_STRING;
+            appconfig.AzureAppInsightsConnString = process.env.APPLICATIONINSIGHTS_CONNECTION_STRING;
 
-        this.createAzureCredentials(appconfig);
+            this.createAzureCredentials(appconfig);
 
-        if (process.env.SERVICE_HEALTH_INTEGRATION_IS_DEVTEST.toLowerCase() == 'true') {
-            appconfig.IsDevTest = true
+            if (process.env.SERVICE_HEALTH_INTEGRATION_IS_DEVTEST.toLowerCase() == 'true') {
+                appconfig.IsDevTest = true
+            }
+            else {
+                appconfig.IsDevTest = false
+            }
+
+            appconfig.AzureCommunicationServiceConnString = process.env.AZURE_COMM_SERVICE_CONN_STRING;
+
+            // load email config
+            appconfig.EMailConfig = AppConfig.loadEmailConfig();
+
+            return appconfig
+
+        } catch (e) {
+            globalThis.funcContext.error(`${e.message}, ${e.stack}`)
         }
-        else {
-            appconfig.IsDevTest = false
-        }
-
-        appconfig.AzureCommunicationServiceConnString = process.env.AZURE_COMM_SERVICE_CONN_STRING;
-
-        // load email config
-        appconfig.EMailConfig = AppConfig.loadEmailConfig();
-
-        return appconfig
     }
 
     //sample
