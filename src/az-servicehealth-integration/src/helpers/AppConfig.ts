@@ -30,7 +30,9 @@ export default class AppConfig {
     AzureStorageConnString: string = '';
     EMailConfig: EMailConfig;
     AzureAppInsightsConnString: string = '';
+    incidentDayFromNow: number = 5 //if HTTP Func does not provide query incidentStartFromDate, this config will be used
 
+    
     //use for local testing only, using Azure Communication Service email
     AzureCommunicationServiceConnString: string = '';
 
@@ -67,6 +69,8 @@ export default class AppConfig {
             }
 
             appconfig.AzureCommunicationServiceConnString = process.env.AZURE_COMM_SERVICE_CONN_STRING;
+
+            appconfig.incidentDayFromNow = parseInt(process.env.SERVICE_HEALTH_INTEGRATION__INCIDENT_DAY_FROM_NOW)
 
             // load email config
             appconfig.EMailConfig = AppConfig.loadEmailConfig();
