@@ -15,22 +15,22 @@ export default class NodeMailerEmailSink implements IEmailSink {
     async send(message: string): Promise<EmailSinkResponse> {
 
         const transporter = nodemailer.createTransport({
-            host: process.env.SERVICE_HEALTH_INTEGRATION_EMAIL_HOST,
+            host: this.appconfig.EMailConfig.Host,
             port: 587,
             auth: {
-                user: process.env.SERVICE_HEALTH_INTEGRATION_EMAIL_USERNAME,
-                pass: process.env.SERVICE_HEALTH_INTEGRATION_EMAIL_PASSWORD
+                user: this.appconfig.EMailConfig.Username,
+                pass: this.appconfig.EMailConfig.Password
             }
         });
     
         const mailOptions: SendMailOptions = {
-            from: '',
-            subject: 'Azure Incident Report',
+            from: this.appconfig.EMailConfig.SenderAddress,
+            subject: this.appconfig.EMailConfig.Subject,
             text: '',
             html: message,
-            to: '',
-            cc: '',
-            bcc: ''
+            to: this.appconfig.EMailConfig.To,
+            cc: this.appconfig.EMailConfig.CC,
+            bcc: this.appconfig.EMailConfig.BCC
         };
 
         try {

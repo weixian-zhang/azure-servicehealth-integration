@@ -19,7 +19,7 @@ class QueueData {
     incidentStartFromDate: string
 }
 
-const queueConnStringEnvName = 'AZURE_STORAGE_QUEUE_CONNECTION_STRING';
+const queueConnStringEnvName = 'AzureWebJobsStorage';
 
 //https://github.com/Azure/azure-sdk-for-js/blob/main/sdk/monitor/monitor-opentelemetry-exporter/samples/v1-beta/typescript/src/basicTracerNode.ts
 //https://opentelemetry.io/docs/languages/js/exporters/

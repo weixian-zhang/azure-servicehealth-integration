@@ -1,15 +1,28 @@
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from "@azure/functions";
-import { QueueClient } from "@azure/storage-queue";
+import { QueueClient, QueueServiceClient } from "@azure/storage-queue";
 import * as _ from 'lodash';
+import AppConfig from "../helpers/AppConfig";
+import { DefaultAzureCredential } from "@azure/identity";
 
 const queueName = 'incident-fetcher-in';
 const queue = createQueueClient();
 
+
 export async function func_http_gateway(request: HttpRequest, context: InvocationContext): Promise<HttpResponseInit> {
-    
+
     try {
 
-        const incidentStartFromDate = request.query.get('incidentStartFromDate');
+        const appconfig = AppConfig.loadFromEnvVar();
+
+        let incidentStartFromDate = request.query.get('incidentStartFromDate');
+
+        if (_.isNil(incidentStartFromDate) == true || _.isDate(incidentStartFromDate) == false) {
+            
+            let now = new Date();
+            now.setDate(now.getDate() - appconfig.incidentDayFromNow)
+            incidentStartFromDate = now.toLocaleDateString('en-US')
+            
+        }
 
         const msg = btoa(`{
             "incidentStartFromDate": "${incidentStartFromDate}"
@@ -36,15 +49,15 @@ export async function func_http_gateway(request: HttpRequest, context: Invocatio
             }
         };
     }
-    
-
-    
 };
 
+// https://learn.microsoft.com/en-us/azure/service-connector/how-to-integrate-storage-queue?tabs=python
+// https://learn.microsoft.com/en-us/azure/service-connector/how-to-integrate-storage-table?tabs=nodejs
 
 function createQueueClient(): QueueClient {
-    const q = new QueueClient(process.env.AZURE_STORAGE_QUEUE_CONNECTION_STRING, queueName);
-    return q;
+    const q = new QueueServiceClient(process.env.AZURE_STORAGEQUEUE_RESOURCEENDPOINT, new DefaultAzureCredential());
+    //const q = new QueueClient(process.env.AzureWebJobsStorage, queueName);//QueueClient(process.env.AZURE_STORAGE_QUEUE_CONNECTION_STRING, queueName);
+    return q.getQueueClient(queueName)
 }
 
 

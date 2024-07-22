@@ -27,7 +27,7 @@ export default class IssueReportGenerationWorkflow {
         //techpass incidents
         const tpSubs = await this.getSubscriptionsByServicePrincipalRBAC(globalThis.appconfig.TechPassClientSecretCredential)
 
-        const tpIssues = await this.getTechPassIssues(tpSubs, this.context);
+        const tpIssues = []; //await this.getTechPassIssues(tpSubs, this.context);
 
         const tpIssuesToSend = await this.isosm.determineShouldSendIssues(this.context, tpIssues)
 
@@ -50,23 +50,25 @@ export default class IssueReportGenerationWorkflow {
             const html: string = htmlRenderer.render(tpi);
 
             //TODO: local testing only
-           if (fs.existsSync('C:\\Users\\weixzha\\Desktop\\a.html')) {
-                await fs.promises.writeFile('C:\\Users\\weixzha\\Desktop\\a.html', html);
-           }
+            await fs.promises.writeFile('C:\\Users\\weixzha\\Desktop\\tp.html', html);
+        //    if (fs.existsSync('C:\\Users\\weixzha\\Desktop\\a.html')) {
+        //         await fs.promises.writeFile('C:\\Users\\weixzha\\Desktop\\a.html', html);
+        //    }
 
            globalThis.funcContext.info(`At ${new Date}, sending email with HTML report for WOG related incidents ${tpi.TrackingId}`);
 
            await emailSink.send(html);
         }
 
-        for (const wogi of wogIssues) {
+        for (const wogi of wogIssuesToSend) {
 
            const html: string = htmlRenderer.render(wogi);
 
            //TODO: local testing only
-           if (fs.existsSync('C:\\Users\\weixzha\\Desktop\\a.html')) {
-                await fs.promises.writeFile('C:\\Users\\weixzha\\Desktop\\a.html', html);
-           }
+           await fs.promises.writeFile('C:\\Users\\weixzha\\Desktop\\wog.html', html);
+        //    if (fs.existsSync('C:\\Users\\weixzha\\Desktop\\a.html')) {
+        //         await fs.promises.writeFile('C:\\Users\\weixzha\\Desktop\\wog.html', html);
+        //    }
            
            globalThis.funcContext.info(`At ${new Date}, sending email with HTML report for WOG related incidents ${wogi.TrackingId}`);
 
