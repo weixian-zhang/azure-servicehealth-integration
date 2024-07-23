@@ -1,5 +1,5 @@
 import { InvocationContext } from "@azure/functions";
-import IssueSendOnceStateManager from "./IssueToSendDecisionTree";
+import IssueSendOnceStateManager from "./SendIssueDecisionTree";
 import IssueFetcher from "./issue-api/IssueFetcher";
 import { ServiceIssue, Subscription } from "./issue-api/ServiceIssueModels";
 import AppConfig from "./AppConfig";

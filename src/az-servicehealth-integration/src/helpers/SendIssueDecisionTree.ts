@@ -11,7 +11,7 @@ class ImpactedServiceMapItem {
 
 // **Asumption: when service issue reaches this stage, ImpactedServices property will never be empty
 // impacted service region will either be Global or SEA
-export default class IssueToSendDecisionTree {
+export default class SendIssueDecisionTree {
     Resolved: string = "Resolved";
     Active: string = "Active";
     context: InvocationContext;
@@ -83,15 +83,17 @@ export default class IssueToSendDecisionTree {
             // impacted service SEA region only level
             else {
 
-                const impactedServices: Map<string, TrackedImpactedService> = await globalThis.db.getImpactedServices(issue.TrackingId);
+                const trackedImpactedServices: Map<string, TrackedImpactedService> =
+                    await globalThis.db.getImpactedServices(issue.TrackingId);//Map<string, TrackedImpactedService> = await globalThis.db.getImpactedServices(issue.TrackingId);
 
                 // all issue at this point is "tracked", and MUST have SEA region impacted services
                 for (const svc of issue.ImpactedServices ) {
 
-                    const trackedIS = impactedServices.get(svc.ImpactedService);
+                    //const trackedIS = impactedServices.get(svc.ImpactedService);
+                    const trackedIS = trackedImpactedServices.get(svc.ImpactedService);
 
                     // deciding whether to throw error as there is no possibility to be null
-                    if (_.isEmpty(trackedIS)) {
+                    if (_.isNil(trackedIS)) {
                         //TODO throw error or not
                         continue;
                     }

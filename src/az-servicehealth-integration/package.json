@@ -7,7 +7,7 @@
     "node": ">=18.0"
   },
   "scripts": {
-    "build": "tsc && npm run cp:sqlite && npm run cp:nunjuckstpl && npm run cp:mockdata",
+    "build": "tsc && npm run cp:nunjuckstpl && npm run cp:mockdata",
     "watch": "tsc -w",
     "clean": "rimraf dist",
     "prestart": "npm run clean && npm run build",
@@ -22,6 +22,7 @@
     "@azure/arm-resources": "^5.2.0",
     "@azure/arm-resources-subscriptions": "^2.1.0",
     "@azure/communication-email": "^1.0.0",
+    "@azure/data-tables": "^13.2.2",
     "@azure/functions": "^4.5.0",
     "@azure/identity": "^4.3.0-alpha.20240507.1",
     "@azure/storage-queue": "^12.17.0",

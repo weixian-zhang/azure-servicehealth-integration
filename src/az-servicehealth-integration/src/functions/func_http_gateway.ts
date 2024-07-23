@@ -56,12 +56,9 @@ export async function func_http_gateway(request: HttpRequest, context: Invocatio
 
 function createQueueClient(): QueueClient {
     const credential = new DefaultAzureCredential();
-
-    const queueClient = new QueueClient(
-        'https://rgservicehealthdevtb605.queue.core.windows.net/incident-fetcher-in',
-      credential
-    );
-  
+    const queueName = 'incident-fetcher-in';
+    const queueUrl = `${process.env.AZURE_STORAGEQUEUE_RESOURCEENDPOINT}/${queueName}`
+    const queueClient = new QueueClient(queueUrl, credential);
     return queueClient;
 }
 
