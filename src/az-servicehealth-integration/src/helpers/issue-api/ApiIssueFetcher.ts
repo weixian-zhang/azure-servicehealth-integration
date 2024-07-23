@@ -78,11 +78,11 @@ export default class ApiIssueFetcher implements IIssueFetcher {
 
                 IssueHelper.createIssueInIssueBag(this.tenantName, sub, currIssue, issueBag);
 
+
                 // get impacted resources
                 await this.fetchImpactedResourcesForIssue(rhc, trackingId, issueBag);
                 
-                
-                if (_.has(issueBag, 'trackingId')) {
+                if (issueBag.has(trackingId)) {
                     // get impacted resources
                     await this.fetchImpactedResourcesForIssue(rhc, trackingId, issueBag);
                 }

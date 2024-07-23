@@ -1,10 +1,10 @@
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from "@azure/functions";
-import { QueueClient, QueueServiceClient } from "@azure/storage-queue";
+import { QueueClient } from "@azure/storage-queue";
 import * as _ from 'lodash';
 import AppConfig from "../helpers/AppConfig";
 import { DefaultAzureCredential } from "@azure/identity";
 
-const queueName = 'incident-fetcher-in';
+
 const queue = createQueueClient();
 
 
@@ -50,14 +50,19 @@ export async function func_http_gateway(request: HttpRequest, context: Invocatio
         };
     }
 };
-
+//https://learn.microsoft.com/en-us/azure/storage/queues/passwordless-migrate-queues?tabs=roles-azure-portal%2Csign-in-visual-studio-code%2Cnodejs%2Cazure-portal-create%2Cazure-portal-associate%2Capp-service-identity%2Capp-service-connector%2Cassign-role-azure-portal#configure-your-local-development-environment
 // https://learn.microsoft.com/en-us/azure/service-connector/how-to-integrate-storage-queue?tabs=python
 // https://learn.microsoft.com/en-us/azure/service-connector/how-to-integrate-storage-table?tabs=nodejs
 
 function createQueueClient(): QueueClient {
-    const q = new QueueServiceClient(process.env.AZURE_STORAGEQUEUE_RESOURCEENDPOINT, new DefaultAzureCredential());
-    //const q = new QueueClient(process.env.AzureWebJobsStorage, queueName);//QueueClient(process.env.AZURE_STORAGE_QUEUE_CONNECTION_STRING, queueName);
-    return q.getQueueClient(queueName)
+    const credential = new DefaultAzureCredential();
+
+    const queueClient = new QueueClient(
+        'https://rgservicehealthdevtb605.queue.core.windows.net/incident-fetcher-in',
+      credential
+    );
+  
+    return queueClient;
 }
 
 

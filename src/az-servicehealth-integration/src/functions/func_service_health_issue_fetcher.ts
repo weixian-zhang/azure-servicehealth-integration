@@ -68,10 +68,12 @@ function initGlobalVariables(incidentStartFromDate: string) {
     globalThis.appconfig = AppConfig.loadFromEnvVar();
     globalThis.appconfig.incidentQueryStartFromDate = incidentStartFromDate
 }
-
+// https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-storage-queue-trigger?tabs=python-v2%2Cisolated-process%2Cnodejs-v4%2Cextensionv5&pivots=programming-language-javascript#identity-based-connections
+//https://stackoverflow.com/questions/77893774/python-azure-functions-identity-based-connection-for-trigger-bindings
+//https://stackoverflow.com/questions/75930046/how-to-run-azure-function-locally-using-user-assigned-managed-identity-configura
 
 app.storageQueue('func_service_health_issue_fetcher', {
     queueName: 'incident-fetcher-in',
-    connection: queueConnStringEnvName,
+    connection: 'StorageQueueIdentityAuth',
     handler: func_service_health_issue_fetcher
 });
