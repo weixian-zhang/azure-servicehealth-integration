@@ -12,6 +12,7 @@
     "applicationInsights": {
       "samplingSettings": {
           "isEnabled": true,
+          "logginglevel":"Error",
           "excludedTypes": "Request"
       },
       "enableLiveMetricsFilters": true
