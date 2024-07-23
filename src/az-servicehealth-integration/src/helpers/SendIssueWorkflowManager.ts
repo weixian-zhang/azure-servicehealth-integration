@@ -49,11 +49,9 @@ export default class IssueReportGenerationWorkflow {
             
             const html: string = htmlRenderer.render(tpi);
 
-            //TODO: local testing only
-            await fs.promises.writeFile('C:\\Users\\weixzha\\Desktop\\tp.html', html);
-        //    if (fs.existsSync('C:\\Users\\weixzha\\Desktop\\a.html')) {
-        //         await fs.promises.writeFile('C:\\Users\\weixzha\\Desktop\\a.html', html);
-        //    }
+            //local testing only
+            await fs.promises.writeFile('C:\\Users\\weixzha\\Desktop\\tp.html', html, {encoding:'utf8',flag:'w'});
+            
 
            globalThis.funcContext.info(`At ${new Date}, sending email with HTML report for WOG related incidents ${tpi.TrackingId}`);
 
@@ -64,12 +62,9 @@ export default class IssueReportGenerationWorkflow {
 
            const html: string = htmlRenderer.render(wogi);
 
-           //TODO: local testing only
-           await fs.promises.writeFile('C:\\Users\\weixzha\\Desktop\\wog.html', html);
-        //    if (fs.existsSync('C:\\Users\\weixzha\\Desktop\\a.html')) {
-        //         await fs.promises.writeFile('C:\\Users\\weixzha\\Desktop\\wog.html', html);
-        //    }
-           
+           //local testing only
+           await fs.promises.writeFile('C:\\Users\\weixzha\\Desktop\\wog.html', html, {encoding:'utf8',flag:'w'});
+
            globalThis.funcContext.info(`At ${new Date}, sending email with HTML report for WOG related incidents ${wogi.TrackingId}`);
 
            await emailSink.send(html);
