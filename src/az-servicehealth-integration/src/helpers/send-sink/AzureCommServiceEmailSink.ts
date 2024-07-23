@@ -33,7 +33,6 @@ export default class AzureCommServiceEmailSink implements IEmailSink {
 
         const emailMessage: EmailMessage = {
             senderAddress: "DoNotReply@674edb48-246c-4119-ac71-7eabf6c96aa5.azurecomm.net",
-            
             content: {
                 subject: this.appconfig.EMailConfig.Subject,
                 html: message,

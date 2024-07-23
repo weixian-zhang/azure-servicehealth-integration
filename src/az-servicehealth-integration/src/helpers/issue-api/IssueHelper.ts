@@ -103,9 +103,6 @@ export default class IssueHelper {
         {
             issueBag.set(si.TrackingId, si);
         }
-
-        
-        
     }
 
     //as List by Subscription Id is called multiple by the number of subscription Id this app's service principal has access to
@@ -130,12 +127,11 @@ export default class IssueHelper {
     static createImpactedResourceInIssueBag
         (impactedRsc: any, trackingId: string, issueBag: Map<string, ServiceIssue>) {
         
-        const id = _.isNil(impactedRsc.properties.targetResourceId) ? impactedRsc.id : impactedRsc.properties.targetResourceId;
+        const id = IssueHelper.getNonNullValue(
+            _.get(impactedRsc, 'properties.targetResourceId', ''),
+            _.get(impactedRsc, 'id', ''),
+            'error capturing resource Id');
         
-        if (_.isNil(id)) {
-            return;
-        }
-
         const rArr: any[] = id.split("/");
         
         const ir = new ImpactedResource();
