@@ -7,7 +7,7 @@
     "node": ">=18.0"
   },
   "scripts": {
-    "build": "tsc && npm run cp:nunjuckstpl && npm run cp:mockdata",
+    "build": "tsc && npm run cp:nunjuckstpl && npm run mkdir:mockdata && npm run cp:mockdata",
     "watch": "tsc -w",
     "clean": "rimraf dist",
     "prestart": "npm run clean && npm run build",
@@ -15,7 +15,8 @@
     "test": "echo \"No tests yet...\"",
     "cp:sqlite": "xcopy src\\helpers\\db\\db.sqlite dist\\src\\helpers\\db /I /Y",
     "cp:nunjuckstpl": "xcopy src\\helpers\\template-engine\\html-incident-report.njk dist\\src\\helpers\\template-engine /I /Y",
-    "cp:mockdata": "if not exist dist\\src\\helpers\\issue-api\\mock-data mkdir dist\\src\\helpers\\issue-api\\mock-data && xcopy src\\helpers\\issue-api\\mock-data\\*.json dist\\src\\helpers\\issue-api\\mock-data /E /I /Y"
+    "mkdir:mockdata": "if not exist dist\\src\\helpers\\issue-api\\mock-data mkdir dist\\src\\helpers\\issue-api\\mock-data",
+    "cp:mockdata": " xcopy \"src\\helpers\\issue-api\\mock-data\\*.json\" \"dist\\src\\helpers\\issue-api\\mock-data\" /c /i /e /h /y"
   },
   "dependencies": {
     "@azure/arm-resourcehealth": "^4.1.0-alpha.20240507.1",
@@ -24,8 +25,8 @@
     "@azure/communication-email": "^1.0.0",
     "@azure/data-tables": "^13.2.2",
     "@azure/functions": "^4.5.0",
-    "@azure/identity": "^4.3.0-alpha.20240507.1",
-    "@azure/storage-queue": "^12.17.0",
+    "@azure/identity": "^4.4.0",
+    "@azure/storage-queue": "^12.23.0",
     "@types/lodash": "^4.17.1",
     "@types/nodemailer": "^6.4.15",
     "@types/nunjucks": "^3.2.6",

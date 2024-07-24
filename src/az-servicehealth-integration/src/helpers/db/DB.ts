@@ -117,13 +117,13 @@ export class DB {
         
     }
 
-    async getImpactedServices(trackingId: string) : Promise<Map<string, TrackedImpactedService>> {
+    async getImpactedServices(trackingId: string) : Promise<[TrackedIssue, Map<string, TrackedImpactedService>]> {
         try {
             
             const [exist, issue] = await this.issueExist(trackingId);
 
             if (!exist) {
-                return new Map<string, TrackedImpactedService>();
+                return [null, new Map<string, TrackedImpactedService>()];
             }
 
             const map = new Map<string, TrackedImpactedService>();
@@ -132,7 +132,7 @@ export class DB {
                 map.set(is.Name,  is)
             });
 
-            return map;
+            return [issue, map];
 
             // const impactedServices: TrackedIssue[] = await this.db.all(`
             //     SELECT 
@@ -244,28 +244,19 @@ export class DB {
         }
     }
 
-    async updateIssueResolved(trackingId: string, lastUpdatedTime: Date) {
+    async updateIssueResolved(trackedIssue: TrackedIssue, lastUpdatedTime: Date) {
         
         try {
-                const issue: TrackedIssue = await this.tableClient.getEntity(trackingId, "");
-                issue.Status= 'Resolved';
-                issue.LastUpdateTimeEpoch = lastUpdatedTime.valueOf();
+                trackedIssue.Status= 'Resolved';
+                trackedIssue.LastUpdateTimeEpoch = lastUpdatedTime.valueOf();
 
-                const ij = JSON.stringify(issue)
+                const ij = JSON.stringify(trackedIssue)
 
                 await this.tableClient.upsertEntity({
-                    partitionKey: issue.TrackingId,
+                    partitionKey: trackedIssue.TrackingId,
                     rowKey: '',
                     issue: ij
                 }, 'Replace')
-                // await this.db.run(`
-                //     UPDATE Issue
-                //     SET
-                //         Status = 'Resolved',
-                //         LastUpdateTime = ${lastUpdatedTime.valueOf()}
-                //     WHERE TrackingId = '${trackingId}';
-                // `
-                // );
 
         } catch (error) {
             throw new Error(`Error at DB.addIssue: ${error.message}`);
@@ -275,10 +266,10 @@ export class DB {
     // explicitly add update function for LastUpdateTime and Status to highlight importance of 
     // Last-Update-Time changes when new updates get added and Status change from Active to Resolved
     // App use LastUpdateTime and Status at SEA region level, to decide whether or not to send out an issue again
-    async updateImpactedServiceLastUpdateTime(trackingId: string, impactedService: string, lastUpdatedTime: Date) {
+    async updateImpactedServiceLastUpdateTime(issue: TrackedIssue, impactedService: string, lastUpdatedTime: Date) {
         
         try {
-                const issue: TrackedIssue = await this.tableClient.getEntity(trackingId, "");
+                //const issue: TrackedIssue = await this.tableClient.getEntity(trackingId, "");
 
                 for(const is of issue.ImpactedServices) {
                     if (is.Name == impactedService) {
@@ -307,10 +298,10 @@ export class DB {
         }
     }
 
-    async updateImpactedServiceResolved(trackingId: string, impactedService: string, lastUpdatedTime: Date) {
+    async updateImpactedServiceResolved(issue: TrackedIssue, impactedService: string, lastUpdatedTime: Date) {
 
         try {
-                const issue: TrackedIssue = await this.tableClient.getEntity(trackingId, "");
+                //const issue: TrackedIssue = await this.tableClient.getEntity(trackingId, "");
 
                 for(const is of issue.ImpactedServices) {
                     if (is.Name == impactedService) {

@@ -80,6 +80,9 @@ table {
     width: 100%;
     border-collapse: collapse;
     margin-top:20px;
+    overflow-y: auto;
+    table-layout: fixed;
+    word-break:break-all;
 }
 
 
@@ -97,14 +100,16 @@ table {
    padding: 10px;
 }
 
+
 .tbl-col-ten {
   width: 10%;
 }
-
 .tbl-col-twenty {
   width: 20%;
 }
-
+.tbl-col-fifteen {
+  width: 15%;
+}
 .tbl-col-thirty {
   width: 30%;
 }
@@ -133,7 +138,7 @@ table {
         <div class="form-container">
             <div class="section-title" id="report-title">
                 Azure Incident Report Test </br>
-                                    <div style="font-size: 16px;">WOG | <span style="color: green;">Resolved</span> | January 31, 2024 at 7:02 PM</div>
+                                    <div style="font-size: 16px;">WOG | Incident Id: NKRF-1TG | <span style="color: green;">Resolved</span> | 2024-01-31T11:02:35.2143784Z</div>
                 
             </div>
             <div class="section-container">
@@ -167,7 +172,7 @@ table {
                     <tr>
                         <td class="table-left-col"><label class="col-label-left">Impact Start Time</label></td>
                         <td>
-                            <label class="col-label-right">January 21, 2024 at 9:59 AM</label>
+                            <label class="col-label-right">2024-01-21T01:59:30.643Z</label>
                         </td>
                     </tr>
                     <tr><td/><td/></tr>
@@ -176,7 +181,7 @@ table {
                     <tr>
                         <td class="table-left-col"><label class="col-label-left">Impact Mitigation Time</label></td>
                         <td>
-                            <label class="col-label-right">January 21, 2024 at 11:15 PM </label>
+                            <label class="col-label-right">2024-01-31T11:02:35.2143784Z </label>
                         </td>
                     </tr>
                 </table>
@@ -184,7 +189,7 @@ table {
             </div>
 
             <div class="section-container">
-                <label class="section-title">Impacted Services</label>
+                <label class="section-title">Impacted Azure Resources</label>
 
                 <div style="height: 700px;overflow-y: auto">
                     
@@ -820,15 +825,16 @@ table {
 
             
             <div class="section-container">
-                <label class="section-title" >Impacted Resources</label>
+                <label class="section-title" >Impacted Azure Resources</label>
                                     <div class="scrolling-table">
                         <table class="inner-table">
                             <colgroup>
                                 <col class="tbl-col-thirty" />
                                 <col class="tbl-col-twenty" />
-                                <col class="tbl-col-ten" />
-                                <col class="tbl-col-ten" />
-                                <col class="tbl-col-ten" />
+                                <col class="tbl-col-fifteen" />
+                                <col class="tbl-col-twenty" />
+                                <col class="tbl-col-fifteen" />
+                                
                             </colgroup>
                             <thead>
                                 <th>Resource Id</th>
@@ -843,98 +849,98 @@ table {
                                     <td>4970d23e-ed41-4670-9c19-02a1d2808dd9</td>
                                     <td>TEST</td>
                                     <td>Microsoft.Compute/VirtualMachines</td>
-                                    <td>testvm</td>
+                                    <td>abc-123-ghj-456</td>
                                 </tr>
                                                                 <tr>
                                     <td>/subscriptions/4970d23e-ed41-4670-9c19-02a1d2808dd9/resourceGroups/TEST/providers/Microsoft.Compute/virtualMachines/testvm</td>
                                     <td>4970d23e-ed41-4670-9c19-02a1d2808dd9</td>
                                     <td>TEST</td>
                                     <td>Microsoft.Compute/VirtualMachines</td>
-                                    <td>testvm</td>
+                                    <td>abc-123-ghj-456</td>
                                 </tr>
                                                                 <tr>
                                     <td>/subscriptions/4970d23e-ed41-4670-9c19-02a1d2808dd9/resourceGroups/TEST/providers/Microsoft.Compute/virtualMachines/testvm</td>
                                     <td>4970d23e-ed41-4670-9c19-02a1d2808dd9</td>
                                     <td>TEST</td>
                                     <td>Microsoft.Compute/VirtualMachines</td>
-                                    <td>testvm</td>
+                                    <td>abc-123-ghj-456</td>
                                 </tr>
                                                                 <tr>
                                     <td>/subscriptions/4970d23e-ed41-4670-9c19-02a1d2808dd9/resourceGroups/TEST/providers/Microsoft.Compute/virtualMachines/testvm</td>
                                     <td>4970d23e-ed41-4670-9c19-02a1d2808dd9</td>
                                     <td>TEST</td>
                                     <td>Microsoft.Compute/VirtualMachines</td>
-                                    <td>testvm</td>
+                                    <td>abc-123-ghj-456</td>
                                 </tr>
                                                                 <tr>
                                     <td>/subscriptions/4970d23e-ed41-4670-9c19-02a1d2808dd9/resourceGroups/TEST/providers/Microsoft.Compute/virtualMachines/testvm</td>
                                     <td>4970d23e-ed41-4670-9c19-02a1d2808dd9</td>
                                     <td>TEST</td>
                                     <td>Microsoft.Compute/VirtualMachines</td>
-                                    <td>testvm</td>
+                                    <td>abc-123-ghj-456</td>
                                 </tr>
                                                                 <tr>
                                     <td>/subscriptions/4970d23e-ed41-4670-9c19-02a1d2808dd9/resourceGroups/TEST/providers/Microsoft.Compute/virtualMachines/testvm</td>
                                     <td>4970d23e-ed41-4670-9c19-02a1d2808dd9</td>
                                     <td>TEST</td>
                                     <td>Microsoft.Compute/VirtualMachines</td>
-                                    <td>testvm</td>
+                                    <td>abc-123-ghj-456</td>
                                 </tr>
                                                                 <tr>
                                     <td>/subscriptions/4970d23e-ed41-4670-9c19-02a1d2808dd9/resourceGroups/Dev2/providers/Microsoft.Compute/virtualMachines/testvm2</td>
                                     <td>4970d23e-ed41-4670-9c19-02a1d2808dd9</td>
                                     <td>Dev2</td>
                                     <td>Microsoft.Compute/VirtualMachines</td>
-                                    <td>testvm2</td>
+                                    <td>wer-345-tyu-789</td>
                                 </tr>
                                                                 <tr>
                                     <td>/subscriptions/4970d23e-ed41-4670-9c19-02a1d2808dd9/resourceGroups/TEST/providers/Microsoft.Compute/virtualMachines/testvm</td>
                                     <td>4970d23e-ed41-4670-9c19-02a1d2808dd9</td>
                                     <td>TEST</td>
                                     <td>Microsoft.Compute/VirtualMachines</td>
-                                    <td>testvm</td>
+                                    <td>abc-123-ghj-456</td>
                                 </tr>
                                                                 <tr>
                                     <td>/subscriptions/4970d23e-ed41-4670-9c19-02a1d2808dd9/resourceGroups/TEST/providers/Microsoft.Compute/virtualMachines/testvm</td>
                                     <td>4970d23e-ed41-4670-9c19-02a1d2808dd9</td>
                                     <td>TEST</td>
                                     <td>Microsoft.Compute/VirtualMachines</td>
-                                    <td>testvm</td>
+                                    <td>abc-123-ghj-456</td>
                                 </tr>
                                                                 <tr>
                                     <td>/subscriptions/4970d23e-ed41-4670-9c19-02a1d2808dd9/resourceGroups/TEST/providers/Microsoft.Compute/virtualMachines/testvm</td>
                                     <td>4970d23e-ed41-4670-9c19-02a1d2808dd9</td>
                                     <td>TEST</td>
                                     <td>Microsoft.Compute/VirtualMachines</td>
-                                    <td>testvm</td>
+                                    <td>abc-123-ghj-456</td>
                                 </tr>
                                                                 <tr>
                                     <td>/subscriptions/4970d23e-ed41-4670-9c19-02a1d2808dd9/resourceGroups/TEST/providers/Microsoft.Compute/virtualMachines/testvm</td>
                                     <td>4970d23e-ed41-4670-9c19-02a1d2808dd9</td>
                                     <td>TEST</td>
                                     <td>Microsoft.Compute/VirtualMachines</td>
-                                    <td>testvm</td>
+                                    <td>abc-123-ghj-456</td>
                                 </tr>
                                                                 <tr>
                                     <td>/subscriptions/4970d23e-ed41-4670-9c19-02a1d2808dd9/resourceGroups/TEST/providers/Microsoft.Compute/virtualMachines/testvm</td>
                                     <td>4970d23e-ed41-4670-9c19-02a1d2808dd9</td>
                                     <td>TEST</td>
                                     <td>Microsoft.Compute/VirtualMachines</td>
-                                    <td>testvm</td>
+                                    <td>abc-123-ghj-456</td>
                                 </tr>
                                                                 <tr>
                                     <td>/subscriptions/4970d23e-ed41-4670-9c19-02a1d2808dd9/resourceGroups/TEST/providers/Microsoft.Compute/virtualMachines/testvm</td>
                                     <td>4970d23e-ed41-4670-9c19-02a1d2808dd9</td>
                                     <td>TEST</td>
                                     <td>Microsoft.Compute/VirtualMachines</td>
-                                    <td>testvm</td>
+                                    <td>abc-123-ghj-456</td>
                                 </tr>
                                                                 <tr>
                                     <td>/subscriptions/4970d23e-ed41-4670-9c19-02a1d2808dd9/resourceGroups/Dev2/providers/Microsoft.Compute/virtualMachines/testvm2</td>
                                     <td>4970d23e-ed41-4670-9c19-02a1d2808dd9</td>
                                     <td>Dev2</td>
                                     <td>Microsoft.Compute/VirtualMachines</td>
-                                    <td>testvm2</td>
+                                    <td>wer-345-tyu-789</td>
                                 </tr>
                                                             </tbody>
                         </table>
