@@ -16,9 +16,8 @@ export default class IssueReportGenerationWorkflow {
     context: InvocationContext;
     appconfig: AppConfig;
 
-    constructor(context: InvocationContext, appconfig: AppConfig) {
+    constructor(appconfig: AppConfig) {
         this.sidt = new SendIssueDecisionTree();
-        this.context = context;
         this.appconfig = appconfig;
     }
 
@@ -29,17 +28,21 @@ export default class IssueReportGenerationWorkflow {
         //techpass incidents
         const tpSubs = await this.getSubscriptionsByServicePrincipalRBAC(globalThis.appconfig.TechPassClientSecretCredential)
 
-        const tpIssues = []; //await this.getTechPassIssues(tpSubs, this.context);
+        const tpIssues = await this.getTechPassIssues(tpSubs);
 
-        const tpIssuesToSend = await this.sidt.determineShouldSendIssues(this.context, tpIssues)
+        const tpIssuesToSend = await this.sidt.determineShouldSendIssues(tpIssues)
+
+        globalThis.funcContext.trace(`TechPass issues count to send: ${tpIssuesToSend.length}`)
 
         //wog incidents
 
         const wogSubs = await this.getSubscriptionsByServicePrincipalRBAC(globalThis.appconfig.wogClientSecretCredential)
 
-        const wogIssues = await this.getWOGIssues(wogSubs, this.context)
+        const wogIssues = await this.getWOGIssues(wogSubs)
 
-        const wogIssuesToSend = await this.sidt.determineShouldSendIssues(this.context, wogIssues)
+        const wogIssuesToSend = await this.sidt.determineShouldSendIssues(wogIssues)
+
+        globalThis.funcContext.trace(`WOG issues count to send: ${wogIssuesToSend.length}`)
 
         //issue to HTML template and send email
         const htmlRenderer = new AzureIncidentReportRenderer();
@@ -52,12 +55,12 @@ export default class IssueReportGenerationWorkflow {
             const html: string = htmlRenderer.render(tpi);
 
             //local testing only
-            await fs.promises.writeFile('C:\\Users\\weixzha\\Desktop\\tp.html', html, {encoding:'utf8',flag:'w'});
-            
-
-           globalThis.funcContext.info(`At ${new Date}, sending HTML report as email for TechPass related incidents ${tpi.TrackingId}`);
+            //await fs.promises.writeFile('C:\\Users\\weixzha\\Desktop\\tp.html', html, {encoding:'utf8',flag:'w'});
+        
 
            await emailSink.send(html);
+
+           globalThis.funcContext.trace(`Sent HTML report as email for TechPass related incidents ${tpi.TrackingId}`);
         }
 
         for (const wogi of wogIssuesToSend) {
@@ -65,35 +68,33 @@ export default class IssueReportGenerationWorkflow {
            const html: string = htmlRenderer.render(wogi);
 
            //local testing only
-           await fs.promises.writeFile('C:\\Users\\weixzha\\Desktop\\wog.html', html, {encoding:'utf8',flag:'w'});
-
-           globalThis.funcContext.info(`At ${new Date}, sending HTML report as email for WOG related incidents ${wogi.TrackingId}`);
+           //await fs.promises.writeFile('C:\\Users\\weixzha\\Desktop\\wog.html', html, {encoding:'utf8',flag:'w'});
 
            await emailSink.send(html);
 
-           
+           globalThis.funcContext.trace(`Sent HTML report as email for WOG related incidents ${wogi.TrackingId}`);
+
         }
     }
 
-    async getTechPassIssues(subscriptions: Subscription[], context: InvocationContext) : Promise<ServiceIssue[]> {
+    async getTechPassIssues(subscriptions: Subscription[]) : Promise<ServiceIssue[]> {
         const techpassIR = new IssueFetcher(
             globalThis.techpassTenantName,
             globalThis.appconfig.TechPassClientSecretCredential, 
             subscriptions,
-            appconfig, context);
+            appconfig);
     
         const issues = await techpassIR.getIssues();
     
         return issues;
     }
     
-    async getWOGIssues(subscriptions: Subscription[], context: InvocationContext) : Promise<ServiceIssue[]> {
+    async getWOGIssues(subscriptions: Subscription[]) : Promise<ServiceIssue[]> {
         const wogIR = new IssueFetcher(
             globalThis.wogTenantName,
             globalThis.appconfig.wogClientSecretCredential,
             subscriptions,
-            appconfig, 
-            context);
+            appconfig);
     
         const issues = await wogIR.getIssues();
     

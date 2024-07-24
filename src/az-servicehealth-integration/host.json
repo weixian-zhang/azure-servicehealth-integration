@@ -9,6 +9,7 @@
     "maxDequeueCount": 1
   },
   "logging": {
+    "fileLoggingMode": "always",
     "applicationInsights": {
       "samplingSettings": {
           "isEnabled": true,
@@ -19,7 +20,9 @@
     },
     "logLevel": {
       "default": "Error",
-      "Host.Results": "Error"
+      "Host.Results": "Error",
+      "Function": "Trace",
+      "Host.Aggregator": "Trace"
     }
   },
   "telemetryMode": "openTelemetry",

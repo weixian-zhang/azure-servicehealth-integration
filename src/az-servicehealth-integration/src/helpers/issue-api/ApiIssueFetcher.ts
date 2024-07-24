@@ -27,10 +27,9 @@ export default class ApiIssueFetcher implements IIssueFetcher {
     subscriptions: Subscription[];
     azcred: ClientSecretCredential;
 
-    constructor(tenantName: string, azcred: ClientSecretCredential, subscriptions: Subscription[], appconfig: AppConfig, context: InvocationContext) {
+    constructor(tenantName: string, azcred: ClientSecretCredential, subscriptions: Subscription[], appconfig: AppConfig) {
         this.tenantName = tenantName;
         this.appconfig = appconfig;
-        this.context = context;
         this.subscriptions = subscriptions;
         this.azcred = azcred;
     }
@@ -50,7 +49,7 @@ export default class ApiIssueFetcher implements IIssueFetcher {
             return serviceIssues
         
         } catch (e) {
-            this.context.error(e.message);
+            globalThis.funcContext.error(e.message);
             throw e;
         }
 

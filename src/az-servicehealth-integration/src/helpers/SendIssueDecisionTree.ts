@@ -1,20 +1,14 @@
-import {DB, TrackedImpactedService, TrackedIssue} from './db/DB';
+import {DB} from './db/DB';
 import * as _ from 'lodash';
 import { ServiceIssue } from './issue-api/ServiceIssueModels';
-import { InvocationContext } from '@azure/functions/types/InvocationContext';
-import { promises } from 'dns';
 
-class ImpactedServiceMapItem {
-    LastUpdateTime: number;
-    Status: string
-}
+
 
 // **Asumption: when service issue reaches this stage, ImpactedServices property will never be empty
 // impacted service region will either be Global or SEA
 export default class SendIssueDecisionTree {
     Resolved: string = "Resolved";
     Active: string = "Active";
-    context: InvocationContext;
     db: DB;
 
     constructor() {
@@ -47,10 +41,8 @@ export default class SendIssueDecisionTree {
                     // status to Resolved
                     // lastUpdatedTime to latest updated time from issue
                 // mark-issue-to-send
-    public async determineShouldSendIssues(context: InvocationContext, issues: ServiceIssue[]): Promise<ServiceIssue[]> {
+    public async determineShouldSendIssues(issues: ServiceIssue[]): Promise<ServiceIssue[]> {
         
-
-        this.context = context;
 
         if (_.isEmpty(issues)) {
             return []
@@ -121,10 +113,10 @@ export default class SendIssueDecisionTree {
                         }
                         // impacted service has newer "lastUpdateTime"
                         else if (svc.SEARegionOrGlobalLastUpdateTime.valueOf() > impactedSvc.LastUpdateTime) {
-                            this.context.info
-                                (`
+                            globalThis.funcContext.trace
+                                (`at SendIssueDecisionTree: 
                                 Issue with Tracking Id ${issue.TrackingId} is an existing issue, with new update at ${new Date(issue.LastUpdateTime )}.
-                                Previous update was at ${new Date(issue.LastUpdateTime)}} mark for sending.
+                                Previous update was at ${new Date(issue.LastUpdateTime)}}, therefore issue mark for re-sending.
                                 `)
                             
                             await this.db.updateImpactedServiceLastUpdateTime(trackedIssue, svc.ImpactedService, svc.SEARegionOrGlobalLastUpdateTime);

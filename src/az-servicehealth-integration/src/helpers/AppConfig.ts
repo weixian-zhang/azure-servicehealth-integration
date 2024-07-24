@@ -31,6 +31,7 @@ export default class AppConfig {
     EMailConfig: EMailConfig;
     AzureAppInsightsConnString: string = '';
     incidentDayFromNow: number = 5 //if HTTP Func does not provide query incidentStartFromDate, this config will be used
+    httpGatewayURL: string = '' //used by func_timer_http_client only
 
     
     //use for local testing only, using Azure Communication Service email
@@ -43,8 +44,6 @@ export default class AppConfig {
 
         try {
             
-            //appconfig.incidentQueryStartFromDate = incidentQueryStartFromDate;
-
             appconfig.TechPassClientId  = process.env.GCC_TECHPASS_CLIENT_ID;
             appconfig.TechPassClientSecret  = process.env.GCC_TECHPASS_CLIENT_SECRET;
             appconfig.TechPassTenantId  = process.env.GCC_TECHPASS_TENANT_ID;
@@ -70,10 +69,12 @@ export default class AppConfig {
 
             appconfig.AzureCommunicationServiceConnString = process.env.AZURE_COMM_SERVICE_CONN_STRING;
 
-            appconfig.incidentDayFromNow = parseInt(process.env.SERVICE_HEALTH_INTEGRATION__INCIDENT_DAY_FROM_NOW)
+            appconfig.incidentDayFromNow = parseInt(process.env.SERVICE_HEALTH_INTEGRATION_INCIDENT_DAY_FROM_NOW)
 
             // load email config
             appconfig.EMailConfig = AppConfig.loadEmailConfig();
+
+            appconfig.httpGatewayURL = process.env.HTTP_GATEWAY_URL;
 
             return appconfig
 

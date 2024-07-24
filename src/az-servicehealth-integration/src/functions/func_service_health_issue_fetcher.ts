@@ -32,24 +32,22 @@ export async function func_service_health_issue_fetcher(data: QueueData, context
 
     try {
 
-        context.info(`At ${new Date}, func_service_health_issue_fetcher received queue data to fetch incidents if any`);
-
         globalThis.funcContext = context;
+
+        globalThis.funcContext.trace(`func_service_health_issue_fetcher received request to fetch incident if any`);
         
         initGlobalVariables(data.incidentStartFromDate);
 
-        const wfm = new SendIssueWorkflowManager(context, globalThis.appconfig);
+        const wfm = new SendIssueWorkflowManager(globalThis.appconfig);
 
         await wfm.generateIssueReport();
 
-        context.info(`At ${new Date}, func_service_health_issue_fetcher completed task`);
+        globalThis.funcContext.trace(`Report generation completed`);
     }
     catch(e){
         
         // if app insights is enabled at function, will log to app insights.Traces
-        context.error(`error message: ${e.message},
-        ${e.stack}
-        `)
+        globalThis.funcContext.error(`error message: ${e.message}, ${e.stack}`)
 
         return {
             status: 500,
