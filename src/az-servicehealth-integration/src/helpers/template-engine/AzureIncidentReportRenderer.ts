@@ -8,15 +8,15 @@ export default class AzureIncidentReportRenderer {
     private tplPath = __dirname;
     private tplMain = "\\html-incident-report.njk";
     private nunjucksEnv: Environment = null;
-    private tplMainIncidentReport: string = '';
+    private htmlReportTemplate: string = '';
 
     constructor() {
         
     }
     
     public async init() {
-        this.tplMainIncidentReport = await fs.promises.readFile(this.tplPath + this.tplMain, "utf8");
-        //this.tplMainIncidentReport = this.tplMainIncidentReport.replace(/\r|\n/g, '');
+        this.htmlReportTemplate = await fs.promises.readFile(this.tplPath + this.tplMain, "utf8");
+        //this.htmlReportTemplate = this.htmlReportTemplate.replace(/\r|\n/g, '');
 
         this.nunjucksEnv = nunjucks.configure(this.tplPath, {
             autoescape: false,
@@ -39,7 +39,7 @@ export default class AzureIncidentReportRenderer {
   }
 
     render(issue: ServiceIssue) {
-        let htmlReport = this.nunjucksEnv.renderString(this.tplMainIncidentReport, issue);
+        let htmlReport = this.nunjucksEnv.renderString(this.htmlReportTemplate, issue);
       return htmlReport;
     }
 }

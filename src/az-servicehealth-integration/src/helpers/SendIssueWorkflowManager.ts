@@ -1,5 +1,5 @@
 import { InvocationContext } from "@azure/functions";
-import IssueSendOnceStateManager from "./SendIssueDecisionTree";
+import SendIssueDecisionTree from "./SendIssueDecisionTree";
 import IssueFetcher from "./issue-api/IssueFetcher";
 import { ServiceIssue, Subscription } from "./issue-api/ServiceIssueModels";
 import AppConfig from "./AppConfig";
@@ -12,24 +12,26 @@ import { IEmailSink } from "./send-sink/IEmailSink";
 import * as opentelemetry from "@opentelemetry/api";
 
 export default class IssueReportGenerationWorkflow {
-    isosm: IssueSendOnceStateManager;
+    sidt: SendIssueDecisionTree;
     context: InvocationContext;
     appconfig: AppConfig;
 
     constructor(context: InvocationContext, appconfig: AppConfig) {
-        this.isosm = new IssueSendOnceStateManager();
+        this.sidt = new SendIssueDecisionTree();
         this.context = context;
         this.appconfig = appconfig;
     }
 
     public async generateIssueReport() {
+
+        await this.sidt.init(); // init tabel storage
       
         //techpass incidents
         const tpSubs = await this.getSubscriptionsByServicePrincipalRBAC(globalThis.appconfig.TechPassClientSecretCredential)
 
         const tpIssues = []; //await this.getTechPassIssues(tpSubs, this.context);
 
-        const tpIssuesToSend = await this.isosm.determineShouldSendIssues(this.context, tpIssues)
+        const tpIssuesToSend = await this.sidt.determineShouldSendIssues(this.context, tpIssues)
 
         //wog incidents
 
@@ -37,7 +39,7 @@ export default class IssueReportGenerationWorkflow {
 
         const wogIssues = await this.getWOGIssues(wogSubs, this.context)
 
-        const wogIssuesToSend = await this.isosm.determineShouldSendIssues(this.context, wogIssues)
+        const wogIssuesToSend = wogIssues; //await this.sidt.determineShouldSendIssues(this.context, wogIssues)
 
         //issue to HTML template and send email
         const htmlRenderer = new AzureIncidentReportRenderer();
@@ -64,12 +66,14 @@ export default class IssueReportGenerationWorkflow {
 
            //local testing only
            await fs.promises.writeFile('C:\\Users\\weixzha\\Desktop\\wog.html', html, {encoding:'utf8',flag:'w'});
+           
+           return;
 
            globalThis.funcContext.info(`At ${new Date}, sending email with HTML report for WOG related incidents ${wogi.TrackingId}`);
 
            await emailSink.send(html);
 
-           return;
+           
         }
     }
 

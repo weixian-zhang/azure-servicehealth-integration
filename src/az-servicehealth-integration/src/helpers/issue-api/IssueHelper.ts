@@ -137,8 +137,11 @@ export default class IssueHelper {
         const ir = new ImpactedResource();
         ir.Id = id;
         ir.SubscriptionId =  rArr[2];
-        ir.ResourceType = _.isNil(impactedRsc.properties.targetResourceType) ? impactedRsc.targetResourceType : impactedRsc.properties.targetResourceType;
-        ir.ResourceName =  _.last(rArr);
+        ir.ResourceType = IssueHelper.getNonNullValue(
+            _.get(impactedRsc, 'properties.targetResourceType', ''),
+            _.get(impactedRsc, 'targetResourceType', ''),
+            '');
+        ir.ResourceName =  impactedRsc.name;
         ir.ResourceGroup = rArr.reverse()[4];
         
         issueBag.get(trackingId).ImpactedResources.push(ir);
