@@ -1,8 +1,9 @@
 # azure-servicehealth-integration
 
 ### What this App does?  
-* Fetches Azure Service Health [incidents](https://learn.microsoft.com/en-us/azure/service-health/service-health-notifications-properties) and [impacted resources](https://learn.microsoft.com/en-us/azure/service-health/impacted-resources-security) for 2 separate Entra tenants
+* Generates HTML report and sends as email for Azure Service Health [incidents](https://learn.microsoft.com/en-us/azure/service-health/service-health-notifications-properties) and [impacted resources](https://learn.microsoft.com/en-us/azure/service-health/impacted-resources-security) for 2 Entra tenants
 * fetches incidents using [Events Api - List by Subscription Id](https://learn.microsoft.com/en-us/rest/api/resourcehealth/events/list-by-subscription-id?view=rest-resourcehealth-2022-10-01&tabs=HTTP)
+* fetches impacted resources using [Impacted Resources - List By Subscription Id And Event Id](https://learn.microsoft.com/en-us/rest/api/resourcehealth/impacted-resources/list-by-subscription-id-and-event-id?view=rest-resourcehealth-2022-10-01&tabs=HTTP)
 * a single incident (a.k.a service issue) can be identified uniquely by its Tracking Id.
 * Each incident can contain multiple impacted services, and each impacted service can contain description for multiple regions.  
   Each region can contain multiple description and updates.  
@@ -50,8 +51,10 @@
 * Stack = Node.js
 * Node.Js version = Node.js 18 LTA
 * Platform = <b>64 Bit</b>
+* Function App uses Managed Identity (or vscode sign-in identity for local dev) to authenticate against [Azure Storage Queue](https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-storage-queue-trigger?tabs=python-v2%2Cisolated-process%2Cnodejs-v4%2Cextensionv5&pivots=programming-language-javascript#identity-based-connections) and [Table Storage](https://learn.microsoft.com/en-us/azure/service-connector/how-to-integrate-storage-table?tabs=nodejs#default-environment-variable-names-or-application-properties-and-sample-code)
 
-### Environment Variables
+### Environment Variables  
+
 * SERVICE_HEALTH_INTEGRATION_IS_DEVTEST=false
 * AZURE_STORAGE_QUEUE_CONNECTION_STRING
 * APPLICATIONINSIGHTS_CONNECTION_STRING
@@ -63,18 +66,21 @@
 * GCC_TECHPASS_CLIENT_SECRET
 * GCC_TECHPASS_TENANT_ID
 * GCC_TECHPASS_TENANT_NAME
-* AZURE_STORAGE_CONNECTION_STRING (AZure Function required storage account)
-* AZURE_COMM_SERVICE_CONN_STRING (using Azure Communication Service - email for local testing only)
+* AzureWebJobsStorage: {Azure storage conection string required by Function app}
+* AZURE_STORAGEQUEUE_RESOURCEENDPOINT: "https://{storage name}.queue.core.windows.net",
+* AZURE_STORAGETABLE_RESOURCEENDPOINT": "https://{storage name}.table.core.windows.net",
+* StorageQueueIdentityAuth__queueServiceUri": "https://{storage name}.queue.core.windows.net/",
 * SERVICE_HEALTH_INTEGRATION_EMAIL_CONFIG (email config in Json format)
   e.g:
+  example uses [Azure Communication Services SMTP](https://learn.microsoft.com/en-us/azure/communication-services/quickstarts/email/send-email-smtp/smtp-authentication)  
   <code>
       {
-          &nbsp;"host": "",
+          &nbsp;"host": "smtp.azurecomm.net",
           &nbsp;"port": 587,
-          &nbsp;"username": "",
-          &nbsp;"password": "",
+          &nbsp;"username": "{Azure comm service name}.{Entra app client id}.{Entra tenant id}",
+          &nbsp;"password": "{Entra app client secret}",
           &nbsp;"subject": "Azure Incident Report",
-          &nbsp;"senderAddress": "674edb48-246c-4119-ac71-7eabf6c96aa5.azurecomm.net",
+          &nbsp;"senderAddress": "{from/sender email address}",
           &nbsp;"recipients": {
             &nbsp;&nbsp;&nbsp;&nbsp;"to": ["weixzha@microsoft.com"],
             &nbsp;&nbsp;&nbsp;&nbsp;"cc": [],
