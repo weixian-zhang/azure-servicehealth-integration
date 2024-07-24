@@ -3,8 +3,8 @@ import { ImpactUpdates, ImpactedResource, ImpactedService, ServiceIssue, Subscri
 import * as _ from 'lodash';
 import { SubscriptionsGetOptionalParams } from "@azure/arm-resources-subscriptions";
 
-export default class IssueHelper {
-    static regionToFilter = "Southeast Asia";
+export default class IssuePropMapper {
+    static regionToFilter = ["Southeast Asia"];
     static levelMap = {
         'Error': 'Widespread issues accessing multiple services across multiple regions are impacting a broad set of customers',
         'Warning': 'Issues accessing specific services and/or specific regions are impacting a subset of customers',
@@ -12,8 +12,8 @@ export default class IssueHelper {
     }
 
     static getLevelDescription(level: string) {
-        if (level in IssueHelper.levelMap) {
-            return IssueHelper.levelMap[level];
+        if (level in IssuePropMapper.levelMap) {
+            return IssuePropMapper.levelMap[level];
         }
         return '';
     }
@@ -32,27 +32,27 @@ export default class IssueHelper {
 
         si.TenantName = tenantName;
         si.TrackingId = currIssue.name || '';
-        si.OverallStatus = IssueHelper.getNonNullValue(_.get(currIssue, 'status'), _.get(currIssue, 'properties.status'),  ''); //_.isNil(currIssue.status) ? currIssue.properties.status : currIssue.status;
-        si.Title = IssueHelper.getNonNullValue(_.get(currIssue, 'title'), _.get(currIssue, 'properties.title'), ''); //!_.isNil(currIssue.title) ? currIssue.title : !_.isNil(currIssue.properties.title) ?  currIssue.properties.title: '';
-        si.Summary = IssueHelper.getNonNullValue(_.get(currIssue, 'summary'), _.get(currIssue, 'properties.summary'), ''); //!_.isNil(currIssue.summary) ? currIssue.summary : !_.isNil(currIssue.properties.summary) ? currIssue.properties.summary: '';
-        si.Description = IssueHelper.getNonNullValue(_.get(currIssue, 'description'), _.get(currIssue, 'properties.description'), '');
-        si.ImpactStartTime =  IssueHelper.getNonNullValue(_.get(currIssue, 'impactStartTime'), _.get(currIssue, 'properties.impactStartTime'), ''); //!_.isNil(currIssue.impactStartTime) ? new Date(currIssue.impactStartTime) : _.isNil(currIssue.properties.impactStartTime) ? new Date(currIssue.properties.impactStartTime): null;
-        si.ImpactMitigationTime = IssueHelper.getNonNullValue(_.get(currIssue, 'impactMitigationTime'), _.get(currIssue, 'properties.lastUpdateTime'), ''); //!_.isNil(currIssue.impactMitigationTime) ? new Date(currIssue.impactMitigationTime) : !_.isNil(currIssue.properties.impactMitigationTime) ? new Date(currIssue.properties.impactMitigationTime): null;
-        si.LastUpdateTime =  IssueHelper.getNonNullValue(_.get(currIssue, 'lastUpdateTime'), _.get(currIssue, 'properties.lastUpdateTime'), ''); //!_.isNil(currIssue.lastUpdateTime) ? new Date(currIssue.lastUpdateTime) : !_.isNil(currIssue.properties.lastUpdateTime) ? new Date(currIssue.properties.lastUpdateTime) : null;
+        si.OverallStatus = IssuePropMapper.getNonNullValue(_.get(currIssue, 'status'), _.get(currIssue, 'properties.status'),  ''); //_.isNil(currIssue.status) ? currIssue.properties.status : currIssue.status;
+        si.Title = IssuePropMapper.getNonNullValue(_.get(currIssue, 'title'), _.get(currIssue, 'properties.title'), ''); //!_.isNil(currIssue.title) ? currIssue.title : !_.isNil(currIssue.properties.title) ?  currIssue.properties.title: '';
+        si.Summary = IssuePropMapper.getNonNullValue(_.get(currIssue, 'summary'), _.get(currIssue, 'properties.summary'), ''); //!_.isNil(currIssue.summary) ? currIssue.summary : !_.isNil(currIssue.properties.summary) ? currIssue.properties.summary: '';
+        si.Description = IssuePropMapper.getNonNullValue(_.get(currIssue, 'description'), _.get(currIssue, 'properties.description'), '');
+        si.ImpactStartTime =  IssuePropMapper.getNonNullValue(_.get(currIssue, 'impactStartTime'), _.get(currIssue, 'properties.impactStartTime'), ''); //!_.isNil(currIssue.impactStartTime) ? new Date(currIssue.impactStartTime) : _.isNil(currIssue.properties.impactStartTime) ? new Date(currIssue.properties.impactStartTime): null;
+        si.ImpactMitigationTime = IssuePropMapper.getNonNullValue(_.get(currIssue, 'impactMitigationTime'), _.get(currIssue, 'properties.lastUpdateTime'), ''); //!_.isNil(currIssue.impactMitigationTime) ? new Date(currIssue.impactMitigationTime) : !_.isNil(currIssue.properties.impactMitigationTime) ? new Date(currIssue.properties.impactMitigationTime): null;
+        si.LastUpdateTime =  IssuePropMapper.getNonNullValue(_.get(currIssue, 'lastUpdateTime'), _.get(currIssue, 'properties.lastUpdateTime'), ''); //!_.isNil(currIssue.lastUpdateTime) ? new Date(currIssue.lastUpdateTime) : !_.isNil(currIssue.properties.lastUpdateTime) ? new Date(currIssue.properties.lastUpdateTime) : null;
         si.LastUpdateTimeEpoch = si.LastUpdateTime.valueOf();
-        si.Level =  IssueHelper.getNonNullValue(_.get(currIssue, 'level'), _.get(currIssue, 'properties.level'), ''); //!_.isNil(currIssue.level) ? currIssue.level : !_.isNil(currIssue.properties.level) ? currIssue.properties.level: '';
-        si.LevelDescription = IssueHelper.getLevelDescription(si.Level);
+        si.Level =  IssuePropMapper.getNonNullValue(_.get(currIssue, 'level'), _.get(currIssue, 'properties.level'), ''); //!_.isNil(currIssue.level) ? currIssue.level : !_.isNil(currIssue.properties.level) ? currIssue.properties.level: '';
+        si.LevelDescription = IssuePropMapper.getLevelDescription(si.Level);
         si.ImpactedServices = new Array();
         si.ImpactedResources = new Array();
         si.ImpactedSubscriptions = new Array<Subscription>();
 
-        const impact = IssueHelper.getNonNullValue(_.get(currIssue, 'impact'), _.get(currIssue, 'properties.impact'), []);
+        const impact = IssuePropMapper.getNonNullValue(_.get(currIssue, 'impact'), _.get(currIssue, 'properties.impact'), []);
 
         impact.forEach(impact => {
 
             impact.impactedRegions.forEach(region => {
 
-                if (region.impactedRegion == this.regionToFilter || region.impactedRegion == "Global") {
+                if (this.regionToFilter.includes(region.impactedRegion ) || region.impactedRegion == "Global") {
 
                     const impactedSvc = new ImpactedService();
 
@@ -97,7 +97,7 @@ export default class IssueHelper {
         // is previously collected issue
         if (issueBag.has(si.TrackingId)) {
 
-            IssueHelper.groupImpactedServicesByTrackingId(si, issueBag);
+            IssuePropMapper.groupImpactedServicesByTrackingId(si, issueBag);
         }
         else
         {
@@ -127,9 +127,9 @@ export default class IssueHelper {
     static createImpactedResourceInIssueBag
         (impactedRsc: any, trackingId: string, issueBag: Map<string, ServiceIssue>) {
         
-        const id = IssueHelper.getNonNullValue(
+        const id = IssuePropMapper.getNonNullValue(
+            _.get(impactedRsc, 'targetResourceId', ''),
             _.get(impactedRsc, 'properties.targetResourceId', ''),
-            _.get(impactedRsc, 'id', ''),
             'error capturing resource Id');
         
         const rArr: any[] = id.split("/");
@@ -137,7 +137,7 @@ export default class IssueHelper {
         const ir = new ImpactedResource();
         ir.Id = id;
         ir.SubscriptionId =  rArr[2];
-        ir.ResourceType = IssueHelper.getNonNullValue(
+        ir.ResourceType = IssuePropMapper.getNonNullValue(
             _.get(impactedRsc, 'properties.targetResourceType', ''),
             _.get(impactedRsc, 'targetResourceType', ''),
             '');
@@ -156,7 +156,7 @@ export default class IssueHelper {
         const defaultVal = args[args.length - 1]
 
         for (var arg of args) {
-            if (!_.isNil(arg)) {
+            if (!_.isNil(arg) && !_.isEmpty(arg)) {
                 return arg
             }
         } 

@@ -1,4 +1,4 @@
-import IssueHelper from "./IssueHelper";
+import IssuePropMapper from "./IssuePropMapper";
 import IIssueFetcher from "./IIssueFetcher";
 import { ServiceIssue, ImpactedService, ImpactUpdates, ImpactedResource, Subscription } from "./ServiceIssueModels";
 import * as fs from 'fs';
@@ -31,7 +31,7 @@ export default class MockIssueGenerator implements IIssueFetcher {
 
             const trackingId = currIssue.name;
 
-            IssueHelper.createIssueInIssueBag(
+            IssuePropMapper.createIssueInIssueBag(
                 wogTenantName, 
                 new Subscription('213-axx-000001-xxaa222333', 
                 'mesos001-11-sub-name'), 
@@ -61,7 +61,7 @@ export default class MockIssueGenerator implements IIssueFetcher {
                 continue;
             }
 
-            IssueHelper.createImpactedResourceInIssueBag(ip, trackingId, issueBag)
+            IssuePropMapper.createImpactedResourceInIssueBag(ip, trackingId, issueBag)
         }
     }
 
@@ -76,7 +76,7 @@ export default class MockIssueGenerator implements IIssueFetcher {
             //     continue;
             // }
             
-            // const [seaRegionImpacted, si] = IssueHelper.createServiceIssue(wogTenantName, issue);
+            // const [seaRegionImpacted, si] = IssuePropMapper.createServiceIssue(wogTenantName, issue);
 
             // if (!seaRegionImpacted) {
             //     continue;
@@ -85,7 +85,7 @@ export default class MockIssueGenerator implements IIssueFetcher {
             // // is previously collected issue
             // if (si.TrackingId in serviceIssues) {
 
-            //     IssueHelper.groupImpactedServicesByTrackingId(si, serviceIssues);
+            //     IssuePropMapper.groupImpactedServicesByTrackingId(si, serviceIssues);
             // }
             // else
             // {
@@ -105,7 +105,7 @@ export default class MockIssueGenerator implements IIssueFetcher {
             // si.LastUpdateTime = new Date(issue.properties.lastUpdateTime);
             // si.LastUpdateTimeEpoch = si.LastUpdateTime.valueOf();
             // si.Level = issue.properties.Level;
-            // si.LevelDescription = IssueHelper.getLevelDescription(si.Level);
+            // si.LevelDescription = IssuePropMapper.getLevelDescription(si.Level);
             // si.ImpactedServices = new Array();
             // si.ImpactedResources = new Array();
 

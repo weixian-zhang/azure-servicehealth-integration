@@ -39,7 +39,7 @@ export default class IssueReportGenerationWorkflow {
 
         const wogIssues = await this.getWOGIssues(wogSubs, this.context)
 
-        const wogIssuesToSend = wogIssues; //await this.sidt.determineShouldSendIssues(this.context, wogIssues)
+        const wogIssuesToSend = await this.sidt.determineShouldSendIssues(this.context, wogIssues)
 
         //issue to HTML template and send email
         const htmlRenderer = new AzureIncidentReportRenderer();
@@ -55,7 +55,7 @@ export default class IssueReportGenerationWorkflow {
             await fs.promises.writeFile('C:\\Users\\weixzha\\Desktop\\tp.html', html, {encoding:'utf8',flag:'w'});
             
 
-           globalThis.funcContext.info(`At ${new Date}, sending email with HTML report for WOG related incidents ${tpi.TrackingId}`);
+           globalThis.funcContext.info(`At ${new Date}, sending HTML report as email for TechPass related incidents ${tpi.TrackingId}`);
 
            await emailSink.send(html);
         }
@@ -66,10 +66,8 @@ export default class IssueReportGenerationWorkflow {
 
            //local testing only
            await fs.promises.writeFile('C:\\Users\\weixzha\\Desktop\\wog.html', html, {encoding:'utf8',flag:'w'});
-           
-           return;
 
-           globalThis.funcContext.info(`At ${new Date}, sending email with HTML report for WOG related incidents ${wogi.TrackingId}`);
+           globalThis.funcContext.info(`At ${new Date}, sending HTML report as email for WOG related incidents ${wogi.TrackingId}`);
 
            await emailSink.send(html);
 

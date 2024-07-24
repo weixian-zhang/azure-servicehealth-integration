@@ -87,7 +87,7 @@ export default class SendIssueDecisionTree {
 
                 // issue status change from Active to Resolved
                 if (issue.OverallStatus == this.Resolved && trackedIssue.Status == this.Active) {
-                    await this.db.updateIssueResolved(issue.TrackingId, issue.LastUpdateTime)
+                    await this.db.updateIssueResolved(trackedIssue, issue.LastUpdateTime)
                     issuesToSend.push(issue);
                     continue;
                 }
@@ -98,35 +98,36 @@ export default class SendIssueDecisionTree {
                 // ** only looking at SEA region impacted services only
                 if (issue.OverallStatus == this.Active && trackedIssue.Status == this.Active) {
 
-                    const trackedImpactedServices: Map<string, TrackedImpactedService> =
+                    const [trackedIssue, trackedImpactedServices] =
                         await this.db.getImpactedServices(issue.TrackingId);//Map<string, TrackedImpactedService> = await this.db.getImpactedServices(issue.TrackingId);
 
                     // all issue at this point is "tracked", and MUST have SEA region impacted services
                     for (const svc of issue.ImpactedServices ) {
 
                         //const trackedIS = impactedServices.get(svc.ImpactedService);
-                        const trackedIS = trackedImpactedServices.get(svc.ImpactedService);
+                        const impactedSvc = trackedImpactedServices.get(svc.ImpactedService);
 
                         // deciding whether to throw error as there is no possibility to be null
-                        if (_.isNil(trackedIS)) {
+                        if (_.isNil(impactedSvc)) {
                             //TODO throw error or not
                             continue;
                         }
 
+                        
+                        if (svc.SEARegionOrGlobalStatus == this.Resolved && impactedSvc.Status == this.Active) {
+                            await this.db.updateImpactedServiceResolved(trackedIssue, svc.ImpactedService, svc.SEARegionOrGlobalLastUpdateTime);
+                            
+                            issuesToSend.push(issue);
+                        }
                         // impacted service has newer "lastUpdateTime"
-                        if (svc.SEARegionOrGlobalLastUpdateTime.valueOf() > trackedIS.LastUpdateTime) {
+                        else if (svc.SEARegionOrGlobalLastUpdateTime.valueOf() > impactedSvc.LastUpdateTime) {
                             this.context.info
                                 (`
                                 Issue with Tracking Id ${issue.TrackingId} is an existing issue, with new update at ${new Date(issue.LastUpdateTime )}.
                                 Previous update was at ${new Date(issue.LastUpdateTime)}} mark for sending.
                                 `)
                             
-                            await this.db.updateImpactedServiceLastUpdateTime(issue.TrackingId, svc.ImpactedService, svc.SEARegionOrGlobalLastUpdateTime);
-                            
-                            issuesToSend.push(issue);
-                        }
-                        else if (svc.SEARegionOrGlobalStatus == this.Resolved && trackedIS.Status == this.Active) {
-                            await this.db.updateImpactedServiceResolved(issue.TrackingId, svc.ImpactedService, svc.SEARegionOrGlobalLastUpdateTime);
+                            await this.db.updateImpactedServiceLastUpdateTime(trackedIssue, svc.ImpactedService, svc.SEARegionOrGlobalLastUpdateTime);
                             
                             issuesToSend.push(issue);
                         }
