@@ -1,4 +1,4 @@
-# azure-servicehealth-integration
+# Azure Service Health to Slack
 
 ### What this App does?  
 * Generates HTML report and sends as email for Azure Service Health [incidents](https://learn.microsoft.com/en-us/azure/service-health/service-health-notifications-properties) and [impacted resources](https://learn.microsoft.com/en-us/azure/service-health/impacted-resources-security) for 2 Entra tenants
