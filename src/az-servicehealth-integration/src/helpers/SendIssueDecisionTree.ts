@@ -15,6 +15,16 @@ export default class SendIssueDecisionTree {
     Resolved: string = "Resolved";
     Active: string = "Active";
     context: InvocationContext;
+    db: DB;
+
+    constructor() {
+        
+    }
+
+    async init() {
+        this.db = new DB();
+        await this.db.initDB()
+    }
 
     // decision tree to determine if an issue can be sent
     // issue level
@@ -50,7 +60,7 @@ export default class SendIssueDecisionTree {
     
         for (const issue of issues) {
 
-            const [isTracked, trackedIssue] = await globalThis.db.issueExist(issue.TrackingId);
+            const [isTracked, trackedIssue] = await this.db.issueExist(issue.TrackingId);
 
             //issue not tracked
             if (!isTracked) {
@@ -62,7 +72,7 @@ export default class SendIssueDecisionTree {
 
                 // issue is Active and no tracked issue is found in DB
                 if (issue.OverallStatus == this.Active) {
-                    await globalThis.db.addIssue(issue);
+                    await this.db.addIssue(issue);
                     issuesToSend.push(issue);
                     continue;
                 }
@@ -77,7 +87,7 @@ export default class SendIssueDecisionTree {
 
                 // issue status change from Active to Resolved
                 if (issue.OverallStatus == this.Resolved && trackedIssue.Status == this.Active) {
-                    await globalThis.db.updateIssueResolved(issue.TrackingId, issue.LastUpdateTime)
+                    await this.db.updateIssueResolved(issue.TrackingId, issue.LastUpdateTime)
                     issuesToSend.push(issue);
                     continue;
                 }
@@ -89,7 +99,7 @@ export default class SendIssueDecisionTree {
                 if (issue.OverallStatus == this.Active && trackedIssue.Status == this.Active) {
 
                     const trackedImpactedServices: Map<string, TrackedImpactedService> =
-                        await globalThis.db.getImpactedServices(issue.TrackingId);//Map<string, TrackedImpactedService> = await globalThis.db.getImpactedServices(issue.TrackingId);
+                        await this.db.getImpactedServices(issue.TrackingId);//Map<string, TrackedImpactedService> = await this.db.getImpactedServices(issue.TrackingId);
 
                     // all issue at this point is "tracked", and MUST have SEA region impacted services
                     for (const svc of issue.ImpactedServices ) {
@@ -111,12 +121,12 @@ export default class SendIssueDecisionTree {
                                 Previous update was at ${new Date(issue.LastUpdateTime)}} mark for sending.
                                 `)
                             
-                            await globalThis.db.updateImpactedServiceLastUpdateTime(issue.TrackingId, svc.ImpactedService, svc.SEARegionOrGlobalLastUpdateTime);
+                            await this.db.updateImpactedServiceLastUpdateTime(issue.TrackingId, svc.ImpactedService, svc.SEARegionOrGlobalLastUpdateTime);
                             
                             issuesToSend.push(issue);
                         }
                         else if (svc.SEARegionOrGlobalStatus == this.Resolved && trackedIS.Status == this.Active) {
-                            await globalThis.db.updateImpactedServiceResolved(issue.TrackingId, svc.ImpactedService, svc.SEARegionOrGlobalLastUpdateTime);
+                            await this.db.updateImpactedServiceResolved(issue.TrackingId, svc.ImpactedService, svc.SEARegionOrGlobalLastUpdateTime);
                             
                             issuesToSend.push(issue);
                         }

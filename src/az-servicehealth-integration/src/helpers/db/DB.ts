@@ -41,10 +41,10 @@ export class DB {
     private tableClient: TableClient;
 
     constructor() {
-        this.initDB();
+
     }
 
-    private async initDB() {
+    public async initDB() {
 
         const tableName = 'Issue';
         const tableEndpoint = `${process.env.AZURE_STORAGETABLE_RESOURCEENDPOINT}`;

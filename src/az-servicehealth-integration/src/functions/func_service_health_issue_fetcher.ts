@@ -9,7 +9,6 @@ declare global {
     var appconfig: AppConfig;
     var wogAzCred: ClientSecretCredential;
     var techpassAzCred: ClientSecretCredential;
-    var db: DB;
     var wogTenantName: string;
     var techpassTenantName: string;
     var funcContext: InvocationContext;
@@ -62,7 +61,6 @@ export async function func_service_health_issue_fetcher(data: QueueData, context
 
 
 function initGlobalVariables(incidentStartFromDate: string) {
-    globalThis.db = new DB();
     globalThis.wogTenantName = "WOG";
     globalThis.techpassTenantName = "TechPass";
     globalThis.appconfig = AppConfig.loadFromEnvVar();

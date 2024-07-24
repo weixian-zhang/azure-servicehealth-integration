@@ -16,7 +16,7 @@ export default class NodeMailerEmailSink implements IEmailSink {
 
         const transporter = nodemailer.createTransport({
             host: this.appconfig.EMailConfig.Host,
-            port: 587,
+            port: this.appconfig.EMailConfig.Port,
             auth: {
                 user: this.appconfig.EMailConfig.Username,
                 pass: this.appconfig.EMailConfig.Password
