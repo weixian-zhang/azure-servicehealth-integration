@@ -57,7 +57,8 @@
 App will retrieve all Azure Subscriptions that Service Principals below have access to.
 
 * SERVICE_HEALTH_INTEGRATION_IS_DEVTEST=false
-* AZURE_STORAGE_QUEUE_CONNECTION_STRING
+* HTTP_GATEWAY_URL: "https://{unction name}.azurewebsites.net/api/azure-incident-report/generate?incidentStartFromDate=7/18/2024&code={function API Key},
+* WEBSITE_TIME_ZONE": "Singapore Standard Time"
 * APPLICATIONINSIGHTS_CONNECTION_STRING
 * GCC_WOG_CLIENT_ID
 * GCC_WOG_CLIENT_SECRET
