@@ -12,10 +12,9 @@ export default class IssueFetcher {
     context: InvocationContext;
     appconfig: AppConfig;
 
-    constructor(tenantName: string, azcred: ClientSecretCredential, subscriptions: Subscription[], appconfig: AppConfig, context: InvocationContext) {
+    constructor(tenantName: string, azcred: ClientSecretCredential, subscriptions: Subscription[], appconfig: AppConfig) {
 
         this.appconfig = appconfig;
-        this.context = context;
 
         const isDevTest = process.env.SERVICE_HEALTH_INTEGRATION_IS_DEVTEST
 
@@ -23,7 +22,7 @@ export default class IssueFetcher {
             this.issueFetcher = new MockIssueRetriever();
         }
         else {
-            this.issueFetcher = new ApiIssueRetriever(tenantName, azcred, subscriptions, this.appconfig, this.context);
+            this.issueFetcher = new ApiIssueRetriever(tenantName, azcred, subscriptions, this.appconfig);
         }
     }
 

@@ -46,7 +46,7 @@ export default class IssuePropMapper {
         si.ImpactedResources = new Array();
         si.ImpactedSubscriptions = new Array<Subscription>();
 
-        const impact = IssuePropMapper.getNonNullValue(_.get(currIssue, 'impact'), _.get(currIssue, 'properties.impact'), []);
+        const impact = IssuePropMapper.getNonNullValue(_.get(currIssue, 'impact', []), _.get(currIssue, 'properties.impact'), []);
 
         impact.forEach(impact => {
 

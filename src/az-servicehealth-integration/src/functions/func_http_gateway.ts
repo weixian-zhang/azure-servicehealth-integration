@@ -4,7 +4,6 @@ import * as _ from 'lodash';
 import AppConfig from "../helpers/AppConfig";
 import { DefaultAzureCredential } from "@azure/identity";
 
-
 const queue = createQueueClient();
 
 
@@ -16,17 +15,20 @@ export async function func_http_gateway(request: HttpRequest, context: Invocatio
 
         let incidentStartFromDate = request.query.get('incidentStartFromDate');
 
-        if (_.isNil(incidentStartFromDate) == true || _.isDate(incidentStartFromDate) == false) {
+        context.trace(`func_http_gateway receive request with incidentStartFromDate ${incidentStartFromDate}`);
+
+        if (_.isNil(incidentStartFromDate) == true || isNaN(Date.parse(incidentStartFromDate))) {
             
             let now = new Date();
             now.setDate(now.getDate() - appconfig.incidentDayFromNow)
             incidentStartFromDate = now.toLocaleDateString('en-US')
-            
         }
 
         const msg = btoa(`{
             "incidentStartFromDate": "${incidentStartFromDate}"
         }`);
+
+        context.trace(`func_http_gateway sending message to queue with incidentStartFromDate ${incidentStartFromDate}`)
 
         await queue.sendMessage(msg);
 
@@ -39,7 +41,7 @@ export async function func_http_gateway(request: HttpRequest, context: Invocatio
         };
         
     } catch (error) {
-        console.error(`Error occured in function func_http_gateway, ${error.message}`);
+        context.error(`Error occured in function func_http_gateway, ${error.message}`);
 
         return {
             status: 500,
