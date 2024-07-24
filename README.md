@@ -54,6 +54,7 @@
 * Function App uses Managed Identity (or vscode sign-in identity for local dev) to authenticate against [Azure Storage Queue](https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-storage-queue-trigger?tabs=python-v2%2Cisolated-process%2Cnodejs-v4%2Cextensionv5&pivots=programming-language-javascript#identity-based-connections) and [Table Storage](https://learn.microsoft.com/en-us/azure/service-connector/how-to-integrate-storage-table?tabs=nodejs#default-environment-variable-names-or-application-properties-and-sample-code)
 
 ### Environment Variables  
+App will retrieve all Azure Subscriptions that Service Principals below have access to.
 
 * SERVICE_HEALTH_INTEGRATION_IS_DEVTEST=false
 * AZURE_STORAGE_QUEUE_CONNECTION_STRING
