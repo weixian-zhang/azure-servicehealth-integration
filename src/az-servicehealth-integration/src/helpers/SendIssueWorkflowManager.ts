@@ -1,5 +1,5 @@
 import { InvocationContext } from "@azure/functions";
-import SendIssueDecisionTree from "./SendIssueDecisionTree";
+import IssueSendDuplicatePreventer from "./IssueSendDuplicatePreventer";
 import IssueFetcher from "./issue-api/IssueFetcher";
 import { ServiceIssue, Subscription } from "./issue-api/ServiceIssueModels";
 import AppConfig from "./AppConfig";
@@ -12,25 +12,25 @@ import { IEmailSink } from "./send-sink/IEmailSink";
 import * as opentelemetry from "@opentelemetry/api";
 
 export default class IssueReportGenerationWorkflow {
-    sidt: SendIssueDecisionTree;
+    sendDupPreventer: IssueSendDuplicatePreventer;
     context: InvocationContext;
     appconfig: AppConfig;
 
     constructor(appconfig: AppConfig) {
-        this.sidt = new SendIssueDecisionTree();
+        this.sendDupPreventer = new IssueSendDuplicatePreventer();
         this.appconfig = appconfig;
     }
 
     public async generateIssueReport() {
 
-        await this.sidt.init(); // init tabel storage
+        await this.sendDupPreventer.init(); // init tabel storage
       
         //techpass incidents
         const tpSubs = await this.getSubscriptionsByServicePrincipalRBAC(globalThis.appconfig.TechPassClientSecretCredential)
 
         const tpIssues = await this.getTechPassIssues(tpSubs);
 
-        const tpIssuesToSend = await this.sidt.determineShouldSendIssues(tpIssues)
+        const tpIssuesToSend = await this.sendDupPreventer.determineShouldSendIssues(tpIssues)
 
         globalThis.funcContext.trace(`TechPass issues count to send: ${tpIssuesToSend.length}`)
 
@@ -40,7 +40,7 @@ export default class IssueReportGenerationWorkflow {
 
         const wogIssues = await this.getWOGIssues(wogSubs)
 
-        const wogIssuesToSend = await this.sidt.determineShouldSendIssues(wogIssues)
+        const wogIssuesToSend = await this.sendDupPreventer.determineShouldSendIssues(wogIssues)
 
         globalThis.funcContext.trace(`WOG issues count to send: ${wogIssuesToSend.length}`)
 
@@ -57,7 +57,6 @@ export default class IssueReportGenerationWorkflow {
             //local testing only
             //await fs.promises.writeFile('C:\\Users\\weixzha\\Desktop\\tp.html', html, {encoding:'utf8',flag:'w'});
         
-
            await emailSink.send(html);
 
            globalThis.funcContext.trace(`Sent HTML report as email for TechPass related incidents ${tpi.TrackingId}`);

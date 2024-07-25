@@ -27,6 +27,7 @@ export class ServiceIssue {
     ImpactedResources: ImpactedResource[];
     LastUpdateTime: Date;
     LastUpdateTimeEpoch: number;
+    ImpactedRegions: string; //either Global or regions within "region filter"
 
     getImpactedServiceNames(): string {
         const n = new Array<string>();
