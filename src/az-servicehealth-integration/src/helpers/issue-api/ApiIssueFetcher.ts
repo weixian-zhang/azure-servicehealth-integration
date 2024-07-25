@@ -5,7 +5,7 @@ import { MicrosoftResourceHealth, EventsListBySubscriptionIdOptionalParams } fro
 import { InvocationContext } from "@azure/functions";
 import AppConfig from "../AppConfig";
 import * as _ from 'lodash';
-import IssuePropMapper from "./IssuePropMapper";
+import IssuePropMapper from "./IssueFilter";
 
 //service issue json schema
 //https://learn.microsoft.com/en-us/rest/api/resourcehealth/events/list-by-tenant-id?view=rest-resourcehealth-2022-10-01&tabs=HTTP#listeventsbytenantid

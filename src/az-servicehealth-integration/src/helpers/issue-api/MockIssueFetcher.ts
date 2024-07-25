@@ -1,4 +1,4 @@
-import IssuePropMapper from "./IssuePropMapper";
+import IssuePropMapper from "./IssueFilter";
 import IIssueFetcher from "./IIssueFetcher";
 import { ServiceIssue, ImpactedService, ImpactUpdates, ImpactedResource, Subscription } from "./ServiceIssueModels";
 import * as fs from 'fs';

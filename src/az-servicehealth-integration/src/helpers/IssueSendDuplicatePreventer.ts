@@ -6,7 +6,7 @@ import { ServiceIssue } from './issue-api/ServiceIssueModels';
 
 // **Asumption: when service issue reaches this stage, ImpactedServices property will never be empty
 // impacted service region will either be Global or SEA
-export default class SendIssueDecisionTree {
+export default class IssueSendDuplicatePreventer {
     Resolved: string = "Resolved";
     Active: string = "Active";
     db: DB;
@@ -114,7 +114,7 @@ export default class SendIssueDecisionTree {
                         // impacted service has newer "lastUpdateTime"
                         else if (svc.SEARegionOrGlobalLastUpdateTime.valueOf() > impactedSvc.LastUpdateTime) {
                             globalThis.funcContext.trace
-                                (`at SendIssueDecisionTree: 
+                                (`at IssueSendDuplicatePreventer: 
                                 Issue with Tracking Id ${issue.TrackingId} is an existing issue, with new update at ${new Date(issue.LastUpdateTime )}.
                                 Previous update was at ${new Date(issue.LastUpdateTime)}}, therefore issue mark for re-sending.
                                 `)
