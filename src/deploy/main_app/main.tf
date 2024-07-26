@@ -41,14 +41,6 @@ resource "azurerm_storage_table" "db_table" {
   storage_account_name = azurerm_storage_account.storage.name
 }
 
-resource "azurerm_service_plan" "asp" {
-  name                = var.app_service_plan_name
-  resource_group_name = var.resource_group_name
-  location            = local.location
-  os_type             = "Linux"
-  sku_name            = "B2"
-}
-
 # get log analytics workspace id that backs app insights
 data "azurerm_log_analytics_workspace" "law" {
   name                = var.existing_log_analytics_name
@@ -64,11 +56,19 @@ resource "azurerm_application_insights" "appinsights" {
 }
 
 
+resource "azurerm_service_plan" "asp" {
+  name                = var.app_service_plan_name
+  resource_group_name = var.resource_group_name
+  location            = local.location
+  os_type             = "Linux"
+  sku_name            = "B2"
+}
+
 resource "azurerm_linux_function_app" "func" {
   name                = var.function_name
   resource_group_name = var.resource_group_name
   location            = local.location
-
+  https_only                 = true
   storage_account_name       = azurerm_storage_account.storage.name
   storage_account_access_key = azurerm_storage_account.storage.primary_access_key
   service_plan_id            = azurerm_service_plan.asp.id
@@ -78,6 +78,8 @@ resource "azurerm_linux_function_app" "func" {
   }
 
   app_settings = {
+    FUNCTIONS_WORKER_RUNTIME = "node"
+    SCM_DO_BUILD_DURING_DEPLOYMENT = true
     SERVICE_HEALTH_INTEGRATION_IS_DEVTEST = false
     SERVICE_HEALTH_INTEGRATION_INCIDENT_DAY_FROM_NOW = 3
     HTTP_GATEWAY_URL= "https://${var.function_name}.azurewebsites.net/api/azure-incident-report/generate"
@@ -99,7 +101,13 @@ resource "azurerm_linux_function_app" "func" {
     SERVICE_HEALTH_INTEGRATION_EMAIL_CONFIG = "{\"host\":\"\",\"port\":,\"username\":\"\",\"password\":\"\",\"subject\":\"Azure Incident Report\",\"senderAddress\":\"\",\"recipients\":{\"to\":[],\"cc\":[],\"bcc\":[]}}"
   }
 
-  site_config {}
+  site_config {
+    always_on = true
+    application_stack {
+      node_version = "18"
+      
+    }
+  }
 }
 
 
@@ -114,6 +122,18 @@ resource "azurerm_role_assignment" "role_assign_func_queue_storage" {
   scope                = azurerm_storage_account.storage.id
   role_definition_name = "Storage Queue Data Contributor"
   principal_id         = azurerm_linux_function_app.func.identity.0.principal_id
+}
+
+
+resource "null_resource" "execute_python_deployment_script" {
+  triggers = {
+    always_run = "${timestamp()}"
+  }
+
+  provisioner "local-exec" {
+    command = "python deploy_func_app.py"
+    working_dir = "${path.module}"
+  }
 }
 
 
