@@ -23,5 +23,38 @@ variable "function_name" {
   default = "func-sh-dev"
 }
 
+variable "existing_log_analytics_resource_group_name" {
+  type=string
+  default = ""
+}
+variable "existing_log_analytics_name" {
+  type=string
+  default = ""
+}
+
+variable "smtp_config" {
+  type = object({
+    host = string
+    port = number
+    username = string
+    password = string
+    sender_address = string
+    to_address = list(string)
+    cc_address = list(string)
+    bcc_address = list(string)
+  })
+  default = {
+    host = "smtp.azurecomm.net"
+    port = 587
+    username = ""
+    password = ""
+    sender_address = "DoNotReply@674edb48-246c-4119-ac71-7eabf6c96aa5.azurecomm.net"
+    to_address = ["weixzha@microsoft.com"]
+    cc_address = []
+    bcc_address = []
+    
+  }
+}
+
 
 
