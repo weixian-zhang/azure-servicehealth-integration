@@ -1,7 +1,13 @@
-# Azure Service Health to Slack
+# Azure Service Health to X  
 
-### What this App does?  
-* Generates HTML report and sends as email for Azure Service Health [incidents](https://learn.microsoft.com/en-us/azure/service-health/service-health-notifications-properties) and [impacted resources](https://learn.microsoft.com/en-us/azure/service-health/impacted-resources-security) for 2 Entra tenants
+* [What is Service Health to X](#what-is-service-health-to-x)
+* [How to Deploy](#how-to-deploy)
+* [Azure Function Configurations](#azure-function-configurations)
+* [Email Message Template](#email-message-template)
+
+### What is Service Health to X?  
+* X refers to X type of output like email. More output formats can be added for e.g generates impacted Azure resources as CSV email attachment
+* Curates Azure Service Health [incidents](https://learn.microsoft.com/en-us/azure/service-health/service-health-notifications-properties) and [impacted resources](https://learn.microsoft.com/en-us/azure/service-health/impacted-resources-security) of 2 Entra tenants, and generates HTML report and sends as email
 * fetches incidents using [Events Api - List by Subscription Id](https://learn.microsoft.com/en-us/rest/api/resourcehealth/events/list-by-subscription-id?view=rest-resourcehealth-2022-10-01&tabs=HTTP)
 * fetches impacted resources using [Impacted Resources - List By Subscription Id And Event Id](https://learn.microsoft.com/en-us/rest/api/resourcehealth/impacted-resources/list-by-subscription-id-and-event-id?view=rest-resourcehealth-2022-10-01&tabs=HTTP)
 * a single incident (a.k.a service issue) can be identified uniquely by its Tracking Id.
@@ -46,6 +52,9 @@
 
 <br />
 <br />  
+
+### How to Deploy  
+Run a [single Terraform file](https://github.com/weixian-zhang/azure-servicehealth-integration/blob/main/src/deploy/main_app/main.tf) (from [directory](https://github.com/weixian-zhang/azure-servicehealth-integration/tree/main/src/deploy/main_app)) to create all needed Azure resources plus, Function app deployment
 
 ### Azure Function Configurations  
 * Stack = Node.js
@@ -92,6 +101,6 @@ App will retrieve all Azure Subscriptions that Service Principals below have acc
       }
     </code>   
 
-### Email/Slack Message Template  
+### Email Message Template  
 
 ![image](https://github.com/weixian-zhang/azure-servicehealth-integration/assets/43234101/36f7f2f6-805b-442c-a549-54c11a44ee45)
