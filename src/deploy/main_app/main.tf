@@ -8,6 +8,9 @@ terraform {
       source  = "hashicorp/azurerm"
       version = "~>3.0"
     }
+    azapi = {
+      source = "Azure/azapi"
+    }
   }
   backend "azurerm" {
       resource_group_name  = "rg-service-health-to-slack-dev"
@@ -15,7 +18,9 @@ terraform {
       container_name       = "tfstate"
       key                  = "terraform.tfstate"
   }
+}
 
+provider "azapi" {
 }
 
 provider "azurerm" {
@@ -79,9 +84,10 @@ resource "azurerm_windows_function_app" "func" {
 
   app_settings = {
     FUNCTIONS_NODE_BLOCK_ON_ENTRY_POINT_ERROR = true
-    WEBSITE_RUN_FROM_PACKAGE = 1
+    WEBSITE_RUN_FROM_PACKAGE = 0
     SCM_DO_BUILD_DURING_DEPLOYMENT = true
     FUNCTIONS_WORKER_RUNTIME = "node"
+    FUNCTION_HOST_KEY = ""
     SERVICE_HEALTH_INTEGRATION_IS_DEVTEST = false
     SERVICE_HEALTH_INTEGRATION_INCIDENT_DAY_FROM_NOW = 3
     HTTP_GATEWAY_URL= "https://${var.function_name}.azurewebsites.net/api/azure-incident-report/generate"
@@ -138,10 +144,45 @@ resource "null_resource" "execute_python_deployment_script" {
     working_dir = "${path.module}"
   }
   
-  depends_on = [ azurerm_windows_function_app.func ]
+  depends_on = [ 
+    azurerm_windows_function_app.func,
+    azurerm_role_assignment.azurerm_role_assignment.role_assign_func_queue_storage,
+    azurerm_role_assignment.azurerm_role_assignment.role_assign_func_table_storage
+  ]
   
 }
 
+# below implementation: try get func host key from data and local-exec but not successful.
+# A proven way is to redirect local-exec key value to a file, may have security concern saving API key on file
+# resource "null_resource" "func_host_key" {
+#   triggers  =  { always_run = "${timestamp()}" }
+#    provisioner "local-exec" {
+#       command = "az functionapp keys list -n func-sh-dev -g rg-service-health-to-slack-dev --query 'functionKeys.default'"
+#       interpreter = ["PowerShell"]
+#     }
+# }
+
+# data "azurerm_function_app_host_keys" "func_host_key" {
+#   name                = azurerm_windows_function_app.func.name
+#   resource_group_name = var.resource_group_name
+#   depends_on = [ azurerm_windows_function_app.func ]
+# }
+#az functionapp keys list -n func-sh-dev -g rg-service-health-to-slack-dev --query 'functionKeys.default'
+
+
+# update function host key needed by func_timer_http_client to call func_http_gateway
+# resource "azapi_update_resource" "azapi_func_app_settings" {
+#   type = "Microsoft.Web/sites@2022-03-01"
+#   resource_id = azurerm_windows_function_app.func.id
+#   body = jsonencode({
+#     properties = {
+#       app_settings = {
+#         FUNCTION_HOST_KEY = "${null_resource.func_host_key}"
+#       }
+#     }
+#   })
+#   depends_on = [ null_resource.func_host_key ]
+# }
 
 
 

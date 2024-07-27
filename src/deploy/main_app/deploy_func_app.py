@@ -48,52 +48,36 @@ def make_archive(source, destination):
     shutil.make_archive(base_name, format, root_dir, base_dir)
 
 
+# do npm build to output dist folder containing .js files
+print(f'${azfunc_directory} : npm run build')
+os.chdir(azfunc_directory)
+p = subprocess.Popen('npm run build', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+
 shutil.copy2(os.path.join(azfunc_directory, 'host.json'), os.path.join(func_deploy_dir))
 shutil.copy2(os.path.join(azfunc_directory, 'package.json'), os.path.join(func_deploy_dir))
-# shutil.copy2(os.path.join(azfunc_directory, 'package-lock.json'), os.path.join(func_deploy_dir))
+shutil.copy2(os.path.join(azfunc_directory, 'package-lock.json'), os.path.join(func_deploy_dir))
 shutil.copy2(os.path.join(azfunc_directory, 'tsconfig.json'), os.path.join(func_deploy_dir))
+
+# functions source files
+copytree(os.path.join(azfunc_directory, 'dist', 'src'), os.path.join(func_deploy_dir, 'dist' , 'src'))
 # functions source files
 copytree(os.path.join(azfunc_directory, 'src', 'functions'), os.path.join(func_deploy_dir, 'src','functions'))
 # copy helpers source files
 copytree(os.path.join(azfunc_directory, 'src', 'helpers'), os.path.join(func_deploy_dir, 'src', 'helpers'))
 
- 
+
 
 # zip folder
-# os.chdir(deploy_main_app_dir)
+print(f'zip func app at: ${func_deploy_dir}')
 make_archive(func_deploy_dir, zip_to_file_path)
 
 print(f'changing os directory to {zip_to_dir}')
 
 os.chdir(zip_to_dir)
-
+print(f'switch directory to: ${zip_to_dir}')
 print(f'{func_deploy_cmd}')
-
 p = subprocess.Popen(func_deploy_cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 for line in p.stdout.readlines():
     print(line),
 retval = p.wait()
-
-# os.chdir(azfunc_directory)
-
-# for file in os.listdir(azfunc_directory):
-#     if file.endswith('.py'):
-#         files_to_zip.append(file)
-
-# print(f'detected source files {files_to_zip}')
-
-# print(f'creating zip file {func_zip_name}')
-
-# zipObj = ZipFile(deployment_file_path, 'w')
-                 
-# for f in files_to_zip:
-#     zipObj.write(f)
-
-# zipObj.close()
-
-# print(f'finish creating zip file at {deployment_file_path}')
-
-# os.chdir(deployment_directory)
-
-# print(f'executing function deployment az cli cmd {func_deploy_cmd}')
 

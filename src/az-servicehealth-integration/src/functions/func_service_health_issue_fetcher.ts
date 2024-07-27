@@ -36,7 +36,7 @@ export async function func_service_health_issue_fetcher(data: QueueData, context
 
         globalThis.funcContext.trace(`func_service_health_issue_fetcher received request to fetch incident if any`);
         
-        initGlobalVariables(data.incidentStartFromDate);
+        initGlobalVariables(context, data.incidentStartFromDate);
 
         const wfm = new SendIssueWorkflowManager(globalThis.appconfig);
 
@@ -58,10 +58,10 @@ export async function func_service_health_issue_fetcher(data: QueueData, context
 };
 
 
-function initGlobalVariables(incidentStartFromDate: string) {
+function initGlobalVariables(context, incidentStartFromDate: string) {
     globalThis.wogTenantName = "WOG";
     globalThis.techpassTenantName = "TechPass";
-    globalThis.appconfig = AppConfig.loadFromEnvVar();
+    globalThis.appconfig = AppConfig.loadFromEnvVar(context);
     globalThis.appconfig.incidentQueryStartFromDate = incidentStartFromDate
 }
 // https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-storage-queue-trigger?tabs=python-v2%2Cisolated-process%2Cnodejs-v4%2Cextensionv5&pivots=programming-language-javascript#identity-based-connections

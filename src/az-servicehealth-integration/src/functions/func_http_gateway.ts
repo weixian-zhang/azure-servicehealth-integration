@@ -11,11 +11,11 @@ export async function func_http_gateway(request: HttpRequest, context: Invocatio
 
     try {
 
-        const appconfig = AppConfig.loadFromEnvVar();
+        const appconfig = AppConfig.loadFromEnvVar(context);
 
         let incidentStartFromDate = request.query.get('incidentStartFromDate');
 
-        context.trace(`func_http_gateway receive request with incidentStartFromDate ${incidentStartFromDate}`);
+        context.trace(`func_http_gateway receive HTTP request`);
 
         if (_.isNil(incidentStartFromDate) == true || isNaN(Date.parse(incidentStartFromDate))) {
             
