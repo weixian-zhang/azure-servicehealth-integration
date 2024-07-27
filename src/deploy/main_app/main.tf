@@ -60,11 +60,11 @@ resource "azurerm_service_plan" "asp" {
   name                = var.app_service_plan_name
   resource_group_name = var.resource_group_name
   location            = local.location
-  os_type             = "Linux"
+  os_type             = "Windows"
   sku_name            = "B2"
 }
 
-resource "azurerm_linux_function_app" "func" {
+resource "azurerm_windows_function_app" "func" {
   name                = var.function_name
   resource_group_name = var.resource_group_name
   location            = local.location
@@ -83,17 +83,17 @@ resource "azurerm_linux_function_app" "func" {
     SERVICE_HEALTH_INTEGRATION_IS_DEVTEST = false
     SERVICE_HEALTH_INTEGRATION_INCIDENT_DAY_FROM_NOW = 3
     HTTP_GATEWAY_URL= "https://${var.function_name}.azurewebsites.net/api/azure-incident-report/generate"
-    FUNCTION_HOST_KEY = "" //try set dynamically by deployment script
+    FUNCTION_HOST_KEY = "" // manually set on function post creation
     WEBSITE_TIME_ZONE= "Singapore Standard Time"
     APPLICATIONINSIGHTS_CONNECTION_STRING = "${azurerm_application_insights.appinsights.connection_string}"
     GCC_WOG_CLIENT_ID = ""
     GCC_WOG_CLIENT_SECRET = ""
     GCC_WOG_TENANT_ID = ""
-    GCC_WOG_TENANT_NAME = ""
+    GCC_WOG_TENANT_NAME = "WOG"
     GCC_TECHPASS_CLIENT_ID = ""
     GCC_TECHPASS_CLIENT_SECRET = ""
     GCC_TECHPASS_TENANT_ID = ""
-    GCC_TECHPASS_TENANT_NAME = ""
+    GCC_TECHPASS_TENANT_NAME = "TechPass"
     AzureWebJobsStorage = "${azurerm_storage_account.storage.primary_connection_string}"
     AZURE_STORAGEQUEUE_RESOURCEENDPOINT = "https://${azurerm_storage_account.storage.name}}.queue.core.windows.net"
     AZURE_STORAGETABLE_RESOURCEENDPOINT = "https://${azurerm_storage_account.storage.name}.table.core.windows.net"
@@ -104,7 +104,7 @@ resource "azurerm_linux_function_app" "func" {
   site_config {
     always_on = true
     application_stack {
-      node_version = "18"
+      node_version = "~18"
       
     }
   }
@@ -114,18 +114,19 @@ resource "azurerm_linux_function_app" "func" {
 resource "azurerm_role_assignment" "role_assign_func_table_storage" {
   scope                = azurerm_storage_account.storage.id
   role_definition_name = "Storage Table Data Contributor"
-  principal_id         = azurerm_linux_function_app.func.identity.0.principal_id
+  principal_id         = azurerm_windows_function_app.func.identity.0.principal_id
   depends_on = [  ]
 }
 
 resource "azurerm_role_assignment" "role_assign_func_queue_storage" {
   scope                = azurerm_storage_account.storage.id
   role_definition_name = "Storage Queue Data Contributor"
-  principal_id         = azurerm_linux_function_app.func.identity.0.principal_id
+  principal_id         = azurerm_windows_function_app.func.identity.0.principal_id
 }
 
 
 resource "null_resource" "execute_python_deployment_script" {
+  
   triggers = {
     always_run = "${timestamp()}"
   }
@@ -134,6 +135,9 @@ resource "null_resource" "execute_python_deployment_script" {
     command = "python deploy_func_app.py"
     working_dir = "${path.module}"
   }
+  
+  depends_on = [ azurerm_windows_function_app.func ]
+  
 }
 
 

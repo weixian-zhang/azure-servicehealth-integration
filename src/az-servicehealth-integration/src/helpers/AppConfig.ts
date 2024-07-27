@@ -18,7 +18,6 @@ export default class AppConfig {
     TechPassClientId: string;
     TechPassClientSecret: string;
     TechPassTenantId: string;
-    TechPassResidentSubscriptionId: string;
     TechPassClientSecretCredential: ClientSecretCredential;
     WogClientId: string;
     WogClientSecret: string;
@@ -47,7 +46,6 @@ export default class AppConfig {
             appconfig.TechPassClientId  = process.env.GCC_TECHPASS_CLIENT_ID;
             appconfig.TechPassClientSecret  = process.env.GCC_TECHPASS_CLIENT_SECRET;
             appconfig.TechPassTenantId  = process.env.GCC_TECHPASS_TENANT_ID;
-            appconfig.TechPassResidentSubscriptionId = process.env.GCC_TECHPASS_RESIDENT_SUBSCRIPTION_ID;
 
             appconfig.WogClientId  = process.env.GCC_WOG_CLIENT_ID;
             appconfig.WogClientSecret  = process.env.GCC_WOG_CLIENT_SECRET;
