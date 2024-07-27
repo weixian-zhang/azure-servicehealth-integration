@@ -1,3 +1,4 @@
+import { InvocationContext } from "@azure/functions";
 import { ClientSecretCredential } from "@azure/identity";
 import { context } from "@opentelemetry/api";
 import * as _ from 'lodash';
@@ -37,7 +38,7 @@ export default class AppConfig {
     AzureCommunicationServiceConnString: string = '';
 
 
-    static loadFromEnvVar() {//(incidentQueryStartFromDate: string) {
+    static loadFromEnvVar(context: InvocationContext) {//(incidentQueryStartFromDate: string) {
 
         var appconfig = new AppConfig()
 
@@ -77,7 +78,7 @@ export default class AppConfig {
             return appconfig
 
         } catch (e) {
-            globalThis.funcContext.error(`${e.message}, ${e.stack}`)
+            context.error(`${e.message}, ${e.stack}`)
         }
     }
 
