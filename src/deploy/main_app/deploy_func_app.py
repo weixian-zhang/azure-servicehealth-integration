@@ -42,19 +42,22 @@ def copytree(src, dst, symlinks=False, ignore=None):
 def make_archive(source, destination):
     base_name = '.'.join(destination.split('.')[:-1])
     format = destination.split('.')[-1]
-    root_dir = os.path.dirname(source)
-    base_dir = os.path.basename(source.strip(os.sep))
+    root_dir = source # os.path.dirname(source)
+    base_dir = './' #os.path.basename(source.strip(os.sep)) + '/'
+    print(base_dir)
     shutil.make_archive(base_name, format, root_dir, base_dir)
 
 
 shutil.copy2(os.path.join(azfunc_directory, 'host.json'), os.path.join(func_deploy_dir))
 shutil.copy2(os.path.join(azfunc_directory, 'package.json'), os.path.join(func_deploy_dir))
+shutil.copy2(os.path.join(azfunc_directory, 'package-lock.json'), os.path.join(func_deploy_dir))
 shutil.copy2(os.path.join(azfunc_directory, 'tsconfig.json'), os.path.join(func_deploy_dir))
-# functions
-copytree(os.path.join(azfunc_directory, 'src', 'functions'), os.path.join(func_deploy_dir, 'functions'))
-# copy helpers
-copytree(os.path.join(azfunc_directory, 'src', 'helpers'), os.path.join(func_deploy_dir, 'helpers'))
+# functions source files
+copytree(os.path.join(azfunc_directory, 'src', 'functions'), os.path.join(func_deploy_dir, 'src','functions'))
+# copy helpers source files
+copytree(os.path.join(azfunc_directory, 'src', 'helpers'), os.path.join(func_deploy_dir, 'src', 'helpers'))
 
+ 
 
 # zip folder
 # os.chdir(deploy_main_app_dir)
@@ -64,7 +67,7 @@ print(f'changing os directory to {zip_to_dir}')
 
 os.chdir(zip_to_dir)
 
-print('f{func_deploy_cmd}')
+print(f'{func_deploy_cmd}')
 
 p = subprocess.Popen(func_deploy_cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
 for line in p.stdout.readlines():
