@@ -50,7 +50,7 @@ def make_archive(source, destination):
 
 shutil.copy2(os.path.join(azfunc_directory, 'host.json'), os.path.join(func_deploy_dir))
 shutil.copy2(os.path.join(azfunc_directory, 'package.json'), os.path.join(func_deploy_dir))
-shutil.copy2(os.path.join(azfunc_directory, 'package-lock.json'), os.path.join(func_deploy_dir))
+# shutil.copy2(os.path.join(azfunc_directory, 'package-lock.json'), os.path.join(func_deploy_dir))
 shutil.copy2(os.path.join(azfunc_directory, 'tsconfig.json'), os.path.join(func_deploy_dir))
 # functions source files
 copytree(os.path.join(azfunc_directory, 'src', 'functions'), os.path.join(func_deploy_dir, 'src','functions'))

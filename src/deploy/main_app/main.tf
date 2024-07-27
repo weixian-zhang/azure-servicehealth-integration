@@ -78,8 +78,10 @@ resource "azurerm_windows_function_app" "func" {
   }
 
   app_settings = {
-    FUNCTIONS_WORKER_RUNTIME = "node"
+    FUNCTIONS_NODE_BLOCK_ON_ENTRY_POINT_ERROR = true
+    WEBSITE_RUN_FROM_PACKAGE = 1
     SCM_DO_BUILD_DURING_DEPLOYMENT = true
+    FUNCTIONS_WORKER_RUNTIME = "node"
     SERVICE_HEALTH_INTEGRATION_IS_DEVTEST = false
     SERVICE_HEALTH_INTEGRATION_INCIDENT_DAY_FROM_NOW = 3
     HTTP_GATEWAY_URL= "https://${var.function_name}.azurewebsites.net/api/azure-incident-report/generate"
