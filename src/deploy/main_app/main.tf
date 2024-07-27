@@ -106,7 +106,7 @@ resource "azurerm_windows_function_app" "func" {
     AZURE_STORAGEQUEUE_RESOURCEENDPOINT = "https://${azurerm_storage_account.storage.name}}.queue.core.windows.net"
     AZURE_STORAGETABLE_RESOURCEENDPOINT = "https://${azurerm_storage_account.storage.name}.table.core.windows.net"
     StorageQueueIdentityAuth__queueServiceUri = "https://${azurerm_storage_account.storage.name}.queue.core.windows.net/"
-    SERVICE_HEALTH_INTEGRATION_EMAIL_CONFIG = "{\"host\":\"\",\"port\":,\"username\":\"\",\"password\":\"\",\"subject\":\"Azure Incident Report\",\"senderAddress\":\"\",\"recipients\":{\"to\":[],\"cc\":[],\"bcc\":[]}}"
+    SERVICE_HEALTH_INTEGRATION_EMAIL_CONFIG = "{\"host\":\"${var.smtp_config.host}\",\"port\":${var.smtp_config.port},\"username\":\"${var.smtp_config.username}\",\"password\":\"${var.smtp_config.password}\",\"subject\":\"Azure Incident Report\",\"senderAddress\":\"${var.smtp_config.sender_address}\",\"recipients\":{\"to\":${jsonencode(var.smtp_config.to_address)},\"cc\":${jsonencode(var.smtp_config.cc_address)},\"bcc\":${jsonencode(var.smtp_config.bcc_address)}}}"
   }
 
   site_config {
@@ -134,21 +134,15 @@ resource "azurerm_role_assignment" "role_assign_func_queue_storage" {
 
 
 resource "null_resource" "execute_python_deployment_script" {
-  
   triggers = {
     always_run = "${timestamp()}"
   }
-
   provisioner "local-exec" {
     command = "python deploy_func_app.py"
     working_dir = "${path.module}"
   }
   
-  depends_on = [ 
-    azurerm_windows_function_app.func,
-    azurerm_role_assignment.azurerm_role_assignment.role_assign_func_queue_storage,
-    azurerm_role_assignment.azurerm_role_assignment.role_assign_func_table_storage
-  ]
+  depends_on = [ azurerm_windows_function_app.func ]
   
 }
 
