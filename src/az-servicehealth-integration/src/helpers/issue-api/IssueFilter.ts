@@ -27,13 +27,14 @@ export default class IssueFilter {
     static createIssueInIssueBag(tenantName: string, subscription: Subscription, currIssue: any, issueBag: Map<string, ServiceIssue>) {
 
         const eventType = _.isNil(currIssue.eventType) ? currIssue.properties.eventType : currIssue.eventType;
+        const eventLevel = _.isNil(currIssue.eventLevel) ? currIssue.properties.eventLevel : currIssue.eventLevel;
 
         
         if (!['ServiceIssue'].includes(eventType) ) {
             return;
         }
 
-        if (!['Warning', 'Error'].includes(currIssue.eventLevel)) {
+        if (!['Warning', 'Error'].includes(eventLevel)) {
             return;
         }
         

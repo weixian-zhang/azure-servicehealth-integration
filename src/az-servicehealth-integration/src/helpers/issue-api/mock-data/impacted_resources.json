@@ -1,102 +1,30 @@
 {
     "value": [
-      {
-        "id": "/subscriptions/{subscripitionId}/providers/Microsoft.ResourceHealth/events/BC_1-FXZ/impactedResources/abc-123-ghj-456",
-        "name": "abc-123-ghj-456",
-        "type": "Microsoft.ResourceHealth/events/impactedResources",
-        "properties": {
-          "targetResourceType": "Microsoft.Compute/VirtualMachines",
-          "targetResourceId": "/subscriptions/4970d23e-ed41-4670-9c19-02a1d2808dd9/resourceGroups/TEST/providers/Microsoft.Compute/virtualMachines/testvm",
-          "targetRegion": "westus"
-        }
-      },
-      {
-        "id": "/subscriptions/{subscripitionId}/providers/Microsoft.ResourceHealth/events/BC_1-FXZ/impactedResources/abc-123-ghj-456",
-        "name": "abc-123-ghj-456",
-        "type": "Microsoft.ResourceHealth/events/impactedResources",
-        "properties": {
-          "targetResourceType": "Microsoft.Compute/VirtualMachines",
-          "targetResourceId": "/subscriptions/4970d23e-ed41-4670-9c19-02a1d2808dd9/resourceGroups/TEST/providers/Microsoft.Compute/virtualMachines/testvm",
-          "targetRegion": "westus"
-        }
-      },
-      {
-        "id": "/subscriptions/{subscripitionId}/providers/Microsoft.ResourceHealth/events/BC_1-FXZ/impactedResources/abc-123-ghj-456",
-        "name": "abc-123-ghj-456",
-        "type": "Microsoft.ResourceHealth/events/impactedResources",
-        "properties": {
-          "targetResourceType": "Microsoft.Compute/VirtualMachines",
-          "targetResourceId": "/subscriptions/4970d23e-ed41-4670-9c19-02a1d2808dd9/resourceGroups/TEST/providers/Microsoft.Compute/virtualMachines/testvm",
-          "targetRegion": "westus"
-        }
-      },
-      {
-        "id": "/subscriptions/{subscripitionId}/providers/Microsoft.ResourceHealth/events/BC_1-FXZ/impactedResources/abc-123-ghj-456",
-        "name": "abc-123-ghj-456",
-        "type": "Microsoft.ResourceHealth/events/impactedResources",
-        "properties": {
-          "targetResourceType": "Microsoft.Compute/VirtualMachines",
-          "targetResourceId": "/subscriptions/4970d23e-ed41-4670-9c19-02a1d2808dd9/resourceGroups/TEST/providers/Microsoft.Compute/virtualMachines/testvm",
-          "targetRegion": "westus"
-        }
-      },
-      {
-        "id": "/subscriptions/{subscripitionId}/providers/Microsoft.ResourceHealth/events/BC_1-FXZ/impactedResources/abc-123-ghj-456",
-        "name": "abc-123-ghj-456",
-        "type": "Microsoft.ResourceHealth/events/impactedResources",
-        "properties": {
-          "targetResourceType": "Microsoft.Compute/VirtualMachines",
-          "targetResourceId": "/subscriptions/4970d23e-ed41-4670-9c19-02a1d2808dd9/resourceGroups/TEST/providers/Microsoft.Compute/virtualMachines/testvm",
-          "targetRegion": "westus"
-        }
-      },
-
-      
-      {
-        "id": "/subscriptions/{subscripitionId}/providers/Microsoft.ResourceHealth/events/BC_1-FXZ/impactedResources/abc-123-ghj-456",
-        "name": "abc-123-ghj-456",
-        "type": "Microsoft.ResourceHealth/events/impactedResources",
-        "properties": {
-          "targetResourceType": "Microsoft.Compute/VirtualMachines",
-          "targetResourceId": "/subscriptions/4970d23e-ed41-4670-9c19-02a1d2808dd9/resourceGroups/TEST/providers/Microsoft.Compute/virtualMachines/testvm",
-          "targetRegion": "westus"
-        }
-      },
-      {
-        "id": "/subscriptions/{subscripitionId}/providers/Microsoft.ResourceHealth/events/BC_1-FXZ/impactedResources/jkl-901-hgy-445",
-        "name": "jkl-901-hgy-445",
-        "type": "Microsoft.ResourceHealth/events/impactedResources",
-        "properties": {
-          "info": [
-            {
-              "key": "ContainerGrp",
-              "value": "xyz"
-            },
-            {
-              "key": "UserGuid",
-              "value": "guid"
-            },
-            {
-              "key": "AplicationID",
-              "value": "Abc"
-            },
-            {
-              "key": "UserPrincipalObjectId",
-              "value": "def"
+        {
+            "id": "/subscriptions/227b734f-e14f-4de6-b7fc-3190c21e69f6/providers/Microsoft.ResourceHealth/events/GCC46-OUT/impactedResources/VHZxWFR0UnJGeUs3NktxMkw5V0JMZz09",
+            "name": "VHZxWFR0UnJGeUs3NktxMkw5V0JMZz09",
+            "type": "Microsoft.ResourceHealth/events/impactedResources",
+            "properties": {
+                "targetResourceType": "Microsoft.DocumentDb/databaseAccounts",
+                "targetResourceId": "/subscriptions/227b734f-e14f-4de6-b7fc-3190c21e69f6/resourceGroups/hs/providers/Microsoft.DocumentDb/databaseAccounts/hsfilterapi",
+                "targetRegion": "southeastasia",
+                "resourceName": "hsfilterapi",
+                "resourceGroup": "hs",
+                "info": []
             }
-          ]
+        },
+        {
+            "id": "/subscriptions/227b734f-e14f-4de6-b7fc-3190c21e69f6/providers/Microsoft.ResourceHealth/events/GCC46-OUT/impactedResources/MlZiTGFsTmhLMlBCcm5iUys1WElzQT09",
+            "name": "MlZiTGFsTmhLMlBCcm5iUys1WElzQT09",
+            "type": "Microsoft.ResourceHealth/events/impactedResources",
+            "properties": {
+                "targetResourceType": "Microsoft.DocumentDb/databaseAccounts",
+                "targetResourceId": "/subscriptions/227b734f-e14f-4de6-b7fc-3190c21e69f6/resourceGroups/shstorerc/providers/Microsoft.DocumentDb/databaseAccounts/shstoretest",
+                "targetRegion": "southeastasia",
+                "resourceName": "shstoretest",
+                "resourceGroup": "shstorerc",
+                "info": []
+            }
         }
-      },
-      {
-        "id": "/subscriptions/{subscripitionId}/providers/Microsoft.ResourceHealth/events/BC_1-FXZ/impactedResources/wer-345-tyu-789",
-        "name": "wer-345-tyu-789",
-        "type": "Microsoft.ResourceHealth/events/impactedResources",
-        "properties": {
-          "targetResourceType": "Microsoft.Compute/VirtualMachines",
-          "targetResourceId": "/subscriptions/4970d23e-ed41-4670-9c19-02a1d2808dd9/resourceGroups/Dev2/providers/Microsoft.Compute/virtualMachines/testvm2",
-          "targetRegion": "westus"
-        }
-      }
-    ],
-    "nextLink": "{originalRequestUrl}?$skipToken={OpaquePageNumber}"
-  }
+    ]
+}

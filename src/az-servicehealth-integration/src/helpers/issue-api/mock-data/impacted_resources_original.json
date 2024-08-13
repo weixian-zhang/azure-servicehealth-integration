@@ -1,0 +1,30 @@
+{
+  "value": [
+      {
+          "id": "/subscriptions/227b734f-e14f-4de6-b7fc-3190c21e69f6/providers/Microsoft.ResourceHealth/events/LT7D-59G/impactedResources/VHZxWFR0UnJGeUs3NktxMkw5V0JMZz09",
+          "name": "VHZxWFR0UnJGeUs3NktxMkw5V0JMZz09",
+          "type": "Microsoft.ResourceHealth/events/impactedResources",
+          "properties": {
+              "targetResourceType": "Microsoft.DocumentDb/databaseAccounts",
+              "targetResourceId": "/subscriptions/227b734f-e14f-4de6-b7fc-3190c21e69f6/resourceGroups/hs/providers/Microsoft.DocumentDb/databaseAccounts/hsfilterapi",
+              "targetRegion": "westus",
+              "resourceName": "hsfilterapi",
+              "resourceGroup": "hs",
+              "info": []
+          }
+      },
+      {
+          "id": "/subscriptions/227b734f-e14f-4de6-b7fc-3190c21e69f6/providers/Microsoft.ResourceHealth/events/LT7D-59G/impactedResources/MlZiTGFsTmhLMlBCcm5iUys1WElzQT09",
+          "name": "MlZiTGFsTmhLMlBCcm5iUys1WElzQT09",
+          "type": "Microsoft.ResourceHealth/events/impactedResources",
+          "properties": {
+              "targetResourceType": "Microsoft.DocumentDb/databaseAccounts",
+              "targetResourceId": "/subscriptions/227b734f-e14f-4de6-b7fc-3190c21e69f6/resourceGroups/shstorerc/providers/Microsoft.DocumentDb/databaseAccounts/shstoretest",
+              "targetRegion": "westus",
+              "resourceName": "shstoretest",
+              "resourceGroup": "shstorerc",
+              "info": []
+          }
+      }
+  ]
+}

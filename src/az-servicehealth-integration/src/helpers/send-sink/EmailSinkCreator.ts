@@ -1,5 +1,5 @@
 import AppConfig from "../AppConfig";
-import AzureCommServiceEmailSink from "./AzureCommServiceEmailSink";
+// import AzureCommServiceEmailSink from "./AzureCommServiceEmailSink";
 import { IEmailSink } from "./IEmailSink";
 import NodeEmailSink from "./NodeMailerEmailSink";
 
