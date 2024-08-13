@@ -143,7 +143,7 @@ table {
                 {% else %}
                     <div style="font-size: 16px;"><div style="color: green;">{{ OverallStatus }}</div></div>
                 {% endif %}
-                 <div style="font-size: 16px;"> | Tenant: {{ TenantName }} | Impacted Regions: {{ImpactedRegions}} | Incident Id: {{ TrackingId }} | {{ formatDateTimeFriendly(LastUpdateTime) }} </div>
+                 <div style="font-size: 16px;"> Tenant: {{ TenantName }} | Impacted Regions: {{ImpactedRegions}} | Incident Id: {{ TrackingId }} </div>
 
             </div>
             <div class="section-container">
@@ -198,7 +198,7 @@ table {
             </div>
 
             <div class="section-container">
-                <label class="section-title">Impacted Service</label>
+                <label class="section-title">Services Impacted by Incident</label>
 
                 <div style="height: 700px;overflow-y: auto">
                     {# Impacted Services #}

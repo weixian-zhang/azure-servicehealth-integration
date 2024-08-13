@@ -58,6 +58,8 @@ export default class ApiIssueFetcher implements IIssueFetcher {
 
     private async _fetchIssuesAndImpactedResources() : Promise<ServiceIssue[]> {
 
+   
+            
         let result = new Array<ServiceIssue>();
         let issueBag = new Map<string, ServiceIssue>();
         
@@ -77,9 +79,6 @@ export default class ApiIssueFetcher implements IIssueFetcher {
 
                 IssuePropMapper.createIssueInIssueBag(this.tenantName, sub, currIssue, issueBag);
 
-
-                // get impacted resources
-                await this.fetchImpactedResourcesForIssue(rhc, trackingId, issueBag);
                 
                 if (issueBag.has(trackingId)) {
                     // get impacted resources
