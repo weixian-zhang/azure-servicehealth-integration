@@ -1,13 +1,16 @@
-# Azure Service Health to X  
+# Azure Service Health to Slack 
 
-* [What is Service Health to X](#what-is-service-health-to-x)
+* [What is Service Health to X](#what-is-service-health-to-slack)
+* [Architecture Design](#architecture-design)
 * [How to Deploy](#how-to-deploy)
 * [Azure Function Configurations](#azure-function-configurations)
-* [Email Message Template](#email-message-template)
+* [Email Sample](#email-sample)
 
-### What is Service Health to X?  
-* X refers to X type of output like email. More output formats can be added for e.g generates impacted Azure resources as CSV email attachment
-* Curates Azure Service Health [incidents](https://learn.microsoft.com/en-us/azure/service-health/service-health-notifications-properties) and [impacted resources](https://learn.microsoft.com/en-us/azure/service-health/impacted-resources-security) of 2 Entra tenants, and generates HTML report and sends as email
+### What is Service Health to Slack?  
+* Curates Azure Service Health [incidents](https://learn.microsoft.com/en-us/azure/service-health/service-health-notifications-properties) and [impacted resources](https://learn.microsoft.com/en-us/azure/service-health/impacted-resources-security) of 2 Entra tenants, generates [HTML report](https://github.com/weixian-zhang/azure-servicehealth-integration/blob/main/src/az-servicehealth-integration/doc/sample-wog-incident-report.html) and sends as email. Slack's email integration picks up email content and sends to preconfigured Slack channels.
+* Other "destinations" in addition to Slack can be potentially enhanced for e.g: Enahnce app to generate impacted Azure resources as CSV email attachment
+
+### How the App Works?
 * fetches incidents using [Events Api - List by Subscription Id](https://learn.microsoft.com/en-us/rest/api/resourcehealth/events/list-by-subscription-id?view=rest-resourcehealth-2022-10-01&tabs=HTTP)
 * fetches impacted resources using [Impacted Resources - List By Subscription Id And Event Id](https://learn.microsoft.com/en-us/rest/api/resourcehealth/impacted-resources/list-by-subscription-id-and-event-id?view=rest-resourcehealth-2022-10-01&tabs=HTTP)
 * a single incident (a.k.a service issue) can be identified uniquely by its Tracking Id.
@@ -53,14 +56,27 @@
 <br />
 <br />  
 
+### Architecture Design  
+![image](https://github.com/user-attachments/assets/22666c02-7d0a-4b19-9dd9-22778ce92e16)
+
+<br />  
+
 ### How to Deploy  
-Run a [single Terraform file](https://github.com/weixian-zhang/azure-servicehealth-integration/blob/main/src/deploy/main_app/main.tf) (from [directory](https://github.com/weixian-zhang/azure-servicehealth-integration/tree/main/src/deploy/main_app)) to create all needed Azure resources plus, Function app deployment
+* deploy Function App only:
+  * change resource group and Function anme in this Python script
+  * executes scri[t "python src/deploy/main_app/deploy_func_app.py"
+* deploy all Azure resources and Function app:
+  * Run a [single Terraform file](https://github.com/weixian-zhang/azure-servicehealth-integration/blob/main/src/deploy/main_app/main.tf) (from [directory](https://github.com/weixian-zhang/azure-servicehealth-integration/tree/main/src/deploy/main_app)) to create all needed Azure resources plus, Function app deployment
+
+<br />  
 
 ### Azure Function Configurations  
 * Stack = Node.js
 * Node.Js version = Node.js 18 LTA
 * Platform = <b>64 Bit</b>
 * Function App uses Managed Identity (or vscode sign-in identity for local dev) to authenticate against [Azure Storage Queue](https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-storage-queue-trigger?tabs=python-v2%2Cisolated-process%2Cnodejs-v4%2Cextensionv5&pivots=programming-language-javascript#identity-based-connections) and [Table Storage](https://learn.microsoft.com/en-us/azure/service-connector/how-to-integrate-storage-table?tabs=nodejs#default-environment-variable-names-or-application-properties-and-sample-code)
+
+<br />  
 
 ### Environment Variables  
 App will retrieve all Azure Subscriptions that Service Principals below have access to.
@@ -101,6 +117,8 @@ App will retrieve all Azure Subscriptions that Service Principals below have acc
       }
     </code>   
 
-### Email Message Template  
+### Email Sample  
 
-![image](https://github.com/weixian-zhang/azure-servicehealth-integration/assets/43234101/36f7f2f6-805b-442c-a549-54c11a44ee45)
+![image](https://github.com/user-attachments/assets/b2f41102-d59e-4bcf-bdde-eb036c05df28)
+
+
