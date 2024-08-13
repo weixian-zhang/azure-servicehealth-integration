@@ -7,7 +7,7 @@
     "node": ">=18.0"
   },
   "scripts": {
-    "build": "tsc && npm run cp:nunjuckstpl && npm run mkdir:mockdata && npm run cp:mockdata",
+    "build": "tsc && npm run cp:nunjuckstpl && npm run mkdir:testdata && npm run cp:testdata",
     "watch": "tsc -w",
     "clean": "rimraf dist",
     "prestart": "npm run clean && npm run build",
@@ -15,8 +15,8 @@
     "test": "echo \"No tests yet...\"",
     "cp:sqlite": "xcopy src\\helpers\\db\\db.sqlite dist\\src\\helpers\\db /I /Y",
     "cp:nunjuckstpl": "xcopy src\\helpers\\template-engine\\html-incident-report.njk dist\\src\\helpers\\template-engine /I /Y",
-    "mkdir:mockdata": "if not exist dist\\src\\helpers\\issue-api\\mock-data mkdir dist\\src\\helpers\\issue-api\\mock-data",
-    "cp:mockdata": " xcopy \"src\\helpers\\issue-api\\mock-data\\*.json\" \"dist\\src\\helpers\\issue-api\\mock-data\" /c /i /e /h /y"
+    "mkdir:testdata": "if not exist dist\\src\\helpers\\issue-api\\test-data mkdir dist\\src\\helpers\\issue-api\\test-data",
+    "cp:testdata": " xcopy \"src\\helpers\\issue-api\\test-data\\*.json\" \"dist\\src\\helpers\\issue-api\\test-data\" /c /i /e /h /y"
   },
   "dependencies": {
     "@azure/arm-resourcehealth": "^4.1.0-alpha.20240507.1",

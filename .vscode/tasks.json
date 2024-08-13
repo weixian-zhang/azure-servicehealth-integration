@@ -19,6 +19,12 @@
 		// 	"label": "debug-func: host start"
 		// },
 		{
+			"label": "deploy Func to Azure",
+			"type": "shell",
+			"command": "echo Hello",
+			"problemMatcher": []
+		},
+		{
 			"type": "func",
 			"label": "func: host start",
 			"command": "host start --verbose",
