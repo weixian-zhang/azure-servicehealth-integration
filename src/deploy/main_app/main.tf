@@ -87,7 +87,6 @@ resource "azurerm_windows_function_app" "func" {
     WEBSITE_RUN_FROM_PACKAGE = 0
     SCM_DO_BUILD_DURING_DEPLOYMENT = true
     FUNCTIONS_WORKER_RUNTIME = "node"
-    FUNCTION_HOST_KEY = ""
     SERVICE_HEALTH_INTEGRATION_IS_DEVTEST = false
     SERVICE_HEALTH_INTEGRATION_INCIDENT_DAY_FROM_NOW = 3
     HTTP_GATEWAY_URL= "https://${var.function_name}.azurewebsites.net/api/azure-incident-report/generate"
