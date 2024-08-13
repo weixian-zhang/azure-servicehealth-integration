@@ -1,6 +1,8 @@
 # Azure Service Health to Slack 
 
-* [What is Service Health to X](#what-is-service-health-to-slack)
+* [What is Service Health to Slack](#what-is-service-health-to-slack)
+* [How App Works](#how-the-app-works)
+* [Service Health Issue Data Structure ](#service-health-issue-data-structure)
 * [Architecture Design](#architecture-design)
 * [How to Deploy](#how-to-deploy)
 * [Azure Function Configurations](#azure-function-configurations)
@@ -13,6 +15,10 @@
 ### How the App Works?
 * fetches incidents using [Events Api - List by Subscription Id](https://learn.microsoft.com/en-us/rest/api/resourcehealth/events/list-by-subscription-id?view=rest-resourcehealth-2022-10-01&tabs=HTTP)
 * fetches impacted resources using [Impacted Resources - List By Subscription Id And Event Id](https://learn.microsoft.com/en-us/rest/api/resourcehealth/impacted-resources/list-by-subscription-id-and-event-id?view=rest-resourcehealth-2022-10-01&tabs=HTTP)
+* Curates data from both Events API and ImpactedResources API
+* Use curated service issue and impacted resource data to generate HTML report.
+
+### Service Health Issue Data Structure
 * a single incident (a.k.a service issue) can be identified uniquely by its Tracking Id.
 * Each incident can contain multiple impacted services, and each impacted service can contain description for multiple regions.  
   Each region can contain multiple description and updates.  
