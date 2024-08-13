@@ -80,6 +80,7 @@ export class ImpactUpdates {
 }
 
 export  class ImpactedResource {
+    IssueEventId: string
     Id: string
     SubscriptionId: string
     ResourceGroup: string

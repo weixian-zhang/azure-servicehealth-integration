@@ -155,6 +155,7 @@ export default class IssueFilter {
         const rArr: any[] = id.split("/");
         
         const ir = new ImpactedResource();
+        ir.IssueEventId = trackingId;
         ir.Id = id;
         ir.SubscriptionId =  rArr[2];
         ir.ResourceType = IssueFilter.getNonNullValue(
