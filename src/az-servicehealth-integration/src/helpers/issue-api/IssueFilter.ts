@@ -24,6 +24,9 @@ export default class IssueFilter {
     //      Warning - Issues accessing specific services and/or specific regions are impacting a subset of customers.
     //      Informational - Issues impacting management operations and/or latency, not impacting service availability.
     // azure doc: https://learn.microsoft.com/en-us/azure/service-health/service-health-notifications-properties
+
+    // * Reason for getting IssueObject."properties" in addition to just property name is that
+    //   handle test data that has unflattened Json schema, which directly comes from Rest API Json result.
     static createIssueInIssueBag(tenantName: string, subscription: Subscription, currIssue: any, issueBag: Map<string, ServiceIssue>) {
 
         const eventType = _.isNil(currIssue.eventType) ? currIssue.properties.eventType : currIssue.eventType;
