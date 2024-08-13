@@ -36,12 +36,13 @@ export default class NodeMailerEmailSink implements IEmailSink {
         try {
 
             const result = await transporter.sendMail(mailOptions);
-            console.log('Email Sent: %s', result.messageId);
+            //console.log('Email Sent: %s', result.messageId);
 
             return new EmailSinkResponse('Succeeded', null);
 
         } catch (error) {
-            return new EmailSinkResponse('Failed', error.message);
+            throw error;
+            //return new EmailSinkResponse('Failed', error.message);
         }
     }
 }

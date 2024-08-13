@@ -20,13 +20,10 @@ export default class MockIssueGenerator implements IIssueFetcher {
         let curr: number = 0;
         const numOfIssuesToReturn: number = 10;
 
-        const result = new Array<ServiceIssue>();
-        let serviceIssues = new Map<string, ServiceIssue>();
-
         for (const currIssue of issues) {
 
             if (curr == numOfIssuesToReturn) {
-                return Promise.resolve(result);
+                return Array.from(issueBag.values()); //Promise.resolve(result);
             }
 
             const trackingId = currIssue.name;
@@ -67,8 +64,8 @@ export default class MockIssueGenerator implements IIssueFetcher {
 
     private async listIssuesBySubscriptionIds() : Promise<any[]> {
         const data = await fs.promises.readFile(this.issuesDataPath, "utf8");
-        let issues = JSON.parse(data) as any[];
-        return issues;
+        let issues = JSON.parse(data);
+        return Array.from(issues.value);
     }
 }
 
