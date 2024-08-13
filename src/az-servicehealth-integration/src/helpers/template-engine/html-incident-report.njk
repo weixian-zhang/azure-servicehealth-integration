@@ -301,6 +301,7 @@ table {
                                 <col class="tbl-col-fifteen" />
                             </colgroup>
                             <thead>
+                                <th>Issue Event Id</th>
                                 <th>Resource Id</th>
                                 <th>Subscription Id</th>
                                 <th>Resource Group</th>
@@ -310,6 +311,7 @@ table {
                             <tbody>
                                 {% for rsc in ImpactedResources %}
                                 <tr>
+                                    <td>{{ rsc.IssueEventId }}</td>
                                     <td>{{ rsc.Id }}</td>
                                     <td>{{ rsc.SubscriptionId }}</td>
                                     <td>{{ rsc.ResourceGroup }}</td>

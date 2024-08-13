@@ -2,7 +2,7 @@ import json
 import os
 
 jd = {}
-dir = os.path.join(os.getcwd(), 'src', 'az-servicehealth-integration','src','functions','helpers','issue-api','mock-data')
+dir = os.path.join(os.getcwd(), 'src', 'az-servicehealth-integration','src','functions','helpers','issue-api','test-data')
 filePath = os.path.join(dir, 'listBySubscriptionId.json')
 with open(filePath, 'r', encoding='utf8') as f:
     jd = json.loads(f.read())
