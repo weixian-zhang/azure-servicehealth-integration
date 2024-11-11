@@ -87,7 +87,7 @@
 ### Environment Variables  
 App will retrieve all Azure Subscriptions that Service Principals below have access to.
 
-* FUNCTION_HOST_KEY
+* <b>HTTP_GATEWAY_FUNC_HOST_KEY_USED_BY_TIMER_FUNC= {on post-provision, manually set func gateway host key here (used by timer function) } </b>
 * SERVICE_HEALTH_INTEGRATION_IS_DEVTEST=false
 * SERVICE_HEALTH_INTEGRATION_INCIDENT_DAY_FROM_NOW=5 (only used when "incidentStartFromDate" querystring is not supplied to func_http_gateway)
 * HTTP_GATEWAY_URL: "https://{unction name}.azurewebsites.net/api/azure-incident-report/generate?incidentStartFromDate=7/18/2024&code={function API Key},

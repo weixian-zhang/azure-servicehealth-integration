@@ -1,6 +1,11 @@
 variable "resource_group_name" {
   type=string
-  default = "rg-service-health-to-slack-dev"
+  default = "rg-service-health-to-email-dev"
+}
+
+variable "func_storage_account_name" {
+  type = string
+  default = "strgshintfuncdb1"
 }
 
 variable "storage_queue_name" {
@@ -20,7 +25,7 @@ variable "app_service_plan_name" {
 
 variable "function_name" {
   type=string
-  default = "func-sh-dev"
+  default = "func-sh-dev-1"
 }
 
 variable "existing_log_analytics_resource_group_name" {

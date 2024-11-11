@@ -1,7 +1,7 @@
 locals {
   location= "Southeast Asia"
   storage_account_name = "strgsvchealthtfstate"
-  resource_group_name = "rg-service-health-to-slack-dev"
+  resource_group_name = "rg-service-health-to-email-dev"
 }
 
 

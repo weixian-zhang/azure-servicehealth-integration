@@ -15,10 +15,10 @@ export async function func_timer_http_client(myTimer: Timer, context: Invocation
             return;
         }
 
-        const funcKey = process.env.FUNCTION_HOST_KEY
+        const funcKey = process.env.HTTP_GATEWAY_FUNC_HOST_KEY_USED_BY_TIMER_FUNC
 
         if (_.isNil(funcKey) || _.isEmpty(funcKey)) {
-            throw new Error('FUNCTION_HOST_KEY is not found in app settings')
+            throw new Error('HTTP_GATEWAY_FUNC_HOST_KEY_USED_BY_TIMER_FUNC is not found in app settings')
         }
         
         const queryString = {
@@ -39,7 +39,7 @@ export async function func_timer_http_client(myTimer: Timer, context: Invocation
 }
     
 
-app.timer('func_timer_http_client', {
-    schedule: '0 0,5,10,15,20,25,30,35,40,45,50,55 * * * *',
-    handler: func_timer_http_client,
-});
+// app.timer('func_timer_http_client', {
+//     schedule: '0 0,5,10,15,20,25,30,35,40,45,50,55 * * * *',
+//     handler: func_timer_http_client,
+// });

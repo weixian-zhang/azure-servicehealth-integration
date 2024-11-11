@@ -7,7 +7,7 @@ import subprocess
 import os, shutil
 
 func_zip_name = 'func-app.zip'
-az_resource_group = 'rg-service-health-to-slack-dev'
+az_resource_group = 'rg-service-health-to-email-dev'
 az_func_name = 'func-sh-dev'
 
 current_working_directory = os.path.join(Path(os.getcwd()).parent.parent.absolute())
