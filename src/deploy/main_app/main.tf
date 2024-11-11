@@ -13,8 +13,8 @@ terraform {
     }
   }
   backend "azurerm" {
-      resource_group_name  = "rg-service-health-to-slack-dev"
-      storage_account_name = "strgsvchealthtfstate"
+      resource_group_name  = "rg-service-health-to-email-dev"
+      storage_account_name = "strgsvchealthtfstate1"
       container_name       = "tfstate"
       key                  = "terraform.tfstate"
   }
@@ -29,7 +29,7 @@ provider "azurerm" {
 
 
 resource "azurerm_storage_account" "storage" {
-  name                     = "strgshintfuncdb"
+  name                     = var.func_storage_account_name
   resource_group_name      = var.resource_group_name
   location                 = local.location
   account_tier             = "Standard"
@@ -90,7 +90,7 @@ resource "azurerm_windows_function_app" "func" {
     SERVICE_HEALTH_INTEGRATION_IS_DEVTEST = false
     SERVICE_HEALTH_INTEGRATION_INCIDENT_DAY_FROM_NOW = 3
     HTTP_GATEWAY_URL= "https://${var.function_name}.azurewebsites.net/api/azure-incident-report/generate"
-    FUNCTION_HOST_KEY = "" // manually set on function post creation
+    HTTP_GATEWAY_FUNC_HOST_KEY_USED_BY_TIMER_FUNC = "" // manually set on function post creation
     WEBSITE_TIME_ZONE= "Singapore Standard Time"
     APPLICATIONINSIGHTS_CONNECTION_STRING = "${azurerm_application_insights.appinsights.connection_string}"
     GCC_WOG_CLIENT_ID = ""
@@ -104,7 +104,7 @@ resource "azurerm_windows_function_app" "func" {
     AzureWebJobsStorage = "${azurerm_storage_account.storage.primary_connection_string}"
     AZURE_STORAGEQUEUE_RESOURCEENDPOINT = "https://${azurerm_storage_account.storage.name}}.queue.core.windows.net"
     AZURE_STORAGETABLE_RESOURCEENDPOINT = "https://${azurerm_storage_account.storage.name}.table.core.windows.net"
-    StorageQueueIdentityAuth__queueServiceUri = "https://${azurerm_storage_account.storage.name}.queue.core.windows.net/"
+    
     SERVICE_HEALTH_INTEGRATION_EMAIL_CONFIG = "{\"host\":\"${var.smtp_config.host}\",\"port\":${var.smtp_config.port},\"username\":\"${var.smtp_config.username}\",\"password\":\"${var.smtp_config.password}\",\"subject\":\"Azure Incident Report\",\"senderAddress\":\"${var.smtp_config.sender_address}\",\"recipients\":{\"to\":${jsonencode(var.smtp_config.to_address)},\"cc\":${jsonencode(var.smtp_config.cc_address)},\"bcc\":${jsonencode(var.smtp_config.bcc_address)}}}"
   }
 
@@ -170,7 +170,7 @@ resource "null_resource" "execute_python_deployment_script" {
 #   body = jsonencode({
 #     properties = {
 #       app_settings = {
-#         FUNCTION_HOST_KEY = "${null_resource.func_host_key}"
+#         HTTP_GATEWAY_FUNC_HOST_KEY_USED_BY_TIMER_FUNC = "${null_resource.func_host_key}"
 #       }
 #     }
 #   })

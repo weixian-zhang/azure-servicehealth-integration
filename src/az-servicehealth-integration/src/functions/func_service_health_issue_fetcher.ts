@@ -70,6 +70,6 @@ function initGlobalVariables(context, incidentStartFromDate: string) {
 
 app.storageQueue('func_service_health_issue_fetcher', {
     queueName: 'incident-fetcher-in',
-    connection: 'StorageQueueIdentityAuth',
+    connection: 'AzureWebJobsStorage',
     handler: func_service_health_issue_fetcher
 });

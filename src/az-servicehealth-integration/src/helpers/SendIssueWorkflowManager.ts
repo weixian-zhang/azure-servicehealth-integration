@@ -26,23 +26,40 @@ export default class IssueReportGenerationWorkflow {
         await this.sendDupPreventer.init(); // init tabel storage
       
         //techpass incidents
-        const tpSubs = await this.getSubscriptionsByServicePrincipalRBAC(globalThis.appconfig.TechPassClientSecretCredential)
 
-        const tpIssues = await this.getTechPassIssues(tpSubs);
+        var tpIssuesToSend = []
+        try {
+            
+            const tpSubs = await this.getSubscriptionsByServicePrincipalRBAC(globalThis.appconfig.TechPassClientSecretCredential)
 
-        const tpIssuesToSend = await this.sendDupPreventer.determineShouldSendIssues(tpIssues)
+            const tpIssues = await this.getTechPassIssues(tpSubs);
 
-        globalThis.funcContext.trace(`TechPass issues count to send: ${tpIssuesToSend.length}`)
+            tpIssuesToSend = await this.sendDupPreventer.determineShouldSendIssues(tpIssues)
+
+            globalThis.funcContext.trace(`TechPass issues count to send: ${tpIssuesToSend.length}`)
+
+        } catch (e) {
+            globalThis.funcContext.error(`error message: ${e.message}, ${e.stack}`)
+        }
+        
 
         //wog incidents
+        var wogIssuesToSend = []
+        
+        try {
 
-        const wogSubs = await this.getSubscriptionsByServicePrincipalRBAC(globalThis.appconfig.wogClientSecretCredential)
+            const wogSubs = await this.getSubscriptionsByServicePrincipalRBAC(globalThis.appconfig.wogClientSecretCredential)
 
-        const wogIssues = await this.getWOGIssues(wogSubs)
+            const wogIssues = await this.getWOGIssues(wogSubs)
 
-        const wogIssuesToSend = await this.sendDupPreventer.determineShouldSendIssues(wogIssues)
+            wogIssuesToSend = await this.sendDupPreventer.determineShouldSendIssues(wogIssues)
 
-        globalThis.funcContext.trace(`WOG issues count to send: ${wogIssuesToSend.length}`)
+            globalThis.funcContext.trace(`WOG issues count to send: ${wogIssuesToSend.length}`)
+
+        } catch (e) {
+            globalThis.funcContext.error(`error message: ${e.message}, ${e.stack}`)
+        }
+        
 
         //issue to HTML template and send email
         const htmlRenderer = new AzureIncidentReportRenderer();
