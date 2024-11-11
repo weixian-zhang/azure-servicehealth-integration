@@ -67,6 +67,21 @@
 
 <br />  
 
+### Identities & RBAC  
+
+1. Function App Managed Identity
+   - RBAC - Scope = Storage
+     -  Storage Table Data Contributor
+     -  Storage Queue Data Contributor
+      
+2. Tenant A Service Principal
+   - Scope = Management Group or Subscriptions
+   - Role = Reader 
+      
+3. Tenant B Service Principal
+   - Scope = Management Group or Subscriptions
+   - Role = Reader 
+
 ### How to Deploy  
 * deploy Function App only:
   * change resource group and Function anme in this Python script
