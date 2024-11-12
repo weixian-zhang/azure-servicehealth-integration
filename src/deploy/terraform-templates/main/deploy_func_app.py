@@ -5,14 +5,15 @@ from pathlib import Path
 from zipfile import ZipFile
 import subprocess
 import os, shutil
+import sys
 
 func_zip_name = 'func-app.zip'
-az_resource_group = 'rg-service-health-to-email-dev'
-az_func_name = 'func-sh-dev'
+az_resource_group = sys.argv[1] #'rg-service-health-to-email-dev'
+az_func_name = sys.argv[2] #'func-sh-dev'
 
-current_working_directory = os.path.join(Path(os.getcwd()).parent.parent.absolute())
+current_working_directory = os.path.join(Path(os.getcwd()).parent.parent.parent.absolute())
 azfunc_directory = os.path.join(current_working_directory, 'az-servicehealth-integration')
-func_deploy_dir = os.path.join(current_working_directory, 'deploy', 'main_app', 'func-app')
+func_deploy_dir = os.path.join(current_working_directory, 'deploy', 'main', 'func-app')
 zip_to_dir = Path(func_deploy_dir).parent
 zip_to_file_path = os.path.join(zip_to_dir, 'func-app.zip')
 
@@ -61,9 +62,9 @@ shutil.copy2(os.path.join(azfunc_directory, 'tsconfig.json'), os.path.join(func_
 # functions source files
 copytree(os.path.join(azfunc_directory, 'dist', 'src'), os.path.join(func_deploy_dir, 'dist' , 'src'))
 # functions source files
-copytree(os.path.join(azfunc_directory, 'src', 'functions'), os.path.join(func_deploy_dir, 'src','functions'))
-# copy helpers source files
-copytree(os.path.join(azfunc_directory, 'src', 'helpers'), os.path.join(func_deploy_dir, 'src', 'helpers'))
+#copytree(os.path.join(azfunc_directory, 'src', 'functions'), os.path.join(func_deploy_dir, 'dist') #os.path.join(func_deploy_dir, 'src','functions'))
+# # copy helpers source files
+#copytree(os.path.join(azfunc_directory, 'src', 'helpers'), os.path.join(func_deploy_dir, 'dist') #os.path.join(func_deploy_dir, 'src', 'helpers'))
 
 
 

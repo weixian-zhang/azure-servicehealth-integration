@@ -16,6 +16,7 @@ export class EMailConfig {
 }
 
 export default class AppConfig {
+    HTTPGatewayFunchostKeyUsedByTimerFunc: string = '';
     TechPassClientId: string;
     TechPassClientSecret: string;
     TechPassTenantId: string;
@@ -34,16 +35,17 @@ export default class AppConfig {
     httpGatewayURL: string = '' //used by func_timer_http_client only
 
     
-    //use for local testing only, using Azure Communication Service email
+    //for local testing only using Azure Communication Service SMTP 
     AzureCommunicationServiceConnString: string = '';
 
 
-    static loadFromEnvVar(context: InvocationContext) {//(incidentQueryStartFromDate: string) {
+    static loadFromEnvVar(context: InvocationContext) {
 
         var appconfig = new AppConfig()
 
         try {
             
+            appconfig.HTTPGatewayFunchostKeyUsedByTimerFunc = process.env.HTTP_GATEWAY_FUNC_HOST_KEY_USED_BY_TIMER_FUNC;
             appconfig.TechPassClientId  = process.env.GCC_TECHPASS_CLIENT_ID;
             appconfig.TechPassClientSecret  = process.env.GCC_TECHPASS_CLIENT_SECRET;
             appconfig.TechPassTenantId  = process.env.GCC_TECHPASS_TENANT_ID;
