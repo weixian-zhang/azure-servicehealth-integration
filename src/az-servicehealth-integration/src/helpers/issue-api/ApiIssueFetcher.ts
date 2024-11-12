@@ -5,7 +5,7 @@ import { MicrosoftResourceHealth, EventsListBySubscriptionIdOptionalParams } fro
 import { InvocationContext } from "@azure/functions";
 import AppConfig from "../AppConfig";
 import * as _ from 'lodash';
-import IssuePropMapper from "./IssueFilter";
+import IssueFilterer from "./IssueFilterer";
 
 //service issue json schema
 //https://learn.microsoft.com/en-us/rest/api/resourcehealth/events/list-by-tenant-id?view=rest-resourcehealth-2022-10-01&tabs=HTTP#listeventsbytenantid
@@ -77,7 +77,7 @@ export default class ApiIssueFetcher implements IIssueFetcher {
                 
                 const trackingId = currIssue.name;
 
-                IssuePropMapper.createIssueInIssueBag(this.tenantName, sub, currIssue, issueBag);
+                IssueFilterer.createAndFilterIssues(this.tenantName, sub, currIssue, issueBag);
 
                 
                 if (issueBag.has(trackingId)) {
@@ -101,7 +101,7 @@ export default class ApiIssueFetcher implements IIssueFetcher {
 
         for await (let resource of rhc.impactedResources.listBySubscriptionIdAndEventId(trackingId)) {//this.resourceHealthClient.impactedResources.listByTenantIdAndEventId(issue.TrackingId)) {
 
-            IssuePropMapper.createImpactedResourceInIssueBag(resource, trackingId, issueBag);
+            IssueFilterer.createImpactedResourceInIssueBag(resource, trackingId, issueBag);
         }
     }
 
@@ -116,7 +116,7 @@ export default class ApiIssueFetcher implements IIssueFetcher {
             //         continue;
             //     }
 
-            //     const [seaRegionImpacted, si] = IssuePropMapper.createServiceIssue(this.tenantName, issue);
+            //     const [seaRegionImpacted, si] = IssueFilterer.createServiceIssue(this.tenantName, issue);
 
             //     if (!seaRegionImpacted) {
             //         continue;
@@ -125,7 +125,7 @@ export default class ApiIssueFetcher implements IIssueFetcher {
             //     // is previously collected issue
             //     if (si.TrackingId in serviceIssues) {
 
-            //         IssuePropMapper.groupImpactedServicesByTrackingId(si, serviceIssues);
+            //         IssueFilterer.groupImpactedServicesByTrackingId(si, serviceIssues);
             //     }
             //     else
             //     {
@@ -146,7 +146,7 @@ export default class ApiIssueFetcher implements IIssueFetcher {
             //     // si.LastUpdateTime = new Date(issue.lastUpdateTime);
             //     // si.LastUpdateTimeEpoch = si.LastUpdateTime.valueOf();
             //     // si.Level = issue.level;
-            //     // si.LevelDescription = IssuePropMapper.getLevelDescription(issue.level);
+            //     // si.LevelDescription = IssueFilterer.getLevelDescription(issue.level);
             //     // si.ImpactedServices = new Array();
             //     // si.ImpactedResources = new Array();
     

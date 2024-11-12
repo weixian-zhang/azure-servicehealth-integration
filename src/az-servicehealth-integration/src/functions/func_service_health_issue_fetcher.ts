@@ -1,7 +1,7 @@
 import { app, HttpRequest, HttpResponseInit, InvocationContext } from "@azure/functions";
 import AppConfig from "../helpers/AppConfig";
 import { ClientSecretCredential   } from "@azure/identity"
-import { DB } from "../helpers/db/DB";
+import { DB } from "../helpers/DB";
 import * as _ from 'lodash';
 import SendIssueWorkflowManager from "../helpers/SendIssueWorkflowManager";
 
