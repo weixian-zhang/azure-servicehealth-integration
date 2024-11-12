@@ -25,7 +25,7 @@
     * multiple regions, each region contains
       * Status
       * issue description
-  Each region can contain multiple description and updates.  
+ 
   Real world example [here](https://raw.githubusercontent.com/weixian-zhang/azure-servicehealth-integration/refs/heads/main/src/az-servicehealth-integration/src/helpers/issue-api/test-data/sea_issues_only.json):  
 
 <code>
