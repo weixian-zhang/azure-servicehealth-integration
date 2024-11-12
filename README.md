@@ -25,6 +25,9 @@
     * multiple regions, each region contains
       * Status
       * issue description
+      * 1 or more Updates, each Update contains:
+        * Summary
+        * LastUpdateTime
  
   Real world example [here](https://raw.githubusercontent.com/weixian-zhang/azure-servicehealth-integration/refs/heads/main/src/az-servicehealth-integration/src/helpers/issue-api/test-data/sea_issues_only.json):  
 
