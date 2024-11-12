@@ -1,4 +1,6 @@
-main_app/func-app
+terraform-templates/main/func-app
+main/func-app
+main/func-app.zip
 
 # Local .terraform directories
 **/.terraform/*

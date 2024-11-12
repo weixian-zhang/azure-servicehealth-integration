@@ -1,6 +1,6 @@
 locals {
   location= "Southeast Asia"
-  storage_account_name = "strgsvchealthtfstate"
+  storage_account_name = "strgsvchealthtfstate1"
   resource_group_name = "rg-service-health-to-email-dev"
 }
 
@@ -41,4 +41,3 @@ resource "azurerm_storage_container" "tfstate_container" {
   storage_account_name  = azurerm_storage_account.tfstate.name
   container_access_type = "private"
 }
-

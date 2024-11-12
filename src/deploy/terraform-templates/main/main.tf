@@ -28,7 +28,7 @@ provider "azurerm" {
 }
 
 
-resource "azurerm_storage_account" "storage" {
+resource "azurerm_storage_account" "storage_func" {
   name                     = var.func_storage_account_name
   resource_group_name      = var.resource_group_name
   location                 = local.location
@@ -38,12 +38,12 @@ resource "azurerm_storage_account" "storage" {
 
 resource "azurerm_storage_queue" "incident_in_queue" {
   name                 = var.storage_queue_name
-  storage_account_name = azurerm_storage_account.storage.name
+  storage_account_name = azurerm_storage_account.storage_func.name
 }
 
 resource "azurerm_storage_table" "db_table" {
   name                 = var.storage_table_name
-  storage_account_name = azurerm_storage_account.storage.name
+  storage_account_name = azurerm_storage_account.storage_func.name
 }
 
 # get log analytics workspace id that backs app insights
@@ -66,23 +66,38 @@ resource "azurerm_service_plan" "asp" {
   resource_group_name = var.resource_group_name
   location            = local.location
   os_type             = "Windows"
-  sku_name            = "B2"
+  sku_name = "B2"
+  # sku_name            = "P1v2"
+  # zone_balancing_enabled = true
+  # per_site_scaling_enabled = true
+  worker_count = 1
 }
 
+//* managed identity assigned to management group
 resource "azurerm_windows_function_app" "func" {
   name                = var.function_name
   resource_group_name = var.resource_group_name
   location            = local.location
   https_only                 = true
-  storage_account_name       = azurerm_storage_account.storage.name
-  storage_account_access_key = azurerm_storage_account.storage.primary_access_key
+  storage_account_name       = azurerm_storage_account.storage_func.name
+  storage_account_access_key = azurerm_storage_account.storage_func.primary_access_key
   service_plan_id            = azurerm_service_plan.asp.id
+  
 
   identity {
     type = "SystemAssigned"
   }
 
   app_settings = {
+    HTTP_GATEWAY_FUNC_HOST_KEY_USED_BY_TIMER_FUNC = "{ http gateway func host key manually set}"
+    GCC_WOG_CLIENT_ID = " {manually set} "
+    GCC_WOG_CLIENT_SECRET = " {manually set} "
+    GCC_WOG_TENANT_ID = " {manually set} "
+    GCC_WOG_TENANT_NAME = "WOG"
+    GCC_TECHPASS_CLIENT_ID = " {manually set} "
+    GCC_TECHPASS_CLIENT_SECRET = " {manually set} "
+    GCC_TECHPASS_TENANT_ID = " {manually set} "
+    GCC_TECHPASS_TENANT_NAME = "TechPass"
     FUNCTIONS_NODE_BLOCK_ON_ENTRY_POINT_ERROR = true
     WEBSITE_RUN_FROM_PACKAGE = 0
     SCM_DO_BUILD_DURING_DEPLOYMENT = true
@@ -93,18 +108,9 @@ resource "azurerm_windows_function_app" "func" {
     HTTP_GATEWAY_FUNC_HOST_KEY_USED_BY_TIMER_FUNC = "" // manually set on function post creation
     WEBSITE_TIME_ZONE= "Singapore Standard Time"
     APPLICATIONINSIGHTS_CONNECTION_STRING = "${azurerm_application_insights.appinsights.connection_string}"
-    GCC_WOG_CLIENT_ID = ""
-    GCC_WOG_CLIENT_SECRET = ""
-    GCC_WOG_TENANT_ID = ""
-    GCC_WOG_TENANT_NAME = "WOG"
-    GCC_TECHPASS_CLIENT_ID = ""
-    GCC_TECHPASS_CLIENT_SECRET = ""
-    GCC_TECHPASS_TENANT_ID = ""
-    GCC_TECHPASS_TENANT_NAME = "TechPass"
-    AzureWebJobsStorage = "${azurerm_storage_account.storage.primary_connection_string}"
-    AZURE_STORAGEQUEUE_RESOURCEENDPOINT = "https://${azurerm_storage_account.storage.name}}.queue.core.windows.net"
-    AZURE_STORAGETABLE_RESOURCEENDPOINT = "https://${azurerm_storage_account.storage.name}.table.core.windows.net"
-    
+    AzureWebJobsStorage = "${azurerm_storage_account.storage_func.primary_connection_string}"
+    AZURE_STORAGEQUEUE_RESOURCEENDPOINT = "https://${azurerm_storage_account.storage_func.name}}.queue.core.windows.net"
+    AZURE_STORAGETABLE_RESOURCEENDPOINT = "https://${azurerm_storage_account.storage_func.name}.table.core.windows.net"
     SERVICE_HEALTH_INTEGRATION_EMAIL_CONFIG = "{\"host\":\"${var.smtp_config.host}\",\"port\":${var.smtp_config.port},\"username\":\"${var.smtp_config.username}\",\"password\":\"${var.smtp_config.password}\",\"subject\":\"Azure Incident Report\",\"senderAddress\":\"${var.smtp_config.sender_address}\",\"recipients\":{\"to\":${jsonencode(var.smtp_config.to_address)},\"cc\":${jsonencode(var.smtp_config.cc_address)},\"bcc\":${jsonencode(var.smtp_config.bcc_address)}}}"
   }
 
@@ -118,15 +124,15 @@ resource "azurerm_windows_function_app" "func" {
 }
 
 
-resource "azurerm_role_assignment" "role_assign_func_table_storage" {
-  scope                = azurerm_storage_account.storage.id
+resource "azurerm_role_assignment" "storage_table_data_contributor" {
+  scope                = azurerm_storage_account.storage_func.id
   role_definition_name = "Storage Table Data Contributor"
   principal_id         = azurerm_windows_function_app.func.identity.0.principal_id
   depends_on = [  ]
 }
 
-resource "azurerm_role_assignment" "role_assign_func_queue_storage" {
-  scope                = azurerm_storage_account.storage.id
+resource "azurerm_role_assignment" "storage_queue_data_contributor" {
+  scope                = azurerm_storage_account.storage_func.id
   role_definition_name = "Storage Queue Data Contributor"
   principal_id         = azurerm_windows_function_app.func.identity.0.principal_id
 }
@@ -137,7 +143,7 @@ resource "null_resource" "execute_python_deployment_script" {
     always_run = "${timestamp()}"
   }
   provisioner "local-exec" {
-    command = "python deploy_func_app.py"
+    command = "python deploy_func_app.py ${var.resource_group_name} ${var.function_name}"
     working_dir = "${path.module}"
   }
   
