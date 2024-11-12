@@ -20,14 +20,22 @@
 
 ### Service Health Issue Data Structure
 * a single incident (a.k.a service issue) can be identified uniquely by its Tracking Id.
-* Each incident can contain multiple impacted services, and each impacted service can contain description for multiple regions.  
-  Each region can contain multiple description and updates.  
-  An real example [here](https://github.com/weixian-zhang/azure-servicehealth-integration/blob/main/src/az-servicehealth-integration/src/functions/helpers/issue-api/mock-data/sea_issues_only.json) and a high-level pseudo summary of the data hierarchy below:
-&nbsp;&nbsp;<code>
-&nbsp;&nbsp;&nbsp;incident/service issue with tracking id NK_29aG1
-&nbsp;&nbsp;&nbsp;description: ARM provider API down
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;impacted services: Azure Relay
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;impacted region:
+* Each incident can contain
+  * multiple impacted services, each impacted service can contains
+    * multiple regions, each region contains
+      * Status
+      * issue description
+      * 1 or more Updates, each Update contains:
+        * Summary
+        * LastUpdateTime
+ 
+  Real world example [here](https://raw.githubusercontent.com/weixian-zhang/azure-servicehealth-integration/refs/heads/main/src/az-servicehealth-integration/src/helpers/issue-api/test-data/sea_issues_only.json):  
+
+<code>
+&nbsp;&nbsp;&nbsp;<ins>incident/service issue with tracking id NK_29aG1</ins>
+&nbsp;&nbsp;&nbsp;issue level description...
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<ins>impacted services: Azure Relay</ins>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<ins>impacted region:</ins>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;South Africa North
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;summary: azure relay down due to ARM provider impacted
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;updates:
@@ -42,8 +50,8 @@
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lastUpdateTime: 2023/5/2 11:22:01
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;summary: update 1
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lastUpdateTime: 2023/5/1 9:22:01
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;impacted services: Event Hub
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;impacted region:
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<ins>impacted services: Event Hub</ins>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<ins>impacted region:</ins>
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;South Japan East
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;summary: azure relay down due to ARM provider impacted
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;updates:
@@ -57,7 +65,8 @@
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;summary: update 2
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lastUpdateTime: 2023/5/2 12:22:01
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;summary: update 1
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lastUpdateTime: 2023/5/1 10:22:01</code>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lastUpdateTime: 2023/5/1 10:22:01
+</code>
 
 <br />
 <br />  
@@ -66,6 +75,21 @@
 ![image](https://github.com/user-attachments/assets/22666c02-7d0a-4b19-9dd9-22778ce92e16)
 
 <br />  
+
+### Identities & RBAC  
+
+1. Function App Managed Identity
+   - RBAC - Scope = Storage
+     -  Storage Table Data Contributor
+     -  Storage Queue Data Contributor
+      
+2. Tenant A Service Principal
+   - Scope = Management Group or Subscriptions
+   - Role = Reader 
+      
+3. Tenant B Service Principal
+   - Scope = Management Group or Subscriptions
+   - Role = Reader 
 
 ### How to Deploy  
 * deploy Function App only:
