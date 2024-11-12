@@ -21,14 +21,14 @@
 ### Service Health Issue Data Structure
 * a single incident (a.k.a service issue) can be identified uniquely by its Tracking Id.
 * Each incident can contain
-  * multiple impacted services, eeach impacted service can contains
+  * multiple impacted services, each impacted service can contains
     * multiple regions, each region contains
       * Status
       * issue description
   Each region can contain multiple description and updates.  
-  Real world example [here](https://raw.githubusercontent.com/weixian-zhang/azure-servicehealth-integration/refs/heads/main/src/az-servicehealth-integration/src/helpers/issue-api/test-data/sea_issues_only.json):
+  Real world example [here](https://raw.githubusercontent.com/weixian-zhang/azure-servicehealth-integration/refs/heads/main/src/az-servicehealth-integration/src/helpers/issue-api/test-data/sea_issues_only.json):  
 
-&nbsp;&nbsp;<code>
+<code>
 &nbsp;&nbsp;&nbsp;<ins>incident/service issue with tracking id NK_29aG1</ins>
 &nbsp;&nbsp;&nbsp;issue level description...
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<ins>impacted services: Azure Relay</ins>
@@ -62,7 +62,8 @@
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;summary: update 2
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lastUpdateTime: 2023/5/2 12:22:01
 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;summary: update 1
-&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lastUpdateTime: 2023/5/1 10:22:01</code>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;lastUpdateTime: 2023/5/1 10:22:01
+</code>
 
 <br />
 <br />  
