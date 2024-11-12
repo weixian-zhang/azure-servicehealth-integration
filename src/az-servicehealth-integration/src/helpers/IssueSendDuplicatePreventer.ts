@@ -1,4 +1,4 @@
-import {DB} from './db/DB';
+import {DB} from './DB';
 import * as _ from 'lodash';
 import { ServiceIssue } from './issue-api/ServiceIssueModels';
 
@@ -20,7 +20,7 @@ export default class IssueSendDuplicatePreventer {
         await this.db.initDB()
     }
 
-    // decision tree to determine if an issue can be sent
+    // ** decision tree to determine if an issue will be sent
     // issue level
         // issue is Resolved and no tracked issue is found in DB
             // do nothing
@@ -90,8 +90,7 @@ export default class IssueSendDuplicatePreventer {
                 // ** only looking at SEA region impacted services only
                 if (issue.OverallStatus == this.Active && trackedIssue.Status == this.Active) {
 
-                    const [trackedIssue, trackedImpactedServices] =
-                        await this.db.getImpactedServices(issue.TrackingId);//Map<string, TrackedImpactedService> = await this.db.getImpactedServices(issue.TrackingId);
+                    const [trackedIssue, trackedImpactedServices] = await this.db.getImpactedServices(issue.TrackingId);
 
                     // all issue at this point is "tracked", and MUST have SEA region impacted services
                     for (const svc of issue.ImpactedServices ) {

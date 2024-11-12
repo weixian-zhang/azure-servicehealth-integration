@@ -1,4 +1,4 @@
-import IssuePropMapper from "./IssueFilter";
+import IssueFilterer from "./IssueFilterer";
 import IIssueFetcher from "./IIssueFetcher";
 import { ServiceIssue, ImpactedService, ImpactUpdates, ImpactedResource, Subscription } from "./ServiceIssueModels";
 import * as fs from 'fs';
@@ -18,29 +18,36 @@ export default class MockIssueGenerator implements IIssueFetcher {
         const issues = await this.listIssuesBySubscriptionIds();
         
         let curr: number = 0;
-        const numOfIssuesToReturn: number = 10;
+        const numOfIssuesToReturn: number = 20;
 
-        for (const currIssue of issues) {
+        const subscriptions = [
+            new Subscription('213-axx-000001-xxaa222312', 'sub-12'),
+            new Subscription('213-axx-000001-xxaa222313', 'sub-13'),
+            new Subscription('213-axx-000001-xxaa222314', 'sub-14')
+        ]
 
-            if (curr == numOfIssuesToReturn) {
-                return Array.from(issueBag.values()); //Promise.resolve(result);
+        for (const sub of subscriptions) {
+            for (const currIssue of issues) {
+
+                if (curr == numOfIssuesToReturn) {
+                    return Array.from(issueBag.values()); //Promise.resolve(result);
+                }
+    
+                const trackingId = currIssue.name;
+    
+                IssueFilterer.createAndFilterIssues(
+                    wogTenantName, 
+                    sub, 
+                    currIssue, 
+                    issueBag);
+                
+                if (issueBag.has(trackingId)) {
+                    // get impacted resources
+                    await this.fetchImpactedResourcesForIssue(trackingId, issueBag);
+                }
+    
+                curr++;
             }
-
-            const trackingId = currIssue.name;
-
-            IssuePropMapper.createIssueInIssueBag(
-                wogTenantName, 
-                new Subscription('213-axx-000001-xxaa222333', 
-                'mesos001-11-sub-name'), 
-                currIssue, 
-                issueBag);
-            
-            if (issueBag.has(trackingId)) {
-                // get impacted resources
-                await this.fetchImpactedResourcesForIssue(trackingId, issueBag);
-            }
-
-            curr++;
         }
 
         return Array.from(issueBag.values());
@@ -58,7 +65,7 @@ export default class MockIssueGenerator implements IIssueFetcher {
                 continue;
             }
 
-            IssuePropMapper.createImpactedResourceInIssueBag(ip, trackingId, issueBag)
+            IssueFilterer.createImpactedResourceInIssueBag(ip, trackingId, issueBag)
         }
     }
 
@@ -73,7 +80,7 @@ export default class MockIssueGenerator implements IIssueFetcher {
             //     continue;
             // }
             
-            // const [seaRegionImpacted, si] = IssuePropMapper.createServiceIssue(wogTenantName, issue);
+            // const [seaRegionImpacted, si] = IssueFilterer.createServiceIssue(wogTenantName, issue);
 
             // if (!seaRegionImpacted) {
             //     continue;
@@ -82,7 +89,7 @@ export default class MockIssueGenerator implements IIssueFetcher {
             // // is previously collected issue
             // if (si.TrackingId in serviceIssues) {
 
-            //     IssuePropMapper.groupImpactedServicesByTrackingId(si, serviceIssues);
+            //     IssueFilterer.groupImpactedServicesByTrackingId(si, serviceIssues);
             // }
             // else
             // {
@@ -102,7 +109,7 @@ export default class MockIssueGenerator implements IIssueFetcher {
             // si.LastUpdateTime = new Date(issue.properties.lastUpdateTime);
             // si.LastUpdateTimeEpoch = si.LastUpdateTime.valueOf();
             // si.Level = issue.properties.Level;
-            // si.LevelDescription = IssuePropMapper.getLevelDescription(si.Level);
+            // si.LevelDescription = IssueFilterer.getLevelDescription(si.Level);
             // si.ImpactedServices = new Array();
             // si.ImpactedResources = new Array();
 

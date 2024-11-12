@@ -50,6 +50,11 @@ export default class IssueReportGenerationWorkflow {
 
             const wogSubs = await this.getSubscriptionsByServicePrincipalRBAC(globalThis.appconfig.wogClientSecretCredential)
 
+            //test only
+            wogSubs.concat([...wogSubs])
+            wogSubs.concat([...wogSubs])
+            wogSubs.concat([...wogSubs])
+
             const wogIssues = await this.getWOGIssues(wogSubs)
 
             wogIssuesToSend = await this.sendDupPreventer.determineShouldSendIssues(wogIssues)
