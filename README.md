@@ -89,7 +89,11 @@
       
 3. Tenant B Service Principal
    - Scope = Management Group or Subscriptions
-   - Role = Reader 
+   - Role = Reader
+  
+4. Terraform Service Principal (optional)
+   - Scope = Susbcription or Resource Group
+   - Role = Contributor
 
 ### How to Deploy  
 * deploy Function App only:
