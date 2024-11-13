@@ -49,7 +49,7 @@ export default class ApiIssueFetcher implements IIssueFetcher {
             return serviceIssues
         
         } catch (e) {
-            globalThis.funcContext.error(e.message);
+            globalThis.funcContext.error(e.message,  {is_error: true});
             throw e;
         }
 

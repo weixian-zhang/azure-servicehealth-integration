@@ -27,6 +27,7 @@ provider "azurerm" {
   features {}
 }
 
+data "azurerm_subscription" "primary" { }
 
 resource "azurerm_storage_account" "storage_func" {
   name                     = var.func_storage_account_name
@@ -89,7 +90,7 @@ resource "azurerm_windows_function_app" "func" {
   }
 
   app_settings = {
-    HTTP_GATEWAY_FUNC_HOST_KEY_USED_BY_TIMER_FUNC = "{ http gateway func host key manually set}"
+    HTTP_GATEWAY_FUNC_HOST_KEY_USED_BY_TIMER_FUNC = "{http gateway func host key manually set}"
     GCC_WOG_CLIENT_ID = " {manually set} "
     GCC_WOG_CLIENT_SECRET = " {manually set} "
     GCC_WOG_TENANT_ID = " {manually set} "
@@ -98,6 +99,7 @@ resource "azurerm_windows_function_app" "func" {
     GCC_TECHPASS_CLIENT_SECRET = " {manually set} "
     GCC_TECHPASS_TENANT_ID = " {manually set} "
     GCC_TECHPASS_TENANT_NAME = "TechPass"
+        SERVICE_HEALTH_INTEGRATION_EMAIL_CONFIG = "{\"host\":\"manually set\",\"port\":25,\"username\":\"manually set\",\"password\":\"manually set\",\"subject\":\"Azure Incident Report\",\"senderAddress\":\"manually set\",\"recipients\":{\"to\": [],\"cc\": [],\"bcc\":[] }}"
     FUNCTIONS_NODE_BLOCK_ON_ENTRY_POINT_ERROR = true
     WEBSITE_RUN_FROM_PACKAGE = 0
     SCM_DO_BUILD_DURING_DEPLOYMENT = true
@@ -109,9 +111,8 @@ resource "azurerm_windows_function_app" "func" {
     WEBSITE_TIME_ZONE= "Singapore Standard Time"
     APPLICATIONINSIGHTS_CONNECTION_STRING = "${azurerm_application_insights.appinsights.connection_string}"
     AzureWebJobsStorage = "${azurerm_storage_account.storage_func.primary_connection_string}"
-    AZURE_STORAGEQUEUE_RESOURCEENDPOINT = "https://${azurerm_storage_account.storage_func.name}}.queue.core.windows.net"
+    AZURE_STORAGEQUEUE_RESOURCEENDPOINT = "https://${azurerm_storage_account.storage_func.name}.queue.core.windows.net"
     AZURE_STORAGETABLE_RESOURCEENDPOINT = "https://${azurerm_storage_account.storage_func.name}.table.core.windows.net"
-    SERVICE_HEALTH_INTEGRATION_EMAIL_CONFIG = "{\"host\":\"${var.smtp_config.host}\",\"port\":${var.smtp_config.port},\"username\":\"${var.smtp_config.username}\",\"password\":\"${var.smtp_config.password}\",\"subject\":\"Azure Incident Report\",\"senderAddress\":\"${var.smtp_config.sender_address}\",\"recipients\":{\"to\":${jsonencode(var.smtp_config.to_address)},\"cc\":${jsonencode(var.smtp_config.cc_address)},\"bcc\":${jsonencode(var.smtp_config.bcc_address)}}}"
   }
 
   site_config {
@@ -123,12 +124,17 @@ resource "azurerm_windows_function_app" "func" {
   }
 }
 
+resource "azurerm_role_assignment" "storage_blob_data_contributor" {
+  scope                = azurerm_storage_account.storage_func.id
+  role_definition_name = "Storage Blob Data Contributor"
+  principal_id         = azurerm_windows_function_app.func.identity.0.principal_id
+}
+
 
 resource "azurerm_role_assignment" "storage_table_data_contributor" {
   scope                = azurerm_storage_account.storage_func.id
-  role_definition_name = "Storage Table Data Contributor"
+  role_definition_name = "Storage Table Data Contributor" # join("/", ["/subscription", data.azurerm_subscription.primary.subscription_id, "providers/Microsoft.Authorization/roleDefinitions/0a9a7e1f-b9d0-4cc4-a60d-0319b160aaa3"])
   principal_id         = azurerm_windows_function_app.func.identity.0.principal_id
-  depends_on = [  ]
 }
 
 resource "azurerm_role_assignment" "storage_queue_data_contributor" {
@@ -136,7 +142,6 @@ resource "azurerm_role_assignment" "storage_queue_data_contributor" {
   role_definition_name = "Storage Queue Data Contributor"
   principal_id         = azurerm_windows_function_app.func.identity.0.principal_id
 }
-
 
 resource "null_resource" "execute_python_deployment_script" {
   triggers = {
@@ -150,6 +155,8 @@ resource "null_resource" "execute_python_deployment_script" {
   depends_on = [ azurerm_windows_function_app.func ]
   
 }
+
+
 
 # below implementation: try get func host key from data and local-exec but not successful.
 # A proven way is to redirect local-exec key value to a file, may have security concern saving API key on file

@@ -1,0 +1,33 @@
+{
+  "version": "2.0",
+  "retry": {
+    "strategy": "fixedDelay",
+    "maxRetryCount": 1,
+    "delayInterval": "00:01:00"
+  },
+  "queues": {
+    "maxDequeueCount": 1
+  },
+  "logging": {
+    "fileLoggingMode": "always",
+    "applicationInsights": {
+      "samplingSettings": {
+          "isEnabled": true,
+          "logginglevel":"Error",
+          "excludedTypes": "Request"
+      },
+      "enableLiveMetricsFilters": true
+    },
+    "logLevel": {
+      "default": "Error",
+      "Host.Results": "Error",
+      "Function": "Trace",
+      "Host.Aggregator": "Trace"
+    }
+  },
+  "telemetryMode": "openTelemetry",
+  "extensionBundle": {
+    "id": "Microsoft.Azure.Functions.ExtensionBundle",
+    "version": "[4.*, 5.0.0)"
+  }
+}

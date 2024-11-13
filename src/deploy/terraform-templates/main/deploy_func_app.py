@@ -13,7 +13,7 @@ az_func_name = sys.argv[2] #'func-sh-dev'
 
 current_working_directory = os.path.join(Path(os.getcwd()).parent.parent.parent.absolute())
 azfunc_directory = os.path.join(current_working_directory, 'az-servicehealth-integration')
-func_deploy_dir = os.path.join(current_working_directory, 'deploy', 'main', 'func-app')
+func_deploy_dir = os.path.join(current_working_directory, 'deploy', 'terraform-templates', 'main', 'func-app')
 zip_to_dir = Path(func_deploy_dir).parent
 zip_to_file_path = os.path.join(zip_to_dir, 'func-app.zip')
 
@@ -52,7 +52,8 @@ def make_archive(source, destination):
 # do npm build to output dist folder containing .js files
 print(f'${azfunc_directory} : npm run build')
 os.chdir(azfunc_directory)
-p = subprocess.Popen('npm run build', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+npm_build_subprocess = subprocess.Popen('npm run build', shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+npm_build_subprocess.wait()
 
 shutil.copy2(os.path.join(azfunc_directory, 'host.json'), os.path.join(func_deploy_dir))
 shutil.copy2(os.path.join(azfunc_directory, 'package.json'), os.path.join(func_deploy_dir))
@@ -77,8 +78,9 @@ print(f'changing os directory to {zip_to_dir}')
 os.chdir(zip_to_dir)
 print(f'switch directory to: ${zip_to_dir}')
 print(f'{func_deploy_cmd}')
-p = subprocess.Popen(func_deploy_cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
-for line in p.stdout.readlines():
+
+az_function_subprocess = subprocess.Popen(func_deploy_cmd, shell=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
+for line in az_function_subprocess.stdout.readlines():
     print(line),
-retval = p.wait()
+retval = az_function_subprocess.wait()
 
