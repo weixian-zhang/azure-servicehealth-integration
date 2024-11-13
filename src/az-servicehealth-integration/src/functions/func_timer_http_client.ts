@@ -34,7 +34,7 @@ export async function func_timer_http_client(myTimer: Timer, context: Invocation
         context.trace(`func_timer_http_client received response of status code ${resp.status}`);
 
     } catch (error) {
-        context.error(error);
+        context.error(error,  {is_error: true});
     }
 }
     

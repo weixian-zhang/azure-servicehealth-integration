@@ -39,7 +39,7 @@ export default class IssueReportGenerationWorkflow {
             globalThis.funcContext.trace(`TechPass issues count to send: ${tpIssuesToSend.length}`)
 
         } catch (e) {
-            globalThis.funcContext.error(`error message: ${e.message}, ${e.stack}`)
+            globalThis.funcContext.error(`error message: ${e.message}, ${e.stack}`, {is_error: true})
         }
         
 
@@ -50,11 +50,6 @@ export default class IssueReportGenerationWorkflow {
 
             const wogSubs = await this.getSubscriptionsByServicePrincipalRBAC(globalThis.appconfig.wogClientSecretCredential)
 
-            //test only
-            wogSubs.concat([...wogSubs])
-            wogSubs.concat([...wogSubs])
-            wogSubs.concat([...wogSubs])
-
             const wogIssues = await this.getWOGIssues(wogSubs)
 
             wogIssuesToSend = await this.sendDupPreventer.determineShouldSendIssues(wogIssues)
@@ -62,7 +57,7 @@ export default class IssueReportGenerationWorkflow {
             globalThis.funcContext.trace(`WOG issues count to send: ${wogIssuesToSend.length}`)
 
         } catch (e) {
-            globalThis.funcContext.error(`error message: ${e.message}, ${e.stack}`)
+            globalThis.funcContext.error(`error message: ${e.message}, ${e.stack}`,  {is_error: true})
         }
         
 

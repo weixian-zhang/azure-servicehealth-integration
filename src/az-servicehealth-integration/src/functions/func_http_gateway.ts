@@ -13,7 +13,7 @@ export async function func_http_gateway(request: HttpRequest, context: Invocatio
 
         const appconfig = AppConfig.loadFromEnvVar(context);
 
-        let incidentStartFromDate = request.query.get('incidentStartFromDate');
+        var incidentStartFromDate = request.query.get('incidentStartFromDate');
 
         context.trace(`func_http_gateway receive HTTP request`);
 
@@ -41,7 +41,7 @@ export async function func_http_gateway(request: HttpRequest, context: Invocatio
         };
         
     } catch (error) {
-        context.error(`Error occured in function func_http_gateway, ${error.message}`);
+        context.error(`Error occured in function func_http_gateway, ${error.message}`,  {is_error: true});
 
         return {
             status: 500,

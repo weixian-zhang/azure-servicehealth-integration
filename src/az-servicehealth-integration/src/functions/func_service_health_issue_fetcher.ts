@@ -47,7 +47,7 @@ export async function func_service_health_issue_fetcher(data: QueueData, context
     catch(e){
         
         // if app insights is enabled at function, will log to app insights.Traces
-        globalThis.funcContext.error(`error message: ${e.message}, ${e.stack}`)
+        globalThis.funcContext.error(`error message: ${e.message}, ${e.stack}`,  {is_error: true})
 
         return {
             status: 500,
