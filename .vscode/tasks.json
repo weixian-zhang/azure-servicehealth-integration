@@ -19,10 +19,20 @@
 		// 	"label": "debug-func: host start"
 		// },
 		{
-			"label": "deploy Func to Azure",
+			"label": "npm run test",
 			"type": "shell",
-			"command": "echo Hello",
-			"problemMatcher": []
+			"command": "npm run test",
+			"options": {
+				"cwd": "${workspaceFolder}\\src\\az-servicehealth-integration"
+			}
+		},
+		{
+			"label": "npm debug unit test",
+			"type": "shell",
+			"command": "npm run debug-ut",
+			"options": {
+				"cwd": "${workspaceFolder}\\src\\az-servicehealth-integration"
+			}
 		},
 		{
 			"type": "func",

@@ -1,8 +1,10 @@
 {
   "compilerOptions": {
+    "resolveJsonModule": true,
     "module": "commonjs",
     "target": "es6",
     "outDir": "dist",
+    "types": ["node", "jest"],
     "rootDir": ".",
     "sourceMap": true,
     "strict": false,

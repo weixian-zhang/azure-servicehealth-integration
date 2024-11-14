@@ -39,7 +39,7 @@ export default class AppConfig {
     AzureCommunicationServiceConnString: string = '';
 
 
-    static loadFromEnvVar(context: InvocationContext) {
+    static loadFromEnvVar(context: InvocationContext | undefined): AppConfig {
 
         var appconfig = new AppConfig()
 
