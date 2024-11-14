@@ -1,28 +1,21 @@
 {
 	"version": "2.0.0",
 	"tasks": [
-		// {
-		// 	"type": "func",
-		// 	"options": {
-		// 		"cwd": "${workspaceFolder}\\src\\az-servicehealth-integration"
-		// 	},
-		// 	"command": "host start --verbose",
-		// 	"problemMatcher": {
-        //         "base": "$func-watch",
-        //         "background": {
-        //           "activeOnStart": true,
-        //           "beginsPattern": "^.*(Job host stopped|signaling restart).*$",
-        //           "endsPattern": "^.*Executing '.*?' \\(Reason='Timer fired at .*?', Id=.*?\\).*$"
-        //         }
-        //       },
-        //     "isBackground": true,
-		// 	"label": "debug-func: host start"
-		// },
 		{
-			"label": "deploy Func to Azure",
+			"label": "terraform apply main app",
 			"type": "shell",
-			"command": "echo Hello",
-			"problemMatcher": []
+			"command": "terraform apply --auto-approve",
+			"options": {
+				"cwd": "${workspaceFolder}/src\\deploy\\terraform-templates\\main"
+			}
+		},
+		{
+			"label": "terraform destroy main app",
+			"type": "shell",
+			"command": "terraform destroy --auto-approve",
+			"options": {
+				"cwd": "${workspaceFolder}/src\\deploy\\terraform-templates\\main"
+			}
 		},
 		{
 			"type": "func",
