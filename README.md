@@ -89,7 +89,12 @@
       
 3. Tenant B Service Principal
    - Scope = Management Group or Subscriptions
-   - Role = Reader 
+   - Role = Reader
+  
+4. Terraform Service Principal (optional)
+   - Scope = Subcription or Resource Group
+   - Role = Owner
+   - [ARM_ACCESS_KEY](https://learn.microsoft.com/en-us/azure/developer/terraform/store-state-in-azure-storage?tabs=azure-cli#3-configure-terraform-backend-state) = { storage access key as environment variable where terraform cli is run }
 
 ### How to Deploy  
 * deploy Function App only:
