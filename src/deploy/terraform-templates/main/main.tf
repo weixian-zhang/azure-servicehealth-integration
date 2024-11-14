@@ -99,7 +99,7 @@ resource "azurerm_windows_function_app" "func" {
     GCC_TECHPASS_CLIENT_SECRET = " {manually set} "
     GCC_TECHPASS_TENANT_ID = " {manually set} "
     GCC_TECHPASS_TENANT_NAME = "TechPass"
-        SERVICE_HEALTH_INTEGRATION_EMAIL_CONFIG = "{\"host\":\"manually set\",\"port\":25,\"username\":\"manually set\",\"password\":\"manually set\",\"subject\":\"Azure Incident Report\",\"senderAddress\":\"manually set\",\"recipients\":{\"to\": [],\"cc\": [],\"bcc\":[] }}"
+    SERVICE_HEALTH_INTEGRATION_EMAIL_CONFIG = "{\"host\":\"manually set\",\"port\":25,\"username\":\"manually set\",\"password\":\"manually set\",\"subject\":\"Azure Incident Report\",\"senderAddress\":\"manually set\",\"recipients\":{\"to\": [],\"cc\": [],\"bcc\":[] }}"
     FUNCTIONS_NODE_BLOCK_ON_ENTRY_POINT_ERROR = true
     WEBSITE_RUN_FROM_PACKAGE = 0
     SCM_DO_BUILD_DURING_DEPLOYMENT = true
