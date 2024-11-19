@@ -7,8 +7,9 @@
 			"command": "npm run test",
 			"options": {
 				"cwd": "${workspaceFolder}\\src\\az-servicehealth-integration"
-    },
-    {
+			}
+    	},
+    	{
 			"label": "terraform apply main app",
 			"type": "shell",
 			"command": "terraform apply --auto-approve",
