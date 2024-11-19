@@ -2,7 +2,7 @@ import { TableClient, TableServiceClient, TableEntity} from "@azure/data-tables"
 import { DefaultAzureCredential } from "@azure/identity";
 import * as _ from 'lodash';
 import { ServiceIssue } from './issue-api/ServiceIssueModels';
-import AppConfig from "./AppConfig";
+import AppConfig from './AppConfig';
 
 // status reference
 // https://learn.microsoft.com/en-us/rest/api/resourcehealth/events/list-by-subscription-id?view=rest-resourcehealth-2022-10-01&tabs=HTTP#eventstatusvalues
@@ -38,33 +38,28 @@ export class TrackedImpactedService {
 // https://github.com/typicode/lowdb
 export class DB {
 
-    private tableServiceClient: TableServiceClient;
     private tableClient: TableClient;
-    public static tableName = 'Issue';
+    private appconfig: AppConfig;
 
-    constructor(appconfig: AppConfig, tableServiceClient: TableServiceClient = null, tableClient: TableClient = null) {
-        this.tableServiceClient = tableServiceClient;
-        this.tableClient = tableClient;
+    constructor(appconfig: AppConfig) {
+        this.appconfig = appconfig;
     }
 
     public async initDB() {
 
         const tableName = 'Issue';
-        // const tableEndpoint = `${process.env.AZURE_STORAGETABLE_RESOURCEENDPOINT}`;
-        // const credential = new DefaultAzureCredential();
+        const tableEndpoint = this.appconfig.AzureStorageTableEndpoint; //`${process.env.AZURE_STORAGETABLE_RESOURCEENDPOINT}`;
+        const credential = new DefaultAzureCredential();
 
-        if (this.tableServiceClient == null || this.tableClient == null) {
-            const cred = new DefaultAzureCredential();
-            this.tableServiceClient = new TableServiceClient( appconfig.AzureStorageTableEndpoint, cred);
-            this.tableClient = new TableClient(appconfig.AzureStorageTableEndpoint, tableName, cred);
-        }
-        
+        const tableService = new TableServiceClient(
+            tableEndpoint,
+            credential
+            );
         
         // creates table if not exist
-        await this.tableServiceClient.createTable(tableName);
+        await tableService.createTable(tableName);
         
-        //this.tableClient = new TableClient(tableEndpoint, tableName, credential);
-        //this.tableClient = new TableClient(tableEndpoint, tableName, credential);
+        this.tableClient = new TableClient(tableEndpoint, tableName, credential);
     }
 
     async issueExist(trackingId: string) : Promise<[boolean, TrackedIssue]> {
