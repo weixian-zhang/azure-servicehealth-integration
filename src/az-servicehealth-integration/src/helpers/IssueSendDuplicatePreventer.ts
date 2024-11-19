@@ -11,14 +11,12 @@ export default class IssueSendDuplicatePreventer {
     Resolved: string = "Resolved";
     Active: string = "Active";
     db: DB;
-    appconfig: AppConfig;
 
-    constructor(appconfig: AppConfig) {
-        this.appconfig = appconfig;
+    constructor(db: DB) {
+        this.db = db;
     }
 
     async init() {
-        this.db = new DB(this.appconfig);
         await this.db.initDB()
     }
 

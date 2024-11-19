@@ -10,6 +10,7 @@ import * as fs from 'fs'; //testing only
 import EmailSinkCreator from "./send-sink/EmailSinkCreator";
 import { IEmailSink } from "./send-sink/IEmailSink";
 import * as opentelemetry from "@opentelemetry/api";
+import { DB } from "./DB";
 
 export default class IssueReportGenerationWorkflow {
     sendDupPreventer: IssueSendDuplicatePreventer;
@@ -17,7 +18,8 @@ export default class IssueReportGenerationWorkflow {
     appconfig: AppConfig;
 
     constructor(appconfig: AppConfig) {
-        this.sendDupPreventer = new IssueSendDuplicatePreventer(appconfig);
+        const db = new DB(appconfig);
+        this.sendDupPreventer = new IssueSendDuplicatePreventer(db);
         this.appconfig = appconfig;
     }
 

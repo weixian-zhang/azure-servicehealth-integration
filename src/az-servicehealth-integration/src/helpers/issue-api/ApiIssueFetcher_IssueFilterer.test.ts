@@ -1,5 +1,6 @@
 import ApiIssueFetcher from './ApiIssueFetcher';
 import IssueFilterer from './IssueFilterer'
+import IssueSendDuplicatePreventer from '../IssueSendDuplicatePreventer';
 import {ServiceIssue, Subscription} from "./ServiceIssueModels";
 import path from 'path'
 import AppConfig from '../AppConfig';
@@ -131,12 +132,14 @@ test("issue_Active_SEA_Active", async () => {
     const event_data = test_case_1_event;
     const impacted_resources_data = test_case_1_impacted_resources;
 
-    // setup mock
+    // setup mock for MicrosoftResourceHealth
     const mrh :MicrosoftResourceHealth = mock(MicrosoftResourceHealth);
     when(mrh.eventsOperations).thenReturn(new MockEventOperations(event_data));
     when(mrh.impactedResources).thenReturn(new MockImpactedResources(impacted_resources_data));
     const mrh_instance = instance(mrh);
     Object.defineProperty(mrh_instance, "subscriptionId", { writable: true, value: 'xx-xx-xx' });
+
+    //setup mock for 
 
 
     const subscriptions = [
@@ -144,10 +147,15 @@ test("issue_Active_SEA_Active", async () => {
     ]
 
     const apif = new ApiIssueFetcher(tenant_name, mrh_instance, subscriptions, appconfig);
+
+    const preventer = new IssueSendDuplicatePreventer(appconfig);
+    preventer.init()
     
     const issues: ServiceIssue[] = await apif.fetchIssuesAndImpactedResources();
 
-    expect(issues.length).toEqual(1);
+    const filtered_issues = issue_duplicate_preventer.determineShouldSendIssues(issues);
+
+    expect(filtered_issues).toEqual(1);
  });
 
 
