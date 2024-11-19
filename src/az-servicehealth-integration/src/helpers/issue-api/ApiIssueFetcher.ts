@@ -25,13 +25,15 @@ export default class ApiIssueFetcher implements IIssueFetcher {
     regionToFilter = "Southeast Asia";
     tenantName: string;
     subscriptions: Subscription[];
-    azcred: ClientSecretCredential;
+    mrh: MicrosoftResourceHealth;
+    //azcred: ClientSecretCredential;
 
-    constructor(tenantName: string, azcred: ClientSecretCredential, subscriptions: Subscription[], appconfig: AppConfig) {
+    constructor(tenantName: string, mrh: MicrosoftResourceHealth, subscriptions: Subscription[], appconfig: AppConfig) {
+        //(tenantName: string, azcred: ClientSecretCredential, subscriptions: Subscription[], appconfig: AppConfig) {
         this.tenantName = tenantName;
         this.appconfig = appconfig;
         this.subscriptions = subscriptions;
-        this.azcred = azcred;
+        this.mrh = mrh;
     }
     
 
@@ -58,8 +60,6 @@ export default class ApiIssueFetcher implements IIssueFetcher {
 
     private async _fetchIssuesAndImpactedResources() : Promise<ServiceIssue[]> {
 
-   
-            
         let result = new Array<ServiceIssue>();
         let issueBag = new Map<string, ServiceIssue>();
         
@@ -69,22 +69,28 @@ export default class ApiIssueFetcher implements IIssueFetcher {
             queryStartTime
         };
 
+
         for (const sub of this.subscriptions) {
 
-            const rhc = new MicrosoftResourceHealth(this.azcred, sub.Id);
-
-            for await (const currIssue of rhc.eventsOperations.listBySubscriptionId(options)) {
+            this.mrh.subscriptionId = sub.Id;
+            //const rhc = new MicrosoftResourceHealth(this.azcred, sub.Id);
+            try {
+                for await (const currIssue of this.mrh.eventsOperations.listBySubscriptionId(options)) {
                 
-                const trackingId = currIssue.name;
-
-                IssueFilterer.createAndFilterIssues(this.tenantName, sub, currIssue, issueBag);
-
-                
-                if (issueBag.has(trackingId)) {
-                    // get impacted resources
-                    await this.fetchImpactedResourcesForIssue(rhc, trackingId, issueBag);
+                    const trackingId = currIssue.name;
+    
+                    IssueFilterer.createAndFilterIssues(this.tenantName, sub, currIssue, issueBag);
+    
+                    
+                    if (issueBag.has(trackingId)) {
+                        // get impacted resources
+                        await this.fetchImpactedResourcesForIssue(trackingId, issueBag);
+                    }
                 }
-            } 
+            } catch (e) {
+                globalThis.funcContext.error(e.message,  {is_error: true});
+            }
+            
         }
 
         return Array.from(issueBag.values());
@@ -92,14 +98,13 @@ export default class ApiIssueFetcher implements IIssueFetcher {
 
     // sample code
     // https://github.com/Azure/azure-sdk-for-js/blob/%40azure/arm-resourcehealth_4.0.0/sdk/resourcehealth/arm-resourcehealth/samples/v4/typescript/src/impactedResourcesListByTenantIdAndEventIdSample.ts
-    private async fetchImpactedResourcesForIssue
-        (rhc: MicrosoftResourceHealth, trackingId: string, issueBag: Map<string, ServiceIssue>) {
+    private async fetchImpactedResourcesForIssue(trackingId: string, issueBag: Map<string, ServiceIssue>) {
             
         if (_.isEmpty(issueBag)) {
             return [];
         }
 
-        for await (let resource of rhc.impactedResources.listBySubscriptionIdAndEventId(trackingId)) {//this.resourceHealthClient.impactedResources.listByTenantIdAndEventId(issue.TrackingId)) {
+        for await (let resource of this.mrh.impactedResources.listBySubscriptionIdAndEventId(trackingId)) {//this.resourceHealthClient.impactedResources.listByTenantIdAndEventId(issue.TrackingId)) {
 
             IssueFilterer.createImpactedResourceInIssueBag(resource, trackingId, issueBag);
         }

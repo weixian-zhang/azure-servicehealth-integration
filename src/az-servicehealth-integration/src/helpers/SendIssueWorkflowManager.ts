@@ -46,19 +46,19 @@ export default class IssueReportGenerationWorkflow {
         //wog incidents
         var wogIssuesToSend = []
         
-        try {
+        // try {
 
-            const wogSubs = await this.getSubscriptionsByServicePrincipalRBAC(globalThis.appconfig.wogClientSecretCredential)
+        //     const wogSubs = await this.getSubscriptionsByServicePrincipalRBAC(globalThis.appconfig.wogClientSecretCredential)
 
-            const wogIssues = await this.getWOGIssues(wogSubs)
+        //     const wogIssues = await this.getWOGIssues(wogSubs)
 
-            wogIssuesToSend = await this.sendDupPreventer.determineShouldSendIssues(wogIssues)
+        //     wogIssuesToSend = await this.sendDupPreventer.determineShouldSendIssues(wogIssues)
 
-            globalThis.funcContext.trace(`WOG issues count to send: ${wogIssuesToSend.length}`)
+        //     globalThis.funcContext.trace(`WOG issues count to send: ${wogIssuesToSend.length}`)
 
-        } catch (e) {
-            globalThis.funcContext.error(`error message: ${e.message}, ${e.stack}`,  {is_error: true})
-        }
+        // } catch (e) {
+        //     globalThis.funcContext.error(`error message: ${e.message}, ${e.stack}`,  {is_error: true})
+        // }
         
 
         //issue to HTML template and send email

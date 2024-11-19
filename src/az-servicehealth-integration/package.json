@@ -48,7 +48,7 @@
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "rimraf": "^5.0.0",
-    "ts-jest": "^29.2.5",
+    "ts-mockito": "^2.6.1",
     "tsx": "^4.10.2",
     "typescript": "^5.4.5"
   }

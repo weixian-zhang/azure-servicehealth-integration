@@ -5,6 +5,7 @@ import {ServiceIssue, Subscription} from "./ServiceIssueModels";
 import AppConfig from "../AppConfig";
 import { InvocationContext } from "@azure/functions";
 import { ClientSecretCredential } from "@azure/identity";
+import { MicrosoftResourceHealth } from "@azure/arm-resourcehealth"
 
 export default class IssueFetcher {
 
@@ -22,7 +23,8 @@ export default class IssueFetcher {
             this.issueFetcher = new MockIssueRetriever();
         }
         else {
-            this.issueFetcher = new ApiIssueRetriever(tenantName, azcred, subscriptions, this.appconfig);
+            const rhc = new MicrosoftResourceHealth(azcred);
+            this.issueFetcher = new ApiIssueRetriever(tenantName, rhc, subscriptions, this.appconfig);
         }
     }
 
