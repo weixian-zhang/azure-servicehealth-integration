@@ -17,7 +17,7 @@ export default class IssueReportGenerationWorkflow {
     appconfig: AppConfig;
 
     constructor(appconfig: AppConfig) {
-        this.sendDupPreventer = new IssueSendDuplicatePreventer();
+        this.sendDupPreventer = new IssueSendDuplicatePreventer(appconfig);
         this.appconfig = appconfig;
     }
 

@@ -32,8 +32,8 @@ export default class AppConfig {
     EMailConfig: EMailConfig;
     AzureAppInsightsConnString: string = '';
     incidentDayFromNow: number = 5 //if HTTP Func does not provide query incidentStartFromDate, this config will be used
-    httpGatewayURL: string = '' //used by func_timer_http_client only
-
+    httpGatewayURL: string = ''; //used by func_timer_http_client only
+    AzureStorageTableEndpoint: string = '';
     
     //for local testing only using Azure Communication Service SMTP 
     AzureCommunicationServiceConnString: string = '';
@@ -56,6 +56,8 @@ export default class AppConfig {
             appconfig.WogResidentSubscriptionId = process.env.GCC_WOG_RESIDENT_SUBSCRIPTION_ID;
 
             appconfig.AzureStorageConnString = process.env.AZURE_STORAGE_CONNECTION_STRING;
+
+            appconfig.AzureStorageTableEndpoint = process.env.AZURE_STORAGETABLE_RESOURCEENDPOINT;
 
             appconfig.AzureAppInsightsConnString = process.env.APPLICATIONINSIGHTS_CONNECTION_STRING;
 

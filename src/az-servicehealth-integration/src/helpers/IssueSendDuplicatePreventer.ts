@@ -1,8 +1,9 @@
 import {DB} from './DB';
 import * as _ from 'lodash';
 import { ServiceIssue } from './issue-api/ServiceIssueModels';
-
-
+import AppConfig from "./AppConfig";
+import { TableClient, TableServiceClient} from "@azure/data-tables"; '@azure/data-table';
+import { DefaultAzureCredential } from "@azure/identity";
 
 // **Asumption: when service issue reaches this stage, ImpactedServices property will never be empty
 // impacted service region will either be Global or SEA
@@ -10,13 +11,14 @@ export default class IssueSendDuplicatePreventer {
     Resolved: string = "Resolved";
     Active: string = "Active";
     db: DB;
+    appconfig: AppConfig;
 
-    constructor() {
-        
+    constructor(appconfig: AppConfig) {
+        this.appconfig = appconfig;
     }
 
     async init() {
-        this.db = new DB();
+        this.db = new DB(this.appconfig);
         await this.db.initDB()
     }
 
