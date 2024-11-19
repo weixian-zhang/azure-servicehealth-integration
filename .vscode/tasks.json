@@ -1,35 +1,10 @@
 {
 	"version": "2.0.0",
 	"tasks": [
-		// {
-		// 	"type": "func",
-		// 	"options": {
-		// 		"cwd": "${workspaceFolder}\\src\\az-servicehealth-integration"
-		// 	},
-		// 	"command": "host start --verbose",
-		// 	"problemMatcher": {
-        //         "base": "$func-watch",
-        //         "background": {
-        //           "activeOnStart": true,
-        //           "beginsPattern": "^.*(Job host stopped|signaling restart).*$",
-        //           "endsPattern": "^.*Executing '.*?' \\(Reason='Timer fired at .*?', Id=.*?\\).*$"
-        //         }
-        //       },
-        //     "isBackground": true,
-		// 	"label": "debug-func: host start"
-		// },
 		{
-			"label": "npm run test",
+			"label": "run jest unit tests",
 			"type": "shell",
 			"command": "npm run test",
-			"options": {
-				"cwd": "${workspaceFolder}\\src\\az-servicehealth-integration"
-			}
-		},
-		{
-			"label": "npm debug unit test",
-			"type": "shell",
-			"command": "npm run debug-ut",
 			"options": {
 				"cwd": "${workspaceFolder}\\src\\az-servicehealth-integration"
 			}

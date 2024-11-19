@@ -10,7 +10,7 @@
         "summary": "<p><strong>Impact Statement:&nbsp;</strong>Starting at 18:46 UTC on 16 Sep 2024, customers using Azure Virtual Desktop may notice a reduction in the diagnostic data we collect. This is a temporary adjustment aimed at stabilizing our backend databases as part of our ongoing investigation into the issues stemming from incident 1LG8-1X0.</p>",
         "header": "Your service might have been impacted by an Azure service issue",
         "level": "Warning",
-        "eventLevel": "Informational",
+        "eventLevel": "Warning",
         "externalIncidentId": "544558517",
         "impactStartTime": "2024-09-17T18:36:24.113Z",
         "impactMitigationTime": "2024-10-20T21:41:37.000Z",

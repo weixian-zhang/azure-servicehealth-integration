@@ -4,16 +4,25 @@ import {ServiceIssue, Subscription} from "./ServiceIssueModels";
 import path from 'path'
 import AppConfig from '../AppConfig';
 import dotenv from 'dotenv'; 
-import { ClientSecretCredential } from "@azure/identity";
+import { mock, when, instance } from 'ts-mockito';
 import { MicrosoftResourceHealth, Event, EventsOperations, 
     EventsListBySubscriptionIdOptionalParams, 
     EventsListBySingleResourceOptionalParams, 
-    EventsListByTenantIdOptionalParams } from "@azure/arm-resourcehealth"
+    EventsListByTenantIdOptionalParams,
+    ImpactedResources,
+    EventImpactedResource,
+    ImpactedResourcesGetByTenantIdOptionalParams,
+    ImpactedResourcesGetByTenantIdResponse,
+    ImpactedResourcesGetOptionalParams,
+    ImpactedResourcesGetResponse,
+    ImpactedResourcesListBySubscriptionIdAndEventIdOptionalParams,
+    ImpactedResourcesListByTenantIdAndEventIdOptionalParams} from "@azure/arm-resourcehealth"
 import {PageSettings, PagedAsyncIterableIterator } from '@azure/core-paging/dist/commonjs/models';
-import { mock, when, instance } from 'ts-mockito';
-import test_data_case_1 from './test-data/unit-test-data/test_case_1.json';
 
-class EventIterator implements PagedAsyncIterableIterator<Event, Event[], PageSettings> {
+import test_case_1_event from './test-data/unit-test-data/test_case_1_event.json';
+import test_case_1_impacted_resources from './test-data/unit-test-data/test_case_1_impacted_resources.json';
+
+class MockEventIterator implements PagedAsyncIterableIterator<Event, Event[], PageSettings> {
     data: any[];
     idx: number;
     constructor(data: any[]) {
@@ -38,19 +47,65 @@ class EventIterator implements PagedAsyncIterableIterator<Event, Event[], PageSe
     }
 }
 
-class EventOps implements EventsOperations {
-    eventIterator: EventIterator;
+class MockImpactedResourceIterator implements PagedAsyncIterableIterator<EventImpactedResource, EventImpactedResource[], PageSettings> {
+    data: any[];
+    idx: number;
     constructor(data: any[]) {
-        this.eventIterator = new EventIterator(data);
+        this.data = data;
+        this.idx = 0;
+    }
+
+    next(): Promise<IteratorResult<Event, any>> {
+        if (this.idx >= this.data.length) {
+            return Promise.resolve({ value: undefined, done: true });
+        }
+        
+        const awaitable_promise = Promise.resolve({value: this.data[this.idx], done:false});
+        this.idx += 1;
+        return awaitable_promise;
+    }
+
+    byPage: (settings?: PageSettings) => AsyncIterableIterator<Event[]>;
+    [Symbol.asyncIterator](): PagedAsyncIterableIterator<Event, Event[], PageSettings> {
+        //throw new Error('Method not implemented.');
+        return this;
+    }
+}
+
+class MockEventOperations implements EventsOperations {
+    iterator: MockEventIterator;
+    constructor(data: any[]) {
+        this.iterator = new MockEventIterator(data);
     }
 
     listBySubscriptionId(options?: EventsListBySubscriptionIdOptionalParams): PagedAsyncIterableIterator<Event> {
-        return this.eventIterator;
+        return this.iterator;
     }
     listByTenantId(options?: EventsListByTenantIdOptionalParams): PagedAsyncIterableIterator<Event> {
         throw new Error('Method not implemented.');
     }
     listBySingleResource(resourceUri: string, options?: EventsListBySingleResourceOptionalParams): PagedAsyncIterableIterator<Event> {
+        throw new Error('Method not implemented.');
+    }
+}
+
+
+class MockImpactedResources implements ImpactedResources {
+    iterator: MockImpactedResourceIterator;
+    constructor(data: any[]) {
+        this.iterator = new MockImpactedResourceIterator(data);
+    }
+
+    listBySubscriptionIdAndEventId(eventTrackingId: string, options?: ImpactedResourcesListBySubscriptionIdAndEventIdOptionalParams): PagedAsyncIterableIterator<EventImpactedResource> {
+        return this.iterator;
+    }
+    listByTenantIdAndEventId(eventTrackingId: string, options?: ImpactedResourcesListByTenantIdAndEventIdOptionalParams): PagedAsyncIterableIterator<EventImpactedResource> {
+        throw new Error('Method not implemented.');
+    }
+    get(eventTrackingId: string, impactedResourceName: string, options?: ImpactedResourcesGetOptionalParams): Promise<ImpactedResourcesGetResponse> {
+        throw new Error('Method not implemented.');
+    }
+    getByTenantId(eventTrackingId: string, impactedResourceName: string, options?: ImpactedResourcesGetByTenantIdOptionalParams): Promise<ImpactedResourcesGetByTenantIdResponse> {
         throw new Error('Method not implemented.');
     }
 }
@@ -60,24 +115,28 @@ class EventOps implements EventsOperations {
 dotenv.config({path: path.join(__dirname, "test-data/.env")});
 const appconfig = AppConfig.loadFromEnvVar(undefined);
 
-const tenant_name = 'TechPass'
+const tenant_name = 'TechPass';
+
 
 // test case 1
 // conditions:
 // - issue is Active
+// - event level is Warning
 // - southeast asia region issue is still Active
 // - central us region issue is Resolved
 // result:
 // - issue count = 1
 test("issue_Active_SEA_Active", async () => {
 
-    const data = test_data_case_1;
+    const event_data = test_case_1_event;
+    const impacted_resources_data = test_case_1_impacted_resources;
 
-    //ts-mockito
+    // setup mock
     const mrh :MicrosoftResourceHealth = mock(MicrosoftResourceHealth);
+    when(mrh.eventsOperations).thenReturn(new MockEventOperations(event_data));
+    when(mrh.impactedResources).thenReturn(new MockImpactedResources(impacted_resources_data));
     const mrh_instance = instance(mrh);
-    when(mrh.eventsOperations).thenReturn(new EventOps(data));
-    when(mrh.subscriptionId).thenCall(() => 'xxx-xx-xxx');
+    Object.defineProperty(mrh_instance, "subscriptionId", { writable: true, value: 'xx-xx-xx' });
 
 
     const subscriptions = [

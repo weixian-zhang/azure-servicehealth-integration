@@ -74,6 +74,7 @@ export default class ApiIssueFetcher implements IIssueFetcher {
 
             this.mrh.subscriptionId = sub.Id;
             //const rhc = new MicrosoftResourceHealth(this.azcred, sub.Id);
+            
             try {
                 for await (const currIssue of this.mrh.eventsOperations.listBySubscriptionId(options)) {
                 
