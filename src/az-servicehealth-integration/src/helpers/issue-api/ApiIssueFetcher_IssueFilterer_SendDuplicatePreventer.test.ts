@@ -4,6 +4,7 @@ import IssueSendDuplicatePreventer from '../IssueSendDuplicatePreventer';
 import {ServiceIssue, Subscription} from "./ServiceIssueModels";
 import path from 'path'
 import AppConfig from '../AppConfig';
+import { DB, TrackedIssue, TrackedImpactedService  } from '../DB';
 import dotenv from 'dotenv'; 
 import { mock, when, instance } from 'ts-mockito';
 import { MicrosoftResourceHealth, Event, EventsOperations, 
@@ -132,30 +133,46 @@ test("issue_Active_SEA_Active", async () => {
     const event_data = test_case_1_event;
     const impacted_resources_data = test_case_1_impacted_resources;
 
-    // setup mock for MicrosoftResourceHealth
-    const mrh :MicrosoftResourceHealth = mock(MicrosoftResourceHealth);
+    // setup mock MicrosoftResourceHealth
+    const mrh = mock(MicrosoftResourceHealth);
     when(mrh.eventsOperations).thenReturn(new MockEventOperations(event_data));
     when(mrh.impactedResources).thenReturn(new MockImpactedResources(impacted_resources_data));
     const mrh_instance = instance(mrh);
     Object.defineProperty(mrh_instance, "subscriptionId", { writable: true, value: 'xx-xx-xx' });
 
-    //setup mock for 
-
-
+    
+    //setup mock DB 
+    const mdb = mock(DB);
+    when(mdb.initDB).thenReturn(async () => await Promise.resolve());
+    when(mdb.issueExist).thenReturn(async () => await Promise.resolve([false, null]));
+    when(mdb.updateIssueResolved).thenReturn(async () => await Promise.resolve());
+    when(mdb.updateImpactedServiceResolved).thenReturn(async () => await Promise.resolve());
+    when(mdb.updateImpactedServiceLastUpdateTime).thenReturn(async () => await Promise.resolve());
+    when(mdb.getImpactedServices).thenReturn(async () => await Promise.resolve(
+        [
+            new TrackedIssue('TechPass', '', null, new Date().valueOf(), 'Active'),
+            new Map<string, TrackedImpactedService>([
+                ['ssd', new TrackedImpactedService('Windows Virtual Desktop', new Date().valueOf(), 'Active')]
+            ])
+        ]
+    ));
+    const mock_db = instance(mdb);
+    
+    
     const subscriptions = [
         new Subscription('xxx-xx-xxx', 'sub-1')
     ]
 
     const apif = new ApiIssueFetcher(tenant_name, mrh_instance, subscriptions, appconfig);
 
-    const preventer = new IssueSendDuplicatePreventer(appconfig);
+    const preventer = new IssueSendDuplicatePreventer(mock_db);
     preventer.init()
     
     const issues: ServiceIssue[] = await apif.fetchIssuesAndImpactedResources();
 
-    const filtered_issues = issue_duplicate_preventer.determineShouldSendIssues(issues);
+    const filtered_issues = await preventer.determineShouldSendIssues(issues);
 
-    expect(filtered_issues).toEqual(1);
+    expect(filtered_issues.length).toEqual(1);
  });
 
 
