@@ -86,9 +86,9 @@ export default class IssueSendDuplicatePreventer {
                 }
 
                 // Issue is Active and tracked issue is also active
-                // then check if there are updates to each impacted services
+                // check if there are updates to each impacted services
                 // *note: each impacted service for each region, can have separate updates
-                // ** only looking at SEA region impacted services only
+                // ** only focusing at SEA region impacted services only
                 if (issue.OverallStatus == this.Active && trackedIssue.Status == this.Active) {
 
                     const [trackedIssue, trackedImpactedServices] = await this.db.getImpactedServices(issue.TrackingId);
