@@ -19,13 +19,16 @@
 * Use curated data to generate HTML report.
 
 ### Service Health Issue Data Structure
-* a single incident (a.k.a service issue) can be identified uniquely by its Tracking Id.
-* Each incident can contain
-  * multiple impacted services, each impacted service can contains
-    * multiple regions, each region contains
+* a single Event (a.k.a service issue) can be identified uniquely by its Tracking Id.
+* Events[] - for each Event:
+  * Status
+  * Last Update Time
+  * other properties
+  * Impacted Services[] - for each Impacted Service:
+    * Impacted Regions[] - for each Impact Region:
       * Status
       * issue description
-      * 1 or more Updates, each Update contains:
+      * Updates[] - for each Update:
         * Summary
         * LastUpdateTime
  

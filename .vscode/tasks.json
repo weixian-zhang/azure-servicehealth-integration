@@ -7,6 +7,21 @@
 			"command": "npm run test",
 			"options": {
 				"cwd": "${workspaceFolder}\\src\\az-servicehealth-integration"
+    },
+    {
+			"label": "terraform apply main app",
+			"type": "shell",
+			"command": "terraform apply --auto-approve",
+			"options": {
+				"cwd": "${workspaceFolder}/src\\deploy\\terraform-templates\\main"
+			}
+		},
+		{
+			"label": "terraform destroy main app",
+			"type": "shell",
+			"command": "terraform destroy --auto-approve",
+			"options": {
+				"cwd": "${workspaceFolder}/src\\deploy\\terraform-templates\\main"
 			}
 		},
 		{
