@@ -24,6 +24,9 @@ import {PageSettings, PagedAsyncIterableIterator } from '@azure/core-paging/dist
 import test_case_1_event from './test-data/unit-test-data/test_case_1_event.json';
 import test_case_2_event from './test-data/unit-test-data/test_case_2_event.json';
 import test_case_3_event from './test-data/unit-test-data/test_case_3_event.json';
+import test_case_4_event from './test-data/unit-test-data/test_case_4_event.json';
+import test_case_5_event from './test-data/unit-test-data/test_case_5_event.json';
+import test_case_6_event from './test-data/unit-test-data/test_case_6_event.json';
 import test_case_impacted_resources from './test-data/unit-test-data/test_case_impacted_resources.json';
 
 class MockEventIterator implements PagedAsyncIterableIterator<Event, Event[], PageSettings> {
@@ -311,17 +314,127 @@ test("test_case_3", async () => {
 // - issue event type is "ServiceIssue"
 // result/action:
 // - issue count = 1
+test("test_case_4", async () => {
+
+    const event_data = test_case_4_event;
+    const impacted_resources_data = test_case_impacted_resources;
+
+    // setup mock MicrosoftResourceHealth
+    const mrh = mock(MicrosoftResourceHealth);
+    when(mrh.eventsOperations).thenReturn(new MockEventOperations(event_data));
+    when(mrh.impactedResources).thenReturn(new MockImpactedResources(impacted_resources_data));
+    const mrh_instance = instance(mrh);
+    Object.defineProperty(mrh_instance, "subscriptionId", { writable: true, value: 'xx-xx-xx' });
+
+    //setup mock DB 
+    const mdb = mock(DB);
+    when(mdb.initDB).thenReturn(async () => await Promise.resolve());
+    when(mdb.addIssue).thenReturn(async () => await Promise.resolve());
+    when(mdb.issueExist).thenReturn(async () => await Promise.resolve([false, null]));
+    when(mdb.updateIssueResolved).thenReturn(async () => await Promise.resolve());
+    when(mdb.updateImpactedServiceResolved).thenReturn(async () => await Promise.resolve());
+    when(mdb.updateImpactedServiceLastUpdateTime).thenReturn(async () => await Promise.resolve());
+    when(mdb.getImpactedServices).thenReturn(async () => await Promise.resolve(
+        [
+            new TrackedIssue('TechPass', '', null, new Date().valueOf(), 'Active'),
+            new Map<string, TrackedImpactedService>([
+                ['GS98-9V8', new TrackedImpactedService('Windows Virtual Desktop', new Date().valueOf(), 'Active')]
+            ])
+        ]
+    ));
+    const mock_db = instance(mdb);
+    
+    
+    const subscriptions = [
+        new Subscription('xxx-xx-xxx', 'sub-1')
+    ]
+
+    const apif = new ApiIssueFetcher(tenant_name, mrh_instance, subscriptions, appconfig);
+
+    const preventer = new IssueSendDuplicatePreventer(mock_db);
+    preventer.init()
+    
+    const issues: ServiceIssue[] = await apif.fetchIssuesAndImpactedResources();
+
+    const filtered_issues = await preventer.determineShouldSendIssues(issues);
+
+    expect(filtered_issues.length).toEqual(0);
+ });
 
 
 // test case 5
-// desc: all ServiceIssue properties is Not null/empty
+// desc: all ServiceIssue properties and nested object properties are Not null/empty
 // conditions:
 // - issue is Active
 // - issue/impactedRegions is SEA region or Global only
 // - issue event type is "ServiceIssue"
 // result/action:
 // - validate all ServiceIssue property values are Not null/empty
+test("test_case_5", async () => {
 
+    const event_data = test_case_5_event;
+    const impacted_resources_data = test_case_impacted_resources;
+
+    // setup mock MicrosoftResourceHealth
+    const mrh = mock(MicrosoftResourceHealth);
+    when(mrh.eventsOperations).thenReturn(new MockEventOperations(event_data));
+    when(mrh.impactedResources).thenReturn(new MockImpactedResources(impacted_resources_data));
+    const mrh_instance = instance(mrh);
+    Object.defineProperty(mrh_instance, "subscriptionId", { writable: true, value: 'xx-xx-xx' });
+
+    //setup mock DB 
+    const mdb = mock(DB);
+    when(mdb.initDB).thenReturn(async () => await Promise.resolve());
+    when(mdb.addIssue).thenReturn(async () => await Promise.resolve());
+    when(mdb.issueExist).thenReturn(async () => await Promise.resolve([false, null]));
+    when(mdb.updateIssueResolved).thenReturn(async () => await Promise.resolve());
+    when(mdb.updateImpactedServiceResolved).thenReturn(async () => await Promise.resolve());
+    when(mdb.updateImpactedServiceLastUpdateTime).thenReturn(async () => await Promise.resolve());
+    when(mdb.getImpactedServices).thenReturn(async () => await Promise.resolve(
+        [
+            new TrackedIssue('TechPass', '', null, new Date().valueOf(), 'Active'),
+            new Map<string, TrackedImpactedService>([
+                ['GS98-9V8', new TrackedImpactedService('Windows Virtual Desktop', new Date().valueOf(), 'Active')]
+            ])
+        ]
+    ));
+    const mock_db = instance(mdb);
+    
+    
+    const subscriptions = [
+        new Subscription('xxx-xx-xxx', 'sub-1')
+    ]
+
+    const apif = new ApiIssueFetcher(tenant_name, mrh_instance, subscriptions, appconfig);
+
+    const preventer = new IssueSendDuplicatePreventer(mock_db);
+    preventer.init()
+    
+    const issues: ServiceIssue[] = await apif.fetchIssuesAndImpactedResources();
+
+    const filtered_issues = await preventer.determineShouldSendIssues(issues);
+
+    const issue = filtered_issues[0];
+
+    Object.keys(issue).forEach(key => {
+        expect(issue[key]).not.toBeNull();
+        expect(issue[key]).not.toBe('');
+    });
+
+    expect(issue.ImpactedServices.length).toEqual(1);
+
+    issue.ImpactedServices.forEach(impacted_service => {
+
+        expect(impacted_service.ImpactUpdates.length).toEqual(3);
+
+        impacted_service.ImpactUpdates.forEach(update => {
+            Object.keys(update).forEach(key => {
+                expect(update[key]).not.toBeNull();
+                expect(update[key]).not.toBe('');
+            });
+        });
+    });
+ });
 
 
 // ** IssueSendDuplicatePreventer test cases **
@@ -333,7 +446,55 @@ test("test_case_3", async () => {
 // - issue Not already tracked in DB
 // result/action:
 // - issue count = 0
+test("test_case_6", async () => {
 
+    const event_data = test_case_6_event;
+    const impacted_resources_data = test_case_impacted_resources;
+
+    // setup mock MicrosoftResourceHealth
+    const mrh = mock(MicrosoftResourceHealth);
+    when(mrh.eventsOperations).thenReturn(new MockEventOperations(event_data));
+    when(mrh.impactedResources).thenReturn(new MockImpactedResources(impacted_resources_data));
+    const mrh_instance = instance(mrh);
+    Object.defineProperty(mrh_instance, "subscriptionId", { writable: true, value: 'xx-xx-xx' });
+
+    //setup mock DB 
+    const mdb = mock(DB);
+    when(mdb.initDB).thenReturn(async () => await Promise.resolve());
+    when(mdb.addIssue).thenReturn(async () => await Promise.resolve());
+    when(mdb.issueExist).thenReturn(async () => await Promise.resolve([false, null]));
+    when(mdb.updateIssueResolved).thenReturn(async () => await Promise.resolve());
+    when(mdb.updateImpactedServiceResolved).thenReturn(async () => await Promise.resolve());
+    when(mdb.updateImpactedServiceLastUpdateTime).thenReturn(async () => await Promise.resolve());
+    when(mdb.getImpactedServices).thenReturn(async () => await Promise.resolve(
+        [
+            new TrackedIssue('TechPass', 'GS98-9V8', null, new Date().valueOf(), 'Active'),
+            new Map<string, TrackedImpactedService>([
+                ['GS98-9V8', new TrackedImpactedService('Windows Virtual Desktop', new Date().valueOf(), 'Active')]
+            ])
+        ]
+    ));
+    const mock_db = instance(mdb);
+    
+    
+    const subscriptions = [
+        new Subscription('xxx-xx-xxx', 'sub-1')
+    ]
+
+    const apif = new ApiIssueFetcher(tenant_name, mrh_instance, subscriptions, appconfig);
+
+    const preventer = new IssueSendDuplicatePreventer(mock_db);
+    preventer.init()
+    
+    const issues: ServiceIssue[] = await apif.fetchIssuesAndImpactedResources();
+
+    const filtered_issues = await preventer.determineShouldSendIssues(issues);
+
+    expect(filtered_issues.length).toEqual(0);
+
+ });
+
+ 
 //test case 7
 // desc: issue is Resolved and tracked issue is also Resolved
 // conditions:
