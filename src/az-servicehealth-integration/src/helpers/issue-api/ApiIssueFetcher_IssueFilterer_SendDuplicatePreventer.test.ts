@@ -20,6 +20,7 @@ import { MicrosoftResourceHealth, Event, EventsOperations,
     ImpactedResourcesListBySubscriptionIdAndEventIdOptionalParams,
     ImpactedResourcesListByTenantIdAndEventIdOptionalParams} from "@azure/arm-resourcehealth"
 import {PageSettings, PagedAsyncIterableIterator } from '@azure/core-paging/dist/commonjs/models';
+import { InvocationContext } from "@azure/functions";
 
 import test_case_1_event from './test-data/unit-test-data/test_case_1_event.json';
 import test_case_2_event from './test-data/unit-test-data/test_case_2_event.json';
@@ -31,6 +32,7 @@ import test_case_7_event from './test-data/unit-test-data/test_case_7_event.json
 import test_case_8_event from './test-data/unit-test-data/test_case_8_event.json';
 import test_case_9_event from './test-data/unit-test-data/test_case_9_event.json';
 import test_case_10_event from './test-data/unit-test-data/test_case_10_event.json';
+import test_case_11_event from './test-data/unit-test-data/test_case_11_event.json';
 import test_case_impacted_resources from './test-data/unit-test-data/test_case_impacted_resources.json';
 
 class MockEventIterator implements PagedAsyncIterableIterator<Event, Event[], PageSettings> {
@@ -779,3 +781,63 @@ test("test_case_10", async () => {
 // - (set tracked-impacted-service status to Resolved in DB)
 // - (set tracked-impacted-service lastUpdatedTime to latest updated time in DB)
 // - issue count = 1
+
+test("test_case_11", async () => {
+
+    const event_data = test_case_11_event;
+    const impacted_resources_data = test_case_impacted_resources;
+
+    globalThis.funcContext =  mock(InvocationContext);
+
+    // setup mock MicrosoftResourceHealth
+    const mrh = mock(MicrosoftResourceHealth);
+    when(mrh.eventsOperations).thenReturn(new MockEventOperations(event_data));
+    when(mrh.impactedResources).thenReturn(new MockImpactedResources(impacted_resources_data));
+    const mrh_instance = instance(mrh);
+    Object.defineProperty(mrh_instance, "subscriptionId", { writable: true, value: 'xx-xx-xx' });
+
+    //setup mock DB 
+    const mdb = mock(DB);
+    when(mdb.initDB).thenReturn(async () => await Promise.resolve());
+    when(mdb.addIssue).thenReturn(async () => await Promise.resolve());
+    when(mdb.updateIssueResolved).thenReturn(async () => await Promise.resolve());
+    when(mdb.updateImpactedServiceResolved).thenReturn(async () => await Promise.resolve());
+    when(mdb.updateImpactedServiceLastUpdateTime).thenReturn(async () => await Promise.resolve());
+
+    // mock DB return existing tracked impacted service
+    when(mdb.getImpactedServices).thenReturn(async () => await Promise.resolve(
+        [
+            new TrackedIssue('TechPass', 'GS98-9V8', null, new Date().valueOf(), 'Active'),
+            new Map<string, TrackedImpactedService>([
+                ['Windows Virtual Desktop', new TrackedImpactedService('Windows Virtual Desktop', 
+                    Date.parse('2024-10-28T23:50:38.298Z').valueOf(), 'Active')]
+            ])
+        ]
+    ));
+
+    // mock DB return existing tracked issue
+    when(mdb.issueExist)
+        .thenReturn(async () => await Promise.resolve([ 
+            true, 
+            new TrackedIssue('TechPass', 'GS98-9V8', null, new Date().valueOf(), 'Active'),
+        ]));
+
+    const mock_db = instance(mdb);
+    
+    
+    const subscriptions = [
+        new Subscription('xxx-xx-xxx', 'sub-1')
+    ]
+
+    const apif = new ApiIssueFetcher(tenant_name, mrh_instance, subscriptions, appconfig);
+
+    const preventer = new IssueSendDuplicatePreventer(mock_db);
+    preventer.init()
+    
+    const issues: ServiceIssue[] = await apif.fetchIssuesAndImpactedResources();
+
+    const filtered_issues = await preventer.determineShouldSendIssues(issues);
+
+    expect(filtered_issues.length).toEqual(1);
+
+ });
