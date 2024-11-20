@@ -1,5 +1,5 @@
 import { InvocationContext } from "@azure/functions";
-import IssueSendDuplicatePreventer from "./IssueSendDuplicatePreventer";
+import IssueSendDuplicatePreventer from "./issue-api/IssueSendDuplicatePreventer";
 import IssueFetcher from "./issue-api/IssueFetcher";
 import { ServiceIssue, Subscription } from "./issue-api/ServiceIssueModels";
 import AppConfig from "./AppConfig";

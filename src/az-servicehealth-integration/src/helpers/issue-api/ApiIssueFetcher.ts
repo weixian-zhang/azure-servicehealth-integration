@@ -91,7 +91,6 @@ export default class ApiIssueFetcher implements IIssueFetcher {
             } catch (e) {
                 globalThis.funcContext.error(e.message,  {is_error: true});
             }
-            
         }
 
         return Array.from(issueBag.values());

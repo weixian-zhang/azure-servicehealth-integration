@@ -24,7 +24,6 @@ export default class AppConfig {
     WogClientId: string;
     WogClientSecret: string;
     WogTenantId: string;
-    WogResidentSubscriptionId: string;
     wogClientSecretCredential: ClientSecretCredential;
     IsDevTest: boolean;
     incidentQueryStartFromDate: string = '';
@@ -53,7 +52,6 @@ export default class AppConfig {
             appconfig.WogClientId  = process.env.GCC_WOG_CLIENT_ID;
             appconfig.WogClientSecret  = process.env.GCC_WOG_CLIENT_SECRET;
             appconfig.WogTenantId  = process.env.GCC_WOG_TENANT_ID;
-            appconfig.WogResidentSubscriptionId = process.env.GCC_WOG_RESIDENT_SUBSCRIPTION_ID;
 
             appconfig.AzureStorageConnString = process.env.AZURE_STORAGE_CONNECTION_STRING;
 

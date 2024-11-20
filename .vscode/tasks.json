@@ -2,7 +2,7 @@
 	"version": "2.0.0",
 	"tasks": [
 		{
-			"label": "run jest unit tests",
+			"label": "run jest",
 			"type": "shell",
 			"command": "npm run test",
 			"options": {

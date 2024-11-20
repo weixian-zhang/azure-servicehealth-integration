@@ -1,7 +1,7 @@
-import {DB} from './DB';
+import {DB} from '../DB';
 import * as _ from 'lodash';
-import { ServiceIssue } from './issue-api/ServiceIssueModels';
-import AppConfig from "./AppConfig";
+import { ServiceIssue } from './ServiceIssueModels';
+import AppConfig from "../AppConfig";
 import { TableClient, TableServiceClient} from "@azure/data-tables"; '@azure/data-table';
 import { DefaultAzureCredential } from "@azure/identity";
 
@@ -26,20 +26,21 @@ export default class IssueSendDuplicatePreventer {
             // do nothing
         // issue is Resolved and tracked issue is also Resolved
             // do nothing
-        // issue is Active and no tracked issue is found in DB
-            // save as tracked issue
-            // dmark-issue-to-send
-        // issue status change from Active to Resolved
-            // update tracked issue status to Resolved
+        // issue is Active and no existing tracked issue is found in DB
+            // save issue as tracked issue in DB
             // mark-issue-to-send
-        // impacted service SEA region only level
-            // any one of the issue's impacted service has newer "lastUpdateTime"
-                // update impacted service lastUpdatedTime to lasted updated time
+        // issue status change from Active to Resolved
+            // update tracked issue status to Resolved in DB
+            // mark-issue-to-send
+
+        // issue / impacted service - SEA region or Global only level
+            // if issue / impacted service has newer "lastUpdateTime", means has new update
+                // update tracked-impacted-service lastUpdatedTime to lasted updated time
                 // mark-issue-to-send
-            // any one of the issue's impacted service status change from Active to Resolved
-                // update impacted service
-                    // status to Resolved
-                    // lastUpdatedTime to latest updated time from issue
+            // if issue / impacted service status change from Active to Resolved
+                // update tracked-impacted-service:
+                    // set tracked-impacted-service status to Resolved in DB
+                    // set tracked-impacted-service lastUpdatedTime to latest updated time in DB
                 // mark-issue-to-send
     public async determineShouldSendIssues(issues: ServiceIssue[]): Promise<ServiceIssue[]> {
         
@@ -95,22 +96,22 @@ export default class IssueSendDuplicatePreventer {
                     // all issue at this point is "tracked", and MUST have SEA region impacted services
                     for (const svc of issue.ImpactedServices ) {
 
-                        //const trackedIS = impactedServices.get(svc.ImpactedService);
                         const impactedSvc = trackedImpactedServices.get(svc.ImpactedService);
 
-                        // deciding whether to throw error as there is no possibility to be null
-                        if (_.isNil(impactedSvc)) {
-                            //TODO throw error or not
-                            continue;
-                        }
+                        // deciding whether to throw error as there should not have possibility to be null
+                        // if (_.isNil(impactedSvc)) {
+                        //     //TODO throw error or not
+                        //     continue;
+                        // }
 
-                        
+                        // issue/impacted service status change from Active to Resolved
                         if (svc.SEARegionOrGlobalStatus == this.Resolved && impactedSvc.Status == this.Active) {
                             await this.db.updateImpactedServiceResolved(trackedIssue, svc.ImpactedService, svc.SEARegionOrGlobalLastUpdateTime);
                             
                             issuesToSend.push(issue);
                         }
-                        // impacted service has newer "lastUpdateTime"
+
+                        // issue/impacted service has newer "lastUpdateTime"
                         else if (svc.SEARegionOrGlobalLastUpdateTime.valueOf() > impactedSvc.LastUpdateTime) {
                             globalThis.funcContext.trace
                                 (`at IssueSendDuplicatePreventer: 
