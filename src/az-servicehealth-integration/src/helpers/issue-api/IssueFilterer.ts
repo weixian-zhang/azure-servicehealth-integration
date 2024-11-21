@@ -45,7 +45,7 @@ export default class IssueFilterer {
             return;
         }
 
-        if (!['Warning', 'Error'].includes(eventLevel)) {
+        if (!['Informational', 'Warning', 'Error'].includes(eventLevel)) {
             return;
         }
         
