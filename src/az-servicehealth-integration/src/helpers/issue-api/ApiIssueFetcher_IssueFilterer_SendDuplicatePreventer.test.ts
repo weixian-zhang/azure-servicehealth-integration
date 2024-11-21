@@ -33,6 +33,7 @@ import test_case_8_event from './test-data/unit-test-data/test_case_8_event.json
 import test_case_9_event from './test-data/unit-test-data/test_case_9_event.json';
 import test_case_10_event from './test-data/unit-test-data/test_case_10_event.json';
 import test_case_11_event from './test-data/unit-test-data/test_case_11_event.json';
+import test_case_12_event from './test-data/unit-test-data/test_case_12_event.json';
 import test_case_impacted_resources from './test-data/unit-test-data/test_case_impacted_resources.json';
 
 class MockEventIterator implements PagedAsyncIterableIterator<Event, Event[], PageSettings> {
@@ -141,7 +142,7 @@ const tenant_name = 'TechPass';
 //   - impacted services = 1
 // result/action:
 // - (send issue as email)
-// - issue count = 1
+// - issues to send as email = 1
 test("test_case_1", async () => {
 
     const event_data = test_case_1_event;
@@ -159,7 +160,6 @@ test("test_case_1", async () => {
     const mdb = mock(DB);
     when(mdb.initDB).thenReturn(async () => await Promise.resolve());
     when(mdb.addIssue).thenReturn(async () => await Promise.resolve());
-    when(mdb.issueExist).thenReturn(async () => await Promise.resolve([false, null]));
     when(mdb.updateIssueResolved).thenReturn(async () => await Promise.resolve());
     when(mdb.updateImpactedServiceResolved).thenReturn(async () => await Promise.resolve());
     when(mdb.updateImpactedServiceLastUpdateTime).thenReturn(async () => await Promise.resolve());
@@ -171,14 +171,17 @@ test("test_case_1", async () => {
             ])
         ]
     ));
-    const mock_db = instance(mdb);
-    
-    
-    const subscriptions = [
-        new Subscription('xxx-xx-xxx', 'sub-1')
-    ]
 
-    const apif = new ApiIssueFetcher(tenant_name, mrh_instance, subscriptions, appconfig);
+    // no exitsting tracked issue in DB
+    when(mdb.issueExist).thenReturn(async () => await Promise.resolve([false, null]));
+
+    const mock_db = instance(mdb);
+
+    const apif = new ApiIssueFetcher(
+        tenant_name, 
+        mrh_instance, 
+        [new Subscription('xxx-xx-xxx', 'sub-1')], 
+        appconfig);
 
     const preventer = new IssueSendDuplicatePreventer(mock_db);
     preventer.init()
@@ -201,7 +204,7 @@ test("test_case_1", async () => {
 // - issue event type is in [EmergingIssues, HealthAdvisory, PlannedMaintenance, RCA, SecurityAdvisory]
 // result/action:
 // - (do not send issue as email)
-// - issue count = 0
+// - issues to send as email = 0
 test("test_case_2", async () => {
 
     const event_data = test_case_2_event;
@@ -218,7 +221,6 @@ test("test_case_2", async () => {
     const mdb = mock(DB);
     when(mdb.initDB).thenReturn(async () => await Promise.resolve());
     when(mdb.addIssue).thenReturn(async () => await Promise.resolve());
-    when(mdb.issueExist).thenReturn(async () => await Promise.resolve([false, null]));
     when(mdb.updateIssueResolved).thenReturn(async () => await Promise.resolve());
     when(mdb.updateImpactedServiceResolved).thenReturn(async () => await Promise.resolve());
     when(mdb.updateImpactedServiceLastUpdateTime).thenReturn(async () => await Promise.resolve());
@@ -230,14 +232,18 @@ test("test_case_2", async () => {
             ])
         ]
     ));
-    const mock_db = instance(mdb);
-    
-    
-    const subscriptions = [
-        new Subscription('xxx-xx-xxx', 'sub-1')
-    ]
 
-    const apif = new ApiIssueFetcher(tenant_name, mrh_instance, subscriptions, appconfig);
+    // no exitsting tracked issue in DB
+    when(mdb.issueExist).thenReturn(async () => await Promise.resolve([false, null]));
+
+    const mock_db = instance(mdb);
+
+    const apif = new ApiIssueFetcher(
+        tenant_name, 
+        mrh_instance, 
+        [new Subscription('xxx-xx-xxx', 'sub-1')], 
+        appconfig);
+
 
     const preventer = new IssueSendDuplicatePreventer(mock_db);
     preventer.init()
@@ -262,7 +268,7 @@ test("test_case_2", async () => {
 //   - 2 impactedRegions = SEA + Global
 // result/action:
 // - issue count = 2
-// - impacted service count = 4
+// - issues to send as email = 4
 test("test_case_3", async () => {
 
     const event_data = test_case_3_event;
@@ -279,7 +285,6 @@ test("test_case_3", async () => {
     const mdb = mock(DB);
     when(mdb.initDB).thenReturn(async () => await Promise.resolve());
     when(mdb.addIssue).thenReturn(async () => await Promise.resolve());
-    when(mdb.issueExist).thenReturn(async () => await Promise.resolve([false, null]));
     when(mdb.updateIssueResolved).thenReturn(async () => await Promise.resolve());
     when(mdb.updateImpactedServiceResolved).thenReturn(async () => await Promise.resolve());
     when(mdb.updateImpactedServiceLastUpdateTime).thenReturn(async () => await Promise.resolve());
@@ -291,14 +296,17 @@ test("test_case_3", async () => {
             ])
         ]
     ));
-    const mock_db = instance(mdb);
-    
-    
-    const subscriptions = [
-        new Subscription('xxx-xx-xxx', 'sub-1')
-    ]
 
-    const apif = new ApiIssueFetcher(tenant_name, mrh_instance, subscriptions, appconfig);
+    // no exitsting tracked issue in DB
+    when(mdb.issueExist).thenReturn(async () => await Promise.resolve([false, null]));
+
+    const mock_db = instance(mdb);
+
+    const apif = new ApiIssueFetcher(
+        tenant_name, 
+        mrh_instance, 
+        [new Subscription('xxx-xx-xxx', 'sub-1')], 
+        appconfig);
 
     const preventer = new IssueSendDuplicatePreventer(mock_db);
     preventer.init()
@@ -319,7 +327,7 @@ test("test_case_3", async () => {
 // - issue/impactedRegions is Not SEA region or Global
 // - issue event type is "ServiceIssue"
 // result/action:
-// - issue count = 1
+// - issues to send as email = 1
 test("test_case_4", async () => {
 
     const event_data = test_case_4_event;
@@ -336,7 +344,6 @@ test("test_case_4", async () => {
     const mdb = mock(DB);
     when(mdb.initDB).thenReturn(async () => await Promise.resolve());
     when(mdb.addIssue).thenReturn(async () => await Promise.resolve());
-    when(mdb.issueExist).thenReturn(async () => await Promise.resolve([false, null]));
     when(mdb.updateIssueResolved).thenReturn(async () => await Promise.resolve());
     when(mdb.updateImpactedServiceResolved).thenReturn(async () => await Promise.resolve());
     when(mdb.updateImpactedServiceLastUpdateTime).thenReturn(async () => await Promise.resolve());
@@ -348,14 +355,17 @@ test("test_case_4", async () => {
             ])
         ]
     ));
-    const mock_db = instance(mdb);
-    
-    
-    const subscriptions = [
-        new Subscription('xxx-xx-xxx', 'sub-1')
-    ]
 
-    const apif = new ApiIssueFetcher(tenant_name, mrh_instance, subscriptions, appconfig);
+    // no exitsting tracked issue in DB
+    when(mdb.issueExist).thenReturn(async () => await Promise.resolve([false, null]));
+
+    const mock_db = instance(mdb);
+
+    const apif = new ApiIssueFetcher(
+        tenant_name, 
+        mrh_instance, 
+        [new Subscription('xxx-xx-xxx', 'sub-1')], 
+        appconfig);
 
     const preventer = new IssueSendDuplicatePreventer(mock_db);
     preventer.init()
@@ -392,7 +402,6 @@ test("test_case_5", async () => {
     const mdb = mock(DB);
     when(mdb.initDB).thenReturn(async () => await Promise.resolve());
     when(mdb.addIssue).thenReturn(async () => await Promise.resolve());
-    when(mdb.issueExist).thenReturn(async () => await Promise.resolve([false, null]));
     when(mdb.updateIssueResolved).thenReturn(async () => await Promise.resolve());
     when(mdb.updateImpactedServiceResolved).thenReturn(async () => await Promise.resolve());
     when(mdb.updateImpactedServiceLastUpdateTime).thenReturn(async () => await Promise.resolve());
@@ -404,14 +413,17 @@ test("test_case_5", async () => {
             ])
         ]
     ));
-    const mock_db = instance(mdb);
     
-    
-    const subscriptions = [
-        new Subscription('xxx-xx-xxx', 'sub-1')
-    ]
+    // no exitsting tracked issue in DB
+    when(mdb.issueExist).thenReturn(async () => await Promise.resolve([false, null]));
 
-    const apif = new ApiIssueFetcher(tenant_name, mrh_instance, subscriptions, appconfig);
+    const mock_db = instance(mdb);
+
+    const apif = new ApiIssueFetcher(
+        tenant_name, 
+        mrh_instance, 
+        [new Subscription('xxx-xx-xxx', 'sub-1')], 
+        appconfig);
 
     const preventer = new IssueSendDuplicatePreventer(mock_db);
     preventer.init()
@@ -451,7 +463,7 @@ test("test_case_5", async () => {
 // - issue is Resolved
 // - issue Not already tracked in DB
 // result/action:
-// - issue count = 0
+// - issues to send as email = 0
 test("test_case_6", async () => {
 
     const event_data = test_case_6_event;
@@ -468,7 +480,7 @@ test("test_case_6", async () => {
     const mdb = mock(DB);
     when(mdb.initDB).thenReturn(async () => await Promise.resolve());
     when(mdb.addIssue).thenReturn(async () => await Promise.resolve());
-    when(mdb.issueExist).thenReturn(async () => await Promise.resolve([false, null]));
+
     when(mdb.updateIssueResolved).thenReturn(async () => await Promise.resolve());
     when(mdb.updateImpactedServiceResolved).thenReturn(async () => await Promise.resolve());
     when(mdb.updateImpactedServiceLastUpdateTime).thenReturn(async () => await Promise.resolve());
@@ -480,14 +492,18 @@ test("test_case_6", async () => {
             ])
         ]
     ));
+
+    // no exitsting tracked issue in DB
+    when(mdb.issueExist).thenReturn(async () => await Promise.resolve([false, null]));
+
     const mock_db = instance(mdb);
     
-    
-    const subscriptions = [
+    const apif = new ApiIssueFetcher(
+        tenant_name, 
+        mrh_instance, [
         new Subscription('xxx-xx-xxx', 'sub-1')
-    ]
-
-    const apif = new ApiIssueFetcher(tenant_name, mrh_instance, subscriptions, appconfig);
+        ], 
+        appconfig);
 
     const preventer = new IssueSendDuplicatePreventer(mock_db);
     preventer.init()
@@ -502,9 +518,11 @@ test("test_case_6", async () => {
 
 
 //test case 7
-// desc: issue is Resolved and tracked issue is also Resolved
+// desc: Active issue GS98-G5Y1 is not tracked.
+// There are 2 existing tracked issues exist in DB but none of them is "GS98-G5Y1".
+// Which means Active issue GS98-G5Y1 is not tracked. 
 // conditions:
-// - issue is Resolved
+// - an issue is Resolved
 // - issue/impactedRegions is SEA region or Global only
 // - existing tracked issue status Resolved in DB
 // data:
@@ -512,7 +530,7 @@ test("test_case_6", async () => {
 //      - Resolved = 1
 //      - Active = 1
 // result/action:
-// - issue count = 1
+// - issue to send as email = 1
 test("test_case_7", async () => {
 
     const event_data = test_case_7_event;
@@ -552,14 +570,15 @@ test("test_case_7", async () => {
             new TrackedIssue('TechPass', 'GS98-CN3Y', null, new Date().valueOf(), 'Active'),
         ]));
 
+
     const mock_db = instance(mdb);
     
-    
-    const subscriptions = [
+    const apif = new ApiIssueFetcher(
+        tenant_name, 
+        mrh_instance, [
         new Subscription('xxx-xx-xxx', 'sub-1')
-    ]
-
-    const apif = new ApiIssueFetcher(tenant_name, mrh_instance, subscriptions, appconfig);
+        ], 
+        appconfig);
 
     const preventer = new IssueSendDuplicatePreventer(mock_db);
     preventer.init()
@@ -580,7 +599,7 @@ test("test_case_7", async () => {
 // - existing tracked issue is Active
 // result/action:
 // - (update tracked issue status as Resolved in DB)
-// - issue count = 1
+// - issue to send as email = 1
 test("test_case_8", async () => {
 
     const event_data = test_case_8_event;
@@ -616,14 +635,15 @@ test("test_case_8", async () => {
             new TrackedIssue('TechPass', 'GS98-9V8', null, new Date().valueOf(), 'Active'),
         ]));
 
+
     const mock_db = instance(mdb);
     
-    
-    const subscriptions = [
+    const apif = new ApiIssueFetcher(
+        tenant_name, 
+        mrh_instance, [
         new Subscription('xxx-xx-xxx', 'sub-1')
-    ]
-
-    const apif = new ApiIssueFetcher(tenant_name, mrh_instance, subscriptions, appconfig);
+        ], 
+        appconfig);
 
     const preventer = new IssueSendDuplicatePreventer(mock_db);
     preventer.init()
@@ -645,7 +665,7 @@ test("test_case_8", async () => {
 // - tracked impacted service is Active
 // - issue/impactedRegions is SEA region or Global only
 // result/action:
-// - issue count = 1
+// - issue to send as email = 1
 test("test_case_9", async () => {
 
     const event_data = test_case_9_event;
@@ -713,7 +733,7 @@ test("test_case_9", async () => {
 // - a Non-SEA region "Central US" status is Resolved
 // - issue/impactedRegions is SEA region or Global only
 // result/action:
-// - issue count = 0
+// - issue to send as email = 0
 test("test_case_10", async () => {
 
     const event_data = test_case_10_event;
@@ -753,12 +773,12 @@ test("test_case_10", async () => {
 
     const mock_db = instance(mdb);
     
-    
-    const subscriptions = [
+    const apif = new ApiIssueFetcher(
+        tenant_name, 
+        mrh_instance, [
         new Subscription('xxx-xx-xxx', 'sub-1')
-    ]
-
-    const apif = new ApiIssueFetcher(tenant_name, mrh_instance, subscriptions, appconfig);
+        ], 
+        appconfig);
 
     const preventer = new IssueSendDuplicatePreventer(mock_db);
     preventer.init()
@@ -772,7 +792,7 @@ test("test_case_10", async () => {
  });
 
 
-//test case 11
+ //test case 11
 // desc: issue / impacted service has newer "lastUpdateTime", means has new update
 // conditions:
 // - issue is Active
@@ -780,8 +800,7 @@ test("test_case_10", async () => {
 // result/action:
 // - (set tracked-impacted-service status to Resolved in DB)
 // - (set tracked-impacted-service lastUpdatedTime to latest updated time in DB)
-// - issue count = 1
-
+// - issue to send as email = 1
 test("test_case_11", async () => {
 
     const event_data = test_case_11_event;
@@ -839,5 +858,81 @@ test("test_case_11", async () => {
     const filtered_issues = await preventer.determineShouldSendIssues(issues);
 
     expect(filtered_issues.length).toEqual(1);
+
+ });
+
+
+
+ //test case 12
+// desc: "Informational" event level is included in addition to [Warning, Error]
+// conditions:
+// - issue is Active
+// - issue/impactedRegions is SEA region or Global only
+// data:
+// - issues = 5
+// - 3 issue with event level "Informational"
+//   - 2 issues of SEA region
+//   - 1 issue Non SEA region
+// - 1 issue with event level "Warning"
+// - 1 issue with event level "Error"
+// result/action:
+// - issue to send as email = 4
+test("test_case_12", async () => {
+
+    const event_data = test_case_12_event;
+    const impacted_resources_data = test_case_impacted_resources;
+
+    globalThis.funcContext =  mock(InvocationContext);
+
+    // setup mock MicrosoftResourceHealth
+    const mrh = mock(MicrosoftResourceHealth);
+    when(mrh.eventsOperations).thenReturn(new MockEventOperations(event_data));
+    when(mrh.impactedResources).thenReturn(new MockImpactedResources(impacted_resources_data));
+    const mrh_instance = instance(mrh);
+    Object.defineProperty(mrh_instance, "subscriptionId", { writable: true, value: 'xx-xx-xx' });
+
+    //setup mock DB 
+    const mdb = mock(DB);
+    when(mdb.initDB).thenReturn(async () => await Promise.resolve());
+    when(mdb.addIssue).thenReturn(async () => await Promise.resolve());
+    when(mdb.updateIssueResolved).thenReturn(async () => await Promise.resolve());
+    when(mdb.updateImpactedServiceResolved).thenReturn(async () => await Promise.resolve());
+    when(mdb.updateImpactedServiceLastUpdateTime).thenReturn(async () => await Promise.resolve());
+
+    // mock DB return existing tracked impacted service
+    when(mdb.getImpactedServices).thenReturn(async () => await Promise.resolve(
+        [
+            new TrackedIssue('TechPass', 'GS98-9V8', null, new Date().valueOf(), 'Active'),
+            new Map<string, TrackedImpactedService>([
+                ['Windows Virtual Desktop', new TrackedImpactedService('Windows Virtual Desktop', 
+                    Date.parse('2024-10-28T23:50:38.298Z').valueOf(), 'Active')]
+            ])
+        ]
+    ));
+
+    // mock DB return existing tracked issue
+    when(mdb.issueExist)
+        .thenReturn(async () => await Promise.resolve([ 
+            false, 
+             null,
+        ]));
+
+    const mock_db = instance(mdb);
+
+    const apif = new ApiIssueFetcher(
+        tenant_name, 
+        mrh_instance, [
+        new Subscription('xxx-xx-xxx', 'sub-1')
+        ], 
+        appconfig);
+
+    const preventer = new IssueSendDuplicatePreventer(mock_db);
+    preventer.init()
+    
+    const issues: ServiceIssue[] = await apif.fetchIssuesAndImpactedResources();
+
+    const filtered_issues = await preventer.determineShouldSendIssues(issues);
+
+    expect(filtered_issues.length).toEqual(4);
 
  });

@@ -20,6 +20,7 @@
    "node_modules",
    "public_html",
    "test",
-   "dist"
+   "dist",
+   "/src/helpers/issue-api/test-data/unit-test-data"
   ]
 }

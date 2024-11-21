@@ -7,8 +7,8 @@
     "node": ">=18.0"
   },
   "scripts": {
-    "debug-ut": "npx ts-node src\\helpers\\issue-api\\ApiIssueFetcher_and_IssueFilterer.test.ts",
-    "build": "tsc && npm run cp:nunjuckstpl && npm run mkdir:testdata && npm run cp:testdata",
+    "//": " && npm run cp:testdata", 
+    "build": "tsc && npm run cp:nunjuckstpl && npm run mkdir:testdata",
     "watch": "tsc -w",
     "clean": "rimraf dist",
     "prestart": "npm run clean && npm run build",
@@ -38,7 +38,7 @@
     "nunjucks": "^3.2.4",
     "sqlite": "^5.1.1",
     "sqlite3": "^5.1.7",
-    "ts-node": "^10.9.2",
+    "ts-node": "^10.9.2"
   },
   "devDependencies": {
     "@types/jest": "^29.5.14",
