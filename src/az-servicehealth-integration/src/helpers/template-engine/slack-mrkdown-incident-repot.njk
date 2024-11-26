@@ -1,0 +1,28 @@
+*Azure Incident Report*  
+
+- Title: {{ Title }}
+- Affected Services: {{ ImpactedServicesNames | join(', ') }}
+- Status: {{ OverallStatus }}
+- Subscriptions Impacted: **{{ ImpactedSubscriptions | length }}**
+- Impact Start Time: {{ formatDateTimeFriendly(ImpactStartTime) }}
+- Impact Mitigation Time: {{ formatDateTimeFriendly(ImpactMitigationTime) }}  
+
+*Impacted Resources*
+
+{% for svc in ImpactedServices %}
+
+*{{ svc.ImpactedService }}*
+- Status: {{ svc.SEARegionOrGlobalStatus }}
+- Last Updated At: {{ formatDateTimeFriendly(svc.SEARegionOrGlobalLastUpdateTime) }}
+
+{% for update in svc.ImpactUpdates %}
+  - {{ formatDateTimeFriendly(update.UpdateDateTime) }}: ```{{ html_to_text(update.Summary) }}```
+{% endfor %}
+
+{% endfor %}
+
+
+*Impacted Subscriptions* 
+{% for subscription in ImpactedSubscriptions %}
+  - {{ sub.Name }} | {{ sub.Id }}
+{% endfor %}

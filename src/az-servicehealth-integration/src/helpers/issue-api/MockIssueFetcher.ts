@@ -6,7 +6,7 @@ import * as _ from 'lodash';
 export default class MockIssueGenerator implements IIssueFetcher {
     // wogTenantName = "WOG";
     techpassTenantName = "TechPass";
-    issuesDataPath: string = __dirname + "\\test-data\\sea_issues_only_from_rest_api_response.json";
+    issuesDataPath: string = __dirname + "\\issues-from-resource-health-sdk-type-event_2.json"; //__dirname + "\\test-data\\sea_issues_only_from_rest_api_response.json";
     impactedResourcesDataPath: string = __dirname + "\\test-data\\impacted_resources_from_rest_api_response.json";
     regionToFilter = "Southeast Asia";
     

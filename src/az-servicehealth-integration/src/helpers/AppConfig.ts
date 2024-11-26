@@ -33,6 +33,7 @@ export default class AppConfig {
     httpGatewayURL: string = ''; //used by func_timer_http_client only
     AzureStorageTableEndpoint: string = '';
     Timezone: string = 'Asia/Singapore';
+    TemplateOutput = 'slack'; // slack or html
     
     //for local testing only using Azure Communication Service SMTP 
     AzureCommunicationServiceConnString: string = '';

@@ -1,138 +1,31 @@
-# Azure Incident Report (Test)  
+*Azure Incident Report (Test)*
 
-* Title: 	Post Incident Review (PIR) - Azure Resource Manager - Services impacted by ARM failures
-* Affected Services: Azure Relay, Event Hubs, Service Bus
-* Status: 	Resolved
-* Subscriptions Impacted: **250**
-* Impact Start Time: 	Jan 21 2024 at 11:02 
-* Impact Mitigation Time: Jan 22 2024 at 2:14
+- Title: 	Post Incident Review (PIR) - Azure Resource Manager - Services impacted by ARM failures
+- Affected Services: Azure Relay, Event Hubs, Service Bus
+- Status: 	Resolved
+- Subscriptions Impacted: **250**
+- Impact Start Time: 	Jan 21 2024 at 11:02 
+- Impact Mitigation Time: Jan 22 2024 at 2:14
 
-## Impacted Susbcriptions  
-<div style="overflow-y: scroll;max-height:200px"  markdown="block">
-<table>
-    <tr>
-        <th>ID</th>
-        <th>Name</th>
-    </tr>
-    <tr>
-        <td>
-            <div style="width:300px">
-                213-axx-000001-xxaa-222333
-            </div>
-        </td>
-        <td>
-            <div style="width:300px">
-                mesos-001-11-sub-1
-            </div>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <div style="width:300px">
-                213-axx-000001-xxaa-222333
-            </div>
-        </td>
-        <td>
-            <div style="width:300px">
-                mesos-001-11-sub-1
-            </div>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <div style="width:300px">
-                213-axx-000001-xxaa-222333
-            </div>
-        </td>
-        <td>
-            <div style="width:300px">
-                mesos-001-11-sub-1
-            </div>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <div style="width:300px">
-                213-axx-000001-xxaa-222333
-            </div>
-        </td>
-        <td>
-            <div style="width:300px">
-                mesos-001-11-sub-1
-            </div>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <div style="width:300px">
-                213-axx-000001-xxaa-222333
-            </div>
-        </td>
-        <td>
-            <div style="width:300px">
-                mesos-001-11-sub-1
-            </div>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <div style="width:300px">
-                213-axx-000001-xxaa-222333
-            </div>
-        </td>
-        <td>
-            <div style="width:300px">
-                mesos-001-11-sub-1
-            </div>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <div style="width:300px">
-                213-axx-000001-xxaa-222333
-            </div>
-        </td>
-        <td>
-            <div style="width:300px">
-                mesos-001-11-sub-1
-            </div>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <div style="width:300px">
-                213-axx-000001-xxaa-222333
-            </div>
-        </td>
-        <td>
-            <div style="width:300px">
-                mesos-001-11-sub-1
-            </div>
-        </td>
-    </tr>
-    <tr>
-        <td>
-            <div style="width:300px">
-                213-axx-000001-xxaa-222333
-            </div>
-        </td>
-        <td>
-            <div style="width:300px">
-                mesos-001-11-sub-1
-            </div>
-        </td>
-    </tr>
-</table>
-</div>
+*Impacted Subscriptions*
+
+- 213-axx-000001-xxaa-222333 | mesos-001-11-sub-1
+- 213-axx-000001-xxaa-222333 | mesos-001-11-sub-1
+- 213-axx-000001-xxaa-222333 | mesos-001-11-sub-1
+- 213-axx-000001-xxaa-222333 | mesos-001-11-sub-1
+- 213-axx-000001-xxaa-222333 | mesos-001-11-sub-1
+
+*Impacted Resources*
 
 
-## Impacted Resources
+*Azure Relay*
+- Status: Resolved
+- Last Updated At: March 4, 2024 at 1:02 PM
+- Updates
 
-
-### <mark>**Azure Relay**</mark>
-* Status: Resolved
-* Last Updated At: March 4, 2024 at 1:02 PM
-
+March 4, 2024 at 1:02 PM - ```
+<p><strong>What happened?</strong></p>\n<p>Between 10:01 UTC on 28 October 2024 and 18:07 UTC on 01 November 2024, a subset of customers using App Service may have experienced erroneous 404 failure notifications for the Microsoft.Web/sites/workflows API from alerts and recorded into their logs.</p>\n<p><strong>What we know so far?</strong></p>\n<p>We identified a previous change to a backend service which caused backend operations to be called to apps incorrectly.</p>\n<p><strong>How did we respond?</strong></p>\n<p>We were alerted to this issue via customer reports and responded to investigate. We applied steps to limit the erroneous failures to alleviate additional erroneous alerts and logging of these. Additionally, we’ve taken steps to revert the previous change.</p>\n<p><strong>What happens next?</strong></p>\n<ul><li>To request a Post Incident Review (PIR), impacted customers can use the “Request PIR” feature within Azure Service Health. (Note: We're in the process of transitioning from \"Root Cause Analyses (RCAs)\" to \"Post Incident Reviews (PIRs)\", so you may temporarily see both terms used interchangeably in the Azure portal and in Service Health alerts.)</li><li>To get notified if a PIR is published, and/or to stay informed about future Azure service issues, make sure that you configure and maintain Azure Service Health alerts – these can trigger emails, SMS, push notifications, webhooks, and more:&nbsp;<a href=\"https://aka.ms/ash-alerts\" target=\"_blank\">https://aka.ms/ash-alerts</a>.</li><li>For more information on Post Incident Reviews, refer to&nbsp;<a href=\"https://aka.ms/AzurePIRs\" target=\"_blank\">https://aka.ms/AzurePIRs</a>.</li><li>Finally, for broader guidance on preparing for cloud incidents, refer to&nbsp;<a href=\"https://aka.ms/incidentreadiness\" target=\"_blank\">https://aka.ms/incidentreadiness</a>.</li></ul>
+```
 <br />
 
 <table>
