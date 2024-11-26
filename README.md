@@ -125,10 +125,6 @@ App will retrieve all Azure Subscriptions that Service Principals below have acc
 * HTTP_GATEWAY_URL: "https://{unction name}.azurewebsites.net/api/azure-incident-report/generate?incidentStartFromDate=7/18/2024&code={function API Key},
 * WEBSITE_TIME_ZONE": "Singapore Standard Time"
 * APPLICATIONINSIGHTS_CONNECTION_STRING
-* GCC_WOG_CLIENT_ID
-* GCC_WOG_CLIENT_SECRET
-* GCC_WOG_TENANT_ID
-* GCC_WOG_TENANT_NAME
 * GCC_TECHPASS_CLIENT_ID
 * GCC_TECHPASS_CLIENT_SECRET
 * GCC_TECHPASS_TENANT_ID

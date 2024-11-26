@@ -35,7 +35,7 @@ export default class IssueFilterer {
     // hence, issues retrieved will have duplicates.
     // But the impacted services could be different as different services exist in different subscriptions,
     // so this function merges different impacted services by same Tracking Id.
-    static createAndFilterIssues(tenantName: string, subscription: Subscription, currIssue: any, issueBag: Map<string, ServiceIssue>) {
+    static createAndFilterIssues(subscription: Subscription, currIssue: any, issueBag: Map<string, ServiceIssue>, tenantName: string = "TechPass", ) {
 
         const eventType = _.isNil(currIssue.eventType) ? currIssue.properties.eventType : currIssue.eventType;
         const eventLevel = _.isNil(currIssue.eventLevel) ? currIssue.properties.eventLevel : currIssue.eventLevel;

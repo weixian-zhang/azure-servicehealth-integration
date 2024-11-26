@@ -7,9 +7,9 @@ import SendIssueWorkflowManager from "../helpers/SendIssueWorkflowManager";
 
 declare global {
     var appconfig: AppConfig;
-    var wogAzCred: ClientSecretCredential;
+    // var wogAzCred: ClientSecretCredential;
     var techpassAzCred: ClientSecretCredential;
-    var wogTenantName: string;
+    // var wogTenantName: string;
     var techpassTenantName: string;
     var funcContext: InvocationContext;
 }
@@ -59,7 +59,7 @@ export async function func_service_health_issue_fetcher(data: QueueData, context
 
 
 function initGlobalVariables(context, incidentStartFromDate: string) {
-    globalThis.wogTenantName = "WOG";
+    //globalThis.wogTenantName = "WOG";
     globalThis.techpassTenantName = "TechPass";
     globalThis.appconfig = AppConfig.loadFromEnvVar(context);
     globalThis.appconfig.incidentQueryStartFromDate = incidentStartFromDate

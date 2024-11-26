@@ -4,7 +4,7 @@ import { ServiceIssue, ImpactedService, ImpactUpdates, ImpactedResource, Subscri
 import * as fs from 'fs';
 import * as _ from 'lodash';
 export default class MockIssueGenerator implements IIssueFetcher {
-    wogTenantName = "WOG";
+    // wogTenantName = "WOG";
     techpassTenantName = "TechPass";
     issuesDataPath: string = __dirname + "\\test-data\\sea_issues_only_from_rest_api_response.json";
     impactedResourcesDataPath: string = __dirname + "\\test-data\\impacted_resources_from_rest_api_response.json";
@@ -36,7 +36,7 @@ export default class MockIssueGenerator implements IIssueFetcher {
                 const trackingId = currIssue.name;
     
                 IssueFilterer.createAndFilterIssues(
-                    wogTenantName, 
+                    //wogTenantName, 
                     sub, 
                     currIssue, 
                     issueBag);
