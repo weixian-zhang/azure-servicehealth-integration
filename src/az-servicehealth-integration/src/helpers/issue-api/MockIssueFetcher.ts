@@ -41,10 +41,10 @@ export default class MockIssueGenerator implements IIssueFetcher {
                     currIssue, 
                     issueBag);
                 
-                if (issueBag.has(trackingId)) {
-                    // get impacted resources
-                    await this.fetchImpactedResourcesForIssue(trackingId, issueBag);
-                }
+                // if (issueBag.has(trackingId)) {
+                //     // get impacted resources
+                //     await this.fetchImpactedResourcesForIssue(trackingId, issueBag);
+                // }
     
                 curr++;
             }

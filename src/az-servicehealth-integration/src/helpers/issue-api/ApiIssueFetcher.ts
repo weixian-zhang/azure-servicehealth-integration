@@ -83,10 +83,10 @@ export default class ApiIssueFetcher implements IIssueFetcher {
                     IssueFilterer.createAndFilterIssues(sub, currIssue, issueBag); //(this.tenantName, sub, currIssue, issueBag);
     
                     
-                    if (issueBag.has(trackingId)) {
-                        // get impacted resources
-                        await this.fetchImpactedResourcesForIssue(trackingId, issueBag);
-                    }
+                    // if (issueBag.has(trackingId)) {
+                    //     // get impacted resources
+                    //     await this.fetchImpactedResourcesForIssue(trackingId, issueBag);
+                    // }
                 }
             } catch (e) {
                 globalThis.funcContext.error(e.message,  {is_error: true});
