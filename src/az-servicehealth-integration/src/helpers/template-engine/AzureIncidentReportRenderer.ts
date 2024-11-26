@@ -2,6 +2,7 @@ import * as nunjucks from 'nunjucks'
 import {Environment} from 'nunjucks';
 import * as fs from 'fs';
 import { ServiceIssue } from '../issue-api/ServiceIssueModels';
+import AppConfig from '../AppConfig';
 
 // https://mozilla.github.io/nunjucks/templating.html
 export default class AzureIncidentReportRenderer {
@@ -9,9 +10,10 @@ export default class AzureIncidentReportRenderer {
     private tplMain = "\\html-incident-report.njk";
     private nunjucksEnv: Environment = null;
     private htmlReportTemplate: string = '';
+    private appconfig: AppConfig;
 
-    constructor() {
-        
+    constructor(appconfig: AppConfig) {
+        this.appconfig = appconfig;
     }
     
     public async init() {
@@ -33,7 +35,8 @@ export default class AzureIncidentReportRenderer {
         day: 'numeric', 
         hour: 'numeric', 
         minute: 'numeric',
-        hour12: true 
+        hour12: true,
+        timeZone: this.appconfig.Timezone
     };
       return date.toLocaleString('en-US', options);
   }
