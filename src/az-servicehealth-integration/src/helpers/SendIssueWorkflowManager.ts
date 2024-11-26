@@ -46,7 +46,7 @@ export default class IssueReportGenerationWorkflow {
         
 
         //wog incidents
-        var wogIssuesToSend = []
+        //var wogIssuesToSend = []
         
         // try {
 
@@ -81,18 +81,18 @@ export default class IssueReportGenerationWorkflow {
            globalThis.funcContext.trace(`Sent HTML report as email for TechPass related incidents ${tpi.TrackingId}`);
         }
 
-        for (const wogi of wogIssuesToSend) {
+        // for (const wogi of wogIssuesToSend) {
 
-           const html: string = htmlRenderer.render(wogi);
+        //    const html: string = htmlRenderer.render(wogi);
 
-           //local testing only
-           //await fs.promises.writeFile('C:\\Users\\weixzha\\Desktop\\wog.html', html, {encoding:'utf8',flag:'w'});
+        //    //local testing only
+        //    //await fs.promises.writeFile('C:\\Users\\weixzha\\Desktop\\wog.html', html, {encoding:'utf8',flag:'w'});
 
-           await emailSink.send(html);
+        //    await emailSink.send(html);
 
-           globalThis.funcContext.trace(`Sent HTML report as email for WOG related incidents ${wogi.TrackingId}`);
+        //    globalThis.funcContext.trace(`Sent HTML report as email for WOG related incidents ${wogi.TrackingId}`);
 
-        }
+        // }
     }
 
     async getTechPassIssues(subscriptions: Subscription[]) : Promise<ServiceIssue[]> {
@@ -107,17 +107,17 @@ export default class IssueReportGenerationWorkflow {
         return issues;
     }
     
-    async getWOGIssues(subscriptions: Subscription[]) : Promise<ServiceIssue[]> {
-        const wogIR = new IssueFetcher(
-            globalThis.wogTenantName,
-            globalThis.appconfig.wogClientSecretCredential,
-            subscriptions,
-            appconfig);
+    // async getWOGIssues(subscriptions: Subscription[]) : Promise<ServiceIssue[]> {
+    //     const wogIR = new IssueFetcher(
+    //         globalThis.wogTenantName,
+    //         globalThis.appconfig.wogClientSecretCredential,
+    //         subscriptions,
+    //         appconfig);
     
-        const issues = await wogIR.getIssues();
+    //     const issues = await wogIR.getIssues();
     
-        return issues
-    }
+    //     return issues
+    // }
 
     async getSubscriptionsByServicePrincipalRBAC(sp: ClientSecretCredential): Promise<Subscription[]> {
         const subClient = new SubscriptionClient(sp);

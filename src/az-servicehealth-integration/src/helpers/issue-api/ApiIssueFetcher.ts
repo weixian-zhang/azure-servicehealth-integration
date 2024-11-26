@@ -80,7 +80,7 @@ export default class ApiIssueFetcher implements IIssueFetcher {
                 
                     const trackingId = currIssue.name;
     
-                    IssueFilterer.createAndFilterIssues(this.tenantName, sub, currIssue, issueBag);
+                    IssueFilterer.createAndFilterIssues(sub, currIssue, issueBag); //(this.tenantName, sub, currIssue, issueBag);
     
                     
                     if (issueBag.has(trackingId)) {

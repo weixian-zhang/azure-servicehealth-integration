@@ -91,10 +91,10 @@ resource "azurerm_windows_function_app" "func" {
 
   app_settings = {
     HTTP_GATEWAY_FUNC_HOST_KEY_USED_BY_TIMER_FUNC = "{http gateway func host key manually set}"
-    GCC_WOG_CLIENT_ID = " {manually set} "
-    GCC_WOG_CLIENT_SECRET = " {manually set} "
-    GCC_WOG_TENANT_ID = " {manually set} "
-    GCC_WOG_TENANT_NAME = "WOG"
+    # GCC_WOG_CLIENT_ID = " {manually set} "
+    # GCC_WOG_CLIENT_SECRET = " {manually set} "
+    # GCC_WOG_TENANT_ID = " {manually set} "
+    # GCC_WOG_TENANT_NAME = "WOG"
     GCC_TECHPASS_CLIENT_ID = " {manually set} "
     GCC_TECHPASS_CLIENT_SECRET = " {manually set} "
     GCC_TECHPASS_TENANT_ID = " {manually set} "

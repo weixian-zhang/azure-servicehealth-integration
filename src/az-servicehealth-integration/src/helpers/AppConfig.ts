@@ -1,6 +1,5 @@
 import { InvocationContext } from "@azure/functions";
 import { ClientSecretCredential } from "@azure/identity";
-import { context } from "@opentelemetry/api";
 import * as _ from 'lodash';
 
 export class EMailConfig {
@@ -21,10 +20,10 @@ export default class AppConfig {
     TechPassClientSecret: string;
     TechPassTenantId: string;
     TechPassClientSecretCredential: ClientSecretCredential;
-    WogClientId: string;
-    WogClientSecret: string;
-    WogTenantId: string;
-    wogClientSecretCredential: ClientSecretCredential;
+    // WogClientId: string;
+    // WogClientSecret: string;
+    // WogTenantId: string;
+    // wogClientSecretCredential: ClientSecretCredential;
     IsDevTest: boolean;
     incidentQueryStartFromDate: string = '';
     AzureStorageConnString: string = '';
@@ -49,9 +48,9 @@ export default class AppConfig {
             appconfig.TechPassClientSecret  = process.env.GCC_TECHPASS_CLIENT_SECRET;
             appconfig.TechPassTenantId  = process.env.GCC_TECHPASS_TENANT_ID;
 
-            appconfig.WogClientId  = process.env.GCC_WOG_CLIENT_ID;
-            appconfig.WogClientSecret  = process.env.GCC_WOG_CLIENT_SECRET;
-            appconfig.WogTenantId  = process.env.GCC_WOG_TENANT_ID;
+            // appconfig.WogClientId  = process.env.GCC_WOG_CLIENT_ID;
+            // appconfig.WogClientSecret  = process.env.GCC_WOG_CLIENT_SECRET;
+            // appconfig.WogTenantId  = process.env.GCC_WOG_TENANT_ID;
 
             appconfig.AzureStorageConnString = process.env.AZURE_STORAGE_CONNECTION_STRING;
 
@@ -128,11 +127,11 @@ export default class AppConfig {
 
     static createAzureCredentials(appconfig: AppConfig) {
 
-        appconfig.wogClientSecretCredential = new ClientSecretCredential(
-            appconfig.WogTenantId,
-            appconfig.WogClientId,
-            appconfig.WogClientSecret
-          );
+        // appconfig.wogClientSecretCredential = new ClientSecretCredential(
+        //     appconfig.WogTenantId,
+        //     appconfig.WogClientId,
+        //     appconfig.WogClientSecret
+        //   );
     
         appconfig.TechPassClientSecretCredential = new ClientSecretCredential(
             appconfig.TechPassTenantId,
