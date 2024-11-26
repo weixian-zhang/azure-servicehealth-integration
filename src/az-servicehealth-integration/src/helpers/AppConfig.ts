@@ -32,6 +32,7 @@ export default class AppConfig {
     incidentDayFromNow: number = 5 //if HTTP Func does not provide query incidentStartFromDate, this config will be used
     httpGatewayURL: string = ''; //used by func_timer_http_client only
     AzureStorageTableEndpoint: string = '';
+    Timezone: string = 'Asia/Singapore';
     
     //for local testing only using Azure Communication Service SMTP 
     AzureCommunicationServiceConnString: string = '';
