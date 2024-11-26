@@ -5,7 +5,7 @@ import { ServiceIssue, Subscription } from "./issue-api/ServiceIssueModels";
 import AppConfig from "./AppConfig";
 import { SubscriptionClient } from "@azure/arm-resources-subscriptions";
 import { ClientSecretCredential } from "@azure/identity";
-import AzureIncidentReportRenderer from "./template-engine/AzureIncidentReportRenderer";
+import AzureIncidentReportRenderer from "./template-engine/ReportRenderer";
 import * as fs from 'fs'; //testing only
 import EmailSinkCreator from "./send-sink/EmailSinkCreator";
 import { IEmailSink } from "./send-sink/IEmailSink";
@@ -65,7 +65,7 @@ export default class IssueReportGenerationWorkflow {
 
         //issue to HTML template and send email
         const htmlRenderer = new AzureIncidentReportRenderer();
-        await htmlRenderer.init();
+        await htmlRenderer.init(this.appconfig);
 
         const emailSink : IEmailSink = EmailSinkCreator.create(this.appconfig);
 

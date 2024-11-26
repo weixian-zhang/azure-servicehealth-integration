@@ -120,6 +120,7 @@ export default class IssueFilterer {
 
         si.ImpactedRegions = Array.from(impactedRegions).join(', ');
 
+        // at this stage issue exist in SEA region, "addImpactedSubscription" will make sure unique subscriptions are added to list
         si.addImpactedSubscription(subscription);
 
         // is previously collected issue
