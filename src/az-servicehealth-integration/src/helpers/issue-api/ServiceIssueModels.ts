@@ -42,6 +42,29 @@ export class ServiceIssue {
         return n.join(', ');
     }
 
+    // O(n^2) complexity, N <= 700
+    addImpactedSubscriptions(subscriptionIds: string[]) {
+        if (subscriptionIds.length == 0) {
+            return
+        }
+
+        if (this.ImpactedSubscriptions.length == 0) {
+            for (const id of subscriptionIds) {
+                this.ImpactedSubscriptions.push(new Subscription(id, ''));
+            }
+            return;
+        }
+
+        for (const isub of this.ImpactedSubscriptions) {
+            for (const id of subscriptionIds) {
+                if (isub.Id == id) {
+                    continue;
+                }
+                this.ImpactedSubscriptions.push(new Subscription(id, ''));
+            }
+        }
+    }
+
     addImpactedSubscription(subscription: Subscription) {
 
         if (_.isEmpty(this.ImpactedSubscriptions)) {
@@ -57,7 +80,7 @@ export class ServiceIssue {
             }
         }
 
-        if (exist) {
+        if (!exist) {
             this.ImpactedSubscriptions.push(subscription);
         }
     }

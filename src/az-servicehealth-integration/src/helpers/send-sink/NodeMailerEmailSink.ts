@@ -22,12 +22,13 @@ export default class NodeMailerEmailSink implements IEmailSink {
                 pass: this.appconfig.EMailConfig.Password
             }
         });
-    
+        
+
         const mailOptions: SendMailOptions = {
             from: this.appconfig.EMailConfig.SenderAddress,
             subject: this.appconfig.EMailConfig.Subject,
-            text: '',
-            html: message,
+            text: this.appconfig.TemplateOutput == 'slack' ? message : '',
+            html: this.appconfig.TemplateOutput == 'html' ? message : '',
             to: this.appconfig.EMailConfig.To,
             cc: this.appconfig.EMailConfig.CC,
             bcc: this.appconfig.EMailConfig.BCC

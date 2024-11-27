@@ -21,8 +21,11 @@
 
 {% endfor %}
 
+{% if (ImpactedSubscriptions.length > 0) %}
 
 *Impacted Subscriptions* 
-{% for subscription in ImpactedSubscriptions %}
+{% for sub in ImpactedSubscriptions %}
   - {{ sub.Name }} | {{ sub.Id }}
 {% endfor %}
+
+{% endif %}

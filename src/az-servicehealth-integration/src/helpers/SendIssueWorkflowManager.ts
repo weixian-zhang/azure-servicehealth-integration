@@ -5,11 +5,10 @@ import { ServiceIssue, Subscription } from "./issue-api/ServiceIssueModels";
 import AppConfig from "./AppConfig";
 import { SubscriptionClient } from "@azure/arm-resources-subscriptions";
 import { ClientSecretCredential } from "@azure/identity";
-import AzureIncidentReportRenderer from "./template-engine/ReportRenderer";
+import ReportRenderer from "./template-engine/ReportRenderer";
 import * as fs from 'fs'; //testing only
 import EmailSinkCreator from "./send-sink/EmailSinkCreator";
 import { IEmailSink } from "./send-sink/IEmailSink";
-import * as opentelemetry from "@opentelemetry/api";
 import { DB } from "./DB";
 
 export default class IssueReportGenerationWorkflow {
@@ -36,7 +35,7 @@ export default class IssueReportGenerationWorkflow {
 
             const tpIssues = await this.getTechPassIssues(tpSubs);
 
-            tpIssuesToSend = await this.sendDupPreventer.determineShouldSendIssues(tpIssues)
+            tpIssuesToSend = tpIssues; //await this.sendDupPreventer.determineShouldSendIssues(tpIssues)
 
             globalThis.funcContext.trace(`TechPass issues count to send: ${tpIssuesToSend.length}`)
 
@@ -64,21 +63,31 @@ export default class IssueReportGenerationWorkflow {
         
 
         //issue to HTML template and send email
-        const htmlRenderer = new AzureIncidentReportRenderer();
-        await htmlRenderer.init(this.appconfig);
+        const rp = new ReportRenderer();
+        await rp.init(this.appconfig);
 
         const emailSink : IEmailSink = EmailSinkCreator.create(this.appconfig);
 
         for(const tpi of tpIssuesToSend) {
+
+            //testing only, to remove
+        //    if (tpi.ImpactedSubscriptions.length == 0) {
+        //     continue;
+        //     }
             
-            const html: string = htmlRenderer.render(tpi);
+            const output: string = rp.render(tpi);
 
             //local testing only
-            //await fs.promises.writeFile('C:\\Users\\weixzha\\Desktop\\tp.html', html, {encoding:'utf8',flag:'w'});
+            //await fs.promises.writeFile('C:\\Users\\weixzha\\Desktop\\tp.txt', output, {encoding:'utf8',flag:'w'});
         
-           await emailSink.send(html);
+           await emailSink.send(output);
 
-           globalThis.funcContext.trace(`Sent HTML report as email for TechPass related incidents ${tpi.TrackingId}`);
+           globalThis.funcContext.trace(`Sent report as email for TechPass related incidents ${tpi.TrackingId}`);
+
+           //testing only, to remove
+        //    if (tpi.ImpactedSubscriptions.length > 0) {
+        //         break;
+        //    }
         }
 
         // for (const wogi of wogIssuesToSend) {

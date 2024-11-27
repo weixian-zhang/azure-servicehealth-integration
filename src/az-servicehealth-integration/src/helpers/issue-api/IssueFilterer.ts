@@ -87,6 +87,11 @@ export default class IssueFilterer {
                     impactedSvc.SEARegionOrGlobalLastUpdateTime = new Date(region.lastUpdateTime);
                     impactedSvc.ImpactedTenants = region.impactedTenants;
                     impactedSvc.ImpactedSubscriptions = region.impactedSubscriptions;
+
+                    // add impacted subscriptions here just in case to "catch all" returned impacted subscriptions
+                    // in addition to all subscriptions that this Function App's service principal has access to
+                    si.addImpactedSubscriptions(region.impactedSubscriptions);
+
                     impactedSvc.ImpactUpdates = new Array();
                     
                     if (!_.isNil(region.updates)) {
