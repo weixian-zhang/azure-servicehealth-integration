@@ -26,8 +26,6 @@ export default class IssueReportGenerationWorkflow {
 
         await this.sendDupPreventer.init(); // init tabel storage
       
-        //techpass incidents
-
         var tpIssuesToSend = []
         try {
             
@@ -35,7 +33,7 @@ export default class IssueReportGenerationWorkflow {
 
             const tpIssues = await this.getTechPassIssues(tpSubs);
 
-            tpIssuesToSend = tpIssues; //await this.sendDupPreventer.determineShouldSendIssues(tpIssues)
+            tpIssuesToSend = await this.sendDupPreventer.determineShouldSendIssues(tpIssues)
 
             globalThis.funcContext.trace(`TechPass issues count to send: ${tpIssuesToSend.length}`)
 
@@ -71,23 +69,23 @@ export default class IssueReportGenerationWorkflow {
         for(const tpi of tpIssuesToSend) {
 
             //testing only, to remove
-        //    if (tpi.ImpactedSubscriptions.length == 0) {
-        //     continue;
-        //     }
+           if (tpi.ImpactedSubscriptions.length == 0) {
+            continue;
+            }
             
             const output: string = rp.render(tpi);
 
             //local testing only
-            //await fs.promises.writeFile('C:\\Users\\weixzha\\Desktop\\tp.txt', output, {encoding:'utf8',flag:'w'});
+            await fs.promises.writeFile('C:\\Users\\weixzha\\Desktop\\tp.txt', output, {encoding:'utf8',flag:'w'});
         
            await emailSink.send(output);
 
-           globalThis.funcContext.trace(`Sent report as email for TechPass related incidents ${tpi.TrackingId}`);
+           globalThis.funcContext.trace(`Sent email report for TechPass incident ${tpi.TrackingId}`);
 
            //testing only, to remove
-        //    if (tpi.ImpactedSubscriptions.length > 0) {
-        //         break;
-        //    }
+           if (tpi.ImpactedSubscriptions.length > 0) {
+                break;
+           }
         }
 
         // for (const wogi of wogIssuesToSend) {

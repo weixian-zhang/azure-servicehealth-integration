@@ -16,7 +16,9 @@
 - Last Updated At: {{ formatDateTimeFriendly(svc.SEARegionOrGlobalLastUpdateTime) }}
 
 {% for update in svc.ImpactUpdates %}
-  - {{ formatDateTimeFriendly(update.UpdateDateTime) }}: ```{{ html_to_text(update.Summary) }}```
+
+- {{ formatDateTimeFriendly(update.UpdateDateTime) }}: ```{{ html_to_text(update.Summary) }}```
+
 {% endfor %}
 
 {% endfor %}
@@ -24,8 +26,8 @@
 {% if (ImpactedSubscriptions.length > 0) %}
 
 *Impacted Subscriptions* 
-{% for sub in ImpactedSubscriptions %}
-  - {{ sub.Name }} | {{ sub.Id }}
+{% for id, sub in ImpactedSubscriptions %}
+- {{ sub.Name }} | {{ id }}
 {% endfor %}
 
 {% endif %}

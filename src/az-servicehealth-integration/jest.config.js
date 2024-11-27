@@ -5,5 +5,6 @@ module.exports = {
   },
   testRegex: "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
   moduleFileExtensions: ["ts", "tsx", "js", "jsx", "json", "node"],
-  modulePathIgnorePatterns: ["src/az-servicehealth-integration/dist/"]
+  modulePathIgnorePatterns: ["src/az-servicehealth-integration/dist/"],
+  workerIdleMemoryLimit: '512MB'
 };

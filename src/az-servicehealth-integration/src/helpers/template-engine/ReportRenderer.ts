@@ -40,16 +40,25 @@ export default class ReportRenderer {
     }
 
     formatDateTimeFriendly(date: Date): string {
-      const options: Intl.DateTimeFormatOptions = { 
+      // const options: Intl.DateTimeFormatOptions = { 
+      //   year: 'numeric', 
+      //   month: 'long', 
+      //   day: 'numeric', 
+      //   hour: 'numeric', 
+      //   minute: 'numeric',
+      //   hour12: true,
+      //   timeZone: 'Asian/Singapore'
+      // };
+
+      return date.toLocaleString('en-US', { 
         year: 'numeric', 
         month: 'long', 
         day: 'numeric', 
         hour: 'numeric', 
         minute: 'numeric',
-        hour12: true
-      };
-
-      return date.toLocaleString('en-US', options);
+        hour12: true,
+        timeZone: 'Asia/Singapore'
+      });
     }
 
     html_to_text(html: string): string {
