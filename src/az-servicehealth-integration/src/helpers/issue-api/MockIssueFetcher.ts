@@ -3,10 +3,12 @@ import IIssueFetcher from "./IIssueFetcher";
 import { ServiceIssue, ImpactedService, ImpactUpdates, ImpactedResource, Subscription } from "./ServiceIssueModels";
 import * as fs from 'fs';
 import * as _ from 'lodash';
+import Path from 'path';
+
 export default class MockIssueGenerator implements IIssueFetcher {
     // wogTenantName = "WOG";
     techpassTenantName = "TechPass";
-    issuesDataPath: string = __dirname + "\\issues-from-resource-health-sdk-type-event_2.json"; //__dirname + "\\test-data\\sea_issues_only_from_rest_api_response.json";
+    issuesDataPath: string = Path.join(__dirname, "test-data", "issues-from-resource-health-sdk-type-event_2.json"); //__dirname + "\\test-data\\sea_issues_only_from_rest_api_response.json";
     impactedResourcesDataPath: string = __dirname + "\\test-data\\impacted_resources_from_rest_api_response.json";
     regionToFilter = "Southeast Asia";
     
@@ -72,7 +74,7 @@ export default class MockIssueGenerator implements IIssueFetcher {
     private async listIssuesBySubscriptionIds() : Promise<any[]> {
         const data = await fs.promises.readFile(this.issuesDataPath, "utf8");
         let issues = JSON.parse(data);
-        return Array.from(issues.value);
+        return Array.from(issues);
     }
 }
 

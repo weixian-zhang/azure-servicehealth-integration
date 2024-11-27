@@ -9,8 +9,8 @@ import {convert} from 'html-to-text'
 // https://mozilla.github.io/nunjucks/templating.html
 export default class ReportRenderer {
     private tplPath = __dirname;
-    private html_tpl_file_name = "\\html-incident-report.njk";
-    private slack_mrkdown_tpl_file_name = "\\slack-mrkdown-incident-repot.njk";
+    private html_tpl_file_name = "html-incident-report.njk";
+    private slack_mrkdown_tpl_file_name = "slack-mrkdown-incident-report.njk";
     private nunjucksEnv: Environment = null;
     private template: string = '';
     private appconfig: AppConfig;
@@ -31,7 +31,8 @@ export default class ReportRenderer {
 
         this.nunjucksEnv = nunjucks.configure(this.tplPath, {
             autoescape: false,
-            trimBlocks: true
+            trimBlocks: true,
+          
           });
 
         this.nunjucksEnv.addGlobal('formatDateTimeFriendly', this.formatDateTimeFriendly)
@@ -45,8 +46,7 @@ export default class ReportRenderer {
         day: 'numeric', 
         hour: 'numeric', 
         minute: 'numeric',
-        hour12: true,
-        timeZone: this.appconfig.Timezone
+        hour12: true
       };
 
       return date.toLocaleString('en-US', options);
