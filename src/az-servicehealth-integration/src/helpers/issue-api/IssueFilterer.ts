@@ -65,7 +65,7 @@ export default class IssueFilterer {
         si.LevelDescription = IssueFilterer.getLevelDescription(si.Level);
         si.ImpactedServices = new Array();
         si.ImpactedResources = new Array();
-        si.ImpactedSubscriptions = new Array<Subscription>();
+        si.ImpactedSubscriptions = new Map<string,Subscription>();
 
         const impactedRegions = new Set<string>();
 
