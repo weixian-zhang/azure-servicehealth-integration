@@ -62,10 +62,6 @@ shutil.copy2(os.path.join(azfunc_directory, 'tsconfig.json'), os.path.join(func_
 
 # functions source files
 copytree(os.path.join(azfunc_directory, 'dist', 'src'), os.path.join(func_deploy_dir, 'dist' , 'src'))
-# functions source files
-#copytree(os.path.join(azfunc_directory, 'src', 'functions'), os.path.join(func_deploy_dir, 'dist') #os.path.join(func_deploy_dir, 'src','functions'))
-# # copy helpers source files
-#copytree(os.path.join(azfunc_directory, 'src', 'helpers'), os.path.join(func_deploy_dir, 'dist') #os.path.join(func_deploy_dir, 'src', 'helpers'))
 
 
 

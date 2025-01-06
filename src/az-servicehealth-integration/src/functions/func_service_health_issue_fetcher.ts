@@ -34,7 +34,7 @@ export async function func_service_health_issue_fetcher(data: QueueData, context
 
         globalThis.funcContext = context;
 
-        globalThis.funcContext.trace(`func_service_health_issue_fetcher received request to fetch incident if any`);
+        globalThis.funcContext.trace(`techpass / issue_fetcher: received message with incidentStartFromDate ${data.incidentStartFromDate}, start fetching issues`);
         
         initGlobalVariables(context, data.incidentStartFromDate);
 
@@ -42,12 +42,12 @@ export async function func_service_health_issue_fetcher(data: QueueData, context
 
         await wfm.generateIssueReport();
 
-        globalThis.funcContext.trace(`Report generation completed`);
+        globalThis.funcContext.trace(`techpass / issue_fetcher: Report generation completed`);
     }
     catch(e){
         
         // if app insights is enabled at function, will log to app insights.Traces
-        globalThis.funcContext.error(`error message: ${e.message}, ${e.stack}`,  {is_error: true})
+        globalThis.funcContext.error(`techpass / issue_fetcher: error message: ${e.message}, ${e.stack}`,  {is_error: true})
 
         return {
             status: 500,
@@ -62,7 +62,11 @@ function initGlobalVariables(context, incidentStartFromDate: string) {
     //globalThis.wogTenantName = "WOG";
     globalThis.techpassTenantName = "TechPass";
     globalThis.appconfig = AppConfig.loadFromEnvVar(context);
-    globalThis.appconfig.incidentQueryStartFromDate = incidentStartFromDate
+
+    if (incidentStartFromDate) {
+        globalThis.appconfig.incidentQueryStartFromDate = incidentStartFromDate;
+    }
+    
 }
 // https://learn.microsoft.com/en-us/azure/azure-functions/functions-bindings-storage-queue-trigger?tabs=python-v2%2Cisolated-process%2Cnodejs-v4%2Cextensionv5&pivots=programming-language-javascript#identity-based-connections
 //https://stackoverflow.com/questions/77893774/python-azure-functions-identity-based-connection-for-trigger-bindings

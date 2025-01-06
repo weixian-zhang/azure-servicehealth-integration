@@ -37,13 +37,14 @@ export default class NodeMailerEmailSink implements IEmailSink {
         try {
 
             const result = await transporter.sendMail(mailOptions);
-            //console.log('Email Sent: %s', result.messageId);
+            
+            globalThis.funcContext.trace(`techpass - email report sent`)
 
             return new EmailSinkResponse('Succeeded', null);
 
         } catch (error) {
+            globalThis.funcContext.trace(`techpass - error at NodeMailerEmailSink: ${error.message}`)
             throw error;
-            //return new EmailSinkResponse('Failed', error.message);
         }
     }
 }

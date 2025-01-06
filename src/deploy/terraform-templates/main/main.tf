@@ -13,8 +13,8 @@ terraform {
     }
   }
   backend "azurerm" {
-      resource_group_name  = "rg-service-health-to-email-dev"
-      storage_account_name = "strgsvchealthtfstate1"
+      resource_group_name  = "rg-service-health-to-email"
+      storage_account_name = "strgsvchealth1"
       container_name       = "tfstate"
       key                  = "terraform.tfstate"
   }
@@ -29,22 +29,26 @@ provider "azurerm" {
 
 data "azurerm_subscription" "primary" { }
 
-resource "azurerm_storage_account" "storage_func" {
-  name                     = var.func_storage_account_name
-  resource_group_name      = var.resource_group_name
-  location                 = local.location
-  account_tier             = "Standard"
-  account_replication_type = "ZRS"
+data "azurerm_storage_account" "func_storage" {
+  name                = var.func_storage_account_name
+  resource_group_name = var.resource_group_name
 }
+# resource "azurerm_storage_account" "storage_func" {
+#   name                     = var.func_storage_account_name
+#   resource_group_name      = var.resource_group_name
+#   location                 = local.location
+#   account_tier             = "Standard"
+#   account_replication_type = "ZRS"
+# }
 
 resource "azurerm_storage_queue" "incident_in_queue" {
   name                 = var.storage_queue_name
-  storage_account_name = azurerm_storage_account.storage_func.name
+  storage_account_name = var.func_storage_account_name #azurerm_storage_account.storage_func.name
 }
 
 resource "azurerm_storage_table" "db_table" {
   name                 = var.storage_table_name
-  storage_account_name = azurerm_storage_account.storage_func.name
+  storage_account_name = var.func_storage_account_name #azurerm_storage_account.storage_func.name
 }
 
 # get log analytics workspace id that backs app insights
@@ -80,8 +84,8 @@ resource "azurerm_windows_function_app" "func" {
   resource_group_name = var.resource_group_name
   location            = local.location
   https_only                 = true
-  storage_account_name       = azurerm_storage_account.storage_func.name
-  storage_account_access_key = azurerm_storage_account.storage_func.primary_access_key
+  storage_account_name       = var.func_storage_account_name
+  storage_account_access_key = data.azurerm_storage_account.func_storage.primary_access_key
   service_plan_id            = azurerm_service_plan.asp.id
   
 
@@ -110,9 +114,9 @@ resource "azurerm_windows_function_app" "func" {
     HTTP_GATEWAY_FUNC_HOST_KEY_USED_BY_TIMER_FUNC = "" // manually set on function post creation
     WEBSITE_TIME_ZONE= "Singapore Standard Time"
     APPLICATIONINSIGHTS_CONNECTION_STRING = "${azurerm_application_insights.appinsights.connection_string}"
-    AzureWebJobsStorage = "${azurerm_storage_account.storage_func.primary_connection_string}"
-    AZURE_STORAGEQUEUE_RESOURCEENDPOINT = "https://${azurerm_storage_account.storage_func.name}.queue.core.windows.net"
-    AZURE_STORAGETABLE_RESOURCEENDPOINT = "https://${azurerm_storage_account.storage_func.name}.table.core.windows.net"
+    AzureWebJobsStorage = "${ data.azurerm_storage_account.func_storage.primary_connection_string}"
+    AZURE_STORAGEQUEUE_RESOURCEENDPOINT = "https://${var.func_storage_account_name}.queue.core.windows.net"
+    AZURE_STORAGETABLE_RESOURCEENDPOINT = "https://${var.func_storage_account_name}.table.core.windows.net"
   }
 
   site_config {
@@ -125,20 +129,20 @@ resource "azurerm_windows_function_app" "func" {
 }
 
 resource "azurerm_role_assignment" "storage_blob_data_contributor" {
-  scope                = azurerm_storage_account.storage_func.id
+  scope                = data.azurerm_storage_account.func_storage.id
   role_definition_name = "Storage Blob Data Contributor"
   principal_id         = azurerm_windows_function_app.func.identity.0.principal_id
 }
 
 
 resource "azurerm_role_assignment" "storage_table_data_contributor" {
-  scope                = azurerm_storage_account.storage_func.id
+  scope                = data.azurerm_storage_account.func_storage.id
   role_definition_name = "Storage Table Data Contributor" # join("/", ["/subscription", data.azurerm_subscription.primary.subscription_id, "providers/Microsoft.Authorization/roleDefinitions/0a9a7e1f-b9d0-4cc4-a60d-0319b160aaa3"])
   principal_id         = azurerm_windows_function_app.func.identity.0.principal_id
 }
 
 resource "azurerm_role_assignment" "storage_queue_data_contributor" {
-  scope                = azurerm_storage_account.storage_func.id
+  scope                = data.azurerm_storage_account.func_storage.id
   role_definition_name = "Storage Queue Data Contributor"
   principal_id         = azurerm_windows_function_app.func.identity.0.principal_id
 }

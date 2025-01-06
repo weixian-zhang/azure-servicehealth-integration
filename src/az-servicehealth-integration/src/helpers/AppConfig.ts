@@ -45,6 +45,8 @@ export default class AppConfig {
 
         try {
             
+            appconfig.incidentQueryStartFromDate = new Date().toISOString().split('T')[0]
+
             appconfig.HTTPGatewayFunchostKeyUsedByTimerFunc = process.env.HTTP_GATEWAY_FUNC_HOST_KEY_USED_BY_TIMER_FUNC;
             appconfig.TechPassClientId  = process.env.GCC_TECHPASS_CLIENT_ID;
             appconfig.TechPassClientSecret  = process.env.GCC_TECHPASS_CLIENT_SECRET;

@@ -1,11 +1,11 @@
 variable "resource_group_name" {
   type=string
-  default = "rg-service-health-to-email-dev"
+  default = "rg-service-health-to-email"
 }
 
 variable "func_storage_account_name" {
   type = string
-  default = "strgshintfuncdb1"
+  default = "strgsvchealth1"
 }
 
 variable "storage_queue_name" {

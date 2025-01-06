@@ -1,7 +1,7 @@
 locals {
   location= "Southeast Asia"
-  storage_account_name = "strgsvchealthtfstate1"
-  resource_group_name = "rg-service-health-to-email-dev"
+  storage_account_name = "strgsvchealth1"
+  resource_group_name = "rg-service-health-to-email"
 }
 
 
