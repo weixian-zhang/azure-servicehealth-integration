@@ -11,14 +11,14 @@ export async function func_timer_http_client(myTimer: Timer, context: Invocation
         const appconfig = AppConfig.loadFromEnvVar(context);
 
         if (_.isNil(appconfig.httpGatewayURL) || _.isEmpty(appconfig.httpGatewayURL)) {
-            context.error('httpGatewayURL not found in environment variable');
+            context.error('techpass / func_timer: httpGatewayURL not found in environment variable');
             return;
         }
 
         const funcKey = process.env.HTTP_GATEWAY_FUNC_HOST_KEY_USED_BY_TIMER_FUNC
 
         if (_.isNil(funcKey) || _.isEmpty(funcKey)) {
-            throw new Error('HTTP_GATEWAY_FUNC_HOST_KEY_USED_BY_TIMER_FUNC is not found in app settings')
+            throw new Error('techpass / func_timer: HTTP_GATEWAY_FUNC_HOST_KEY_USED_BY_TIMER_FUNC is not found in app settings')
         }
         
         const queryString = {
@@ -27,14 +27,14 @@ export async function func_timer_http_client(myTimer: Timer, context: Invocation
 
         const url = appconfig.httpGatewayURL + '?' + querystring.stringify(queryString)
 
-        context.trace(`func_timer_http_client calling ${appconfig.httpGatewayURL}`);
+        context.trace(`techpass / func_timer:  calling ${appconfig.httpGatewayURL}`);
 
         const resp = await fetch(url);
 
-        context.trace(`func_timer_http_client received response of status code ${resp.status}`);
+        context.trace(`techpass / func_timer: received response of status code ${resp.status}`);
 
     } catch (error) {
-        context.error(error,  {is_error: true});
+        context.error(`techpass / func_timer: ${error}`);
     }
 }
     

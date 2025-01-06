@@ -10,20 +10,21 @@
   },
   "logging": {
     "fileLoggingMode": "always",
-    "applicationInsights": {
-      "samplingSettings": {
-          "isEnabled": true,
-          "logginglevel":"Error",
-          "excludedTypes": "Request"
-      },
-      "enableLiveMetricsFilters": true
-    },
     "logLevel": {
-      "default": "Error",
-      "Host.Results": "Error",
-      "Function": "Trace",
-      "Host.Aggregator": "Trace"
-    }
+        "default": "Warning",
+        "Function": "Error",
+        "Host.Aggregator": "Error",
+        "Host.Results": "Information",
+        "Function.Function1": "Information",
+        "Function.Function1.User": "Error"
+      },
+      "applicationInsights": {
+        "samplingSettings": {
+          "isEnabled": true,
+          "maxTelemetryItemsPerSecond": 1,
+          "excludedTypes": "Request"
+        }
+      }
   },
   "telemetryMode": "openTelemetry",
   "extensionBundle": {

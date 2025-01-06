@@ -15,7 +15,7 @@ export async function func_http_gateway(request: HttpRequest, context: Invocatio
 
         var incidentStartFromDate = request.query.get('incidentStartFromDate');
 
-        context.trace(`func_http_gateway receive HTTP request`);
+        context.trace(`techpass / func_http_gateway: receive HTTP request`);
 
         if (_.isNil(incidentStartFromDate) == true || isNaN(Date.parse(incidentStartFromDate))) {
             
@@ -28,7 +28,7 @@ export async function func_http_gateway(request: HttpRequest, context: Invocatio
             "incidentStartFromDate": "${incidentStartFromDate}"
         }`);
 
-        context.trace(`func_http_gateway sending message to queue with incidentStartFromDate ${incidentStartFromDate}`)
+        context.trace(`techpass / func_http_gateway: send message to queue with incidentStartFromDate ${incidentStartFromDate}`)
 
         await queue.sendMessage(msg);
 
@@ -41,7 +41,7 @@ export async function func_http_gateway(request: HttpRequest, context: Invocatio
         };
         
     } catch (error) {
-        context.error(`Error occured in function func_http_gateway, ${error.message}`,  {is_error: true});
+        context.error(`techpass - Error occured in function func_http_gateway, ${error.message}`,  {is_error: true});
 
         return {
             status: 500,

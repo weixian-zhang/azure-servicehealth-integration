@@ -20,6 +20,7 @@ export default class IssueFetcher {
         const isDevTest = process.env.SERVICE_HEALTH_INTEGRATION_IS_DEVTEST
 
         if (appconfig.IsDevTest) {
+            globalThis.funcContext.trace(`techpass / issue_fetcher: IsDevTest = true, using mock data`);
             this.issueFetcher = new MockIssueRetriever();
         }
         else {

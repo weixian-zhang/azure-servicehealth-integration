@@ -29,16 +29,22 @@ export default class IssueReportGenerationWorkflow {
         var tpIssuesToSend = []
         try {
             
+            globalThis.funcContext.trace(`techpass / issue_fetcher: get subscriptions by service principal`);
+
             const tpSubs = await this.getSubscriptionsByServicePrincipalRBAC(globalThis.appconfig.TechPassClientSecretCredential)
+
+            globalThis.funcContext.trace(`techpass / issue_fetcher: get issues`);
 
             const tpIssues = await this.getTechPassIssues(tpSubs);
 
+            globalThis.funcContext.trace(`techpass / issue_fetcher: determine if issues should be send`);
+
             tpIssuesToSend = await this.sendDupPreventer.determineShouldSendIssues(tpIssues)
 
-            globalThis.funcContext.trace(`TechPass issues count to send: ${tpIssuesToSend.length}`)
+            globalThis.funcContext.trace(`techpass / issue_fetcher: issues count to send: ${tpIssuesToSend.length}`)
 
         } catch (e) {
-            globalThis.funcContext.error(`error message: ${e.message}, ${e.stack}`, {is_error: true})
+            globalThis.funcContext.error(`techpass / issue_fetcher: error message: ${e.message}, ${e.stack}`, {is_error: true})
         }
         
 
@@ -68,24 +74,15 @@ export default class IssueReportGenerationWorkflow {
 
         for(const tpi of tpIssuesToSend) {
 
-            //testing only, to remove
-           if (tpi.ImpactedSubscriptions.length == 0) {
-            continue;
-            }
-            
             const output: string = rp.render(tpi);
 
             //local testing only
-            await fs.promises.writeFile('C:\\Users\\weixzha\\Desktop\\tp.txt', output, {encoding:'utf8',flag:'w'});
+            //await fs.promises.writeFile('C:\\Users\\weixzha\\Desktop\\tp.txt', output, {encoding:'utf8',flag:'w'});
         
-           await emailSink.send(output);
+            await emailSink.send(output);
 
-           globalThis.funcContext.trace(`Sent email report for TechPass incident ${tpi.TrackingId}`);
+            globalThis.funcContext.trace(`techpass - Sent email report for TechPass incident ${tpi.TrackingId}`);
 
-           //testing only, to remove
-           if (tpi.ImpactedSubscriptions.length > 0) {
-                break;
-           }
         }
 
         // for (const wogi of wogIssuesToSend) {
