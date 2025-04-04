@@ -1,4 +1,7 @@
-# Azure Service Health to Slack 
+# Azure Service Health to Slack  
+
+ <mark>Warning: Important information for customers using azure-servicehealth-integration <br />
+ This solution, offered by the Open-Source community, does not receive contributions nor support by Microsoft.</mark>
 
 * [What is Service Health to Slack](#what-is-service-health-to-slack)
 * [How App Works](#how-the-app-works)
