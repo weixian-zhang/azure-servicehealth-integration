@@ -10,7 +10,8 @@
 * [Architecture Design](#architecture-design)
 * [How to Deploy](#how-to-deploy)
 * [Azure Function Configurations](#azure-function-configurations)
-* [Email Sample](#email-sample)
+* [HTML Formatted Email Report Sample](#html-formatted-email-report-sample)
+* [Slack Markdown Formatted Report Sample](#slack-markdown-formatted-report-sample)
 
 ### What is Service Health to Slack?  
 * Curates Azure Service Health [incidents](https://learn.microsoft.com/en-us/azure/service-health/service-health-notifications-properties) and [impacted resources](https://learn.microsoft.com/en-us/azure/service-health/impacted-resources-security) of 2 Entra tenants, generates [HTML report](https://github.com/weixian-zhang/azure-servicehealth-integration/blob/main/src/az-servicehealth-integration/doc/sample-wog-incident-report.html) and sends as email. Slack's email integration picks up email content and sends to preconfigured Slack channels.
@@ -106,8 +107,170 @@ App will retrieve all Azure Subscriptions that Service Principals below have acc
       }
     </code>   
 
-### Email Sample  
+### HTML formatted Email Report Sample  
 
-![image](https://github.com/user-attachments/assets/b2f41102-d59e-4bcf-bdde-eb036c05df28)
+![image](https://github.com/user-attachments/assets/b2f41102-d59e-4bcf-bdde-eb036c05df28)  
+
+### Slack Markdown formatted Report Sample
+
+*Azure Incident Report* 
+
+- Title: Active - Azure Virtual Desktop reduction in the diagnostic data
+- Affected Services: Windows Virtual Desktop, Azure Relay, Azure Kubernetes Service
+- Status: Active
+- Subscriptions Impacted: **4**
+- Impact Start Time: 2024-09-17T18:36:24.113Z
+- Impact Mitigation Time: 2024-10-20T21:41:37.000Z 
+
+*Impacted Resources*
 
 
+*Windows Virtual Desktop*
+- Status: Active
+- Last Updated At: October 29, 2024 at 7:50 AM
+
+
+- October 29, 2024 at 7:50 AM: ```Impact Statement: Starting at 18:46 UTC on 16 Sep 2024, customers using Azure Virtual Desktop may notice a reduction in the
+diagnostic data we collect. This is a temporary adjustment aimed at stabilizing our backend databases as part of our ongoing
+investigation into the issues stemming from incident 1LG8-1X0.
+
+ 
+
+Current status: The decision to reduce diagnostics collection is a precaution to avoid a recurrence of the challenges we faced
+during that incident. One of the triggers of the incident was traced to an overload of data being written to database replicas,
+which triggered delays, automatic failovers, and ultimately led to a database outage. By temporarily limiting the amount of
+diagnostic data captured, we are reducing the load on the databases and mitigating potential replication issues, thus improving
+service stability.
+
+ 
+
+This is a temporary solution until we roll out a permanent fix.
+
+ 
+
+The diagnostics that we will no longer be ingesting are exclusive to "Feed and management diagnostics". One of the triggers of the
+incident was a degradation in the speed at which data was written to database replicas, which triggered delays, automatic
+failovers, and ultimately led to a database outage.
+
+ 
+
+We are still working on the long term fix, and will provide a status update on its development by November 15, 2024, or sooner as
+events warrant. ```
+
+
+- October 22, 2024 at 2:20 AM: ```We previously reported this issue as mitigated, however, on further inspection we can confirm that the issue is still active and
+being investigated. We apologize for the inconvenience.
+
+
+
+
+Impact Statement: Starting at 18:46 UTC on 16 Sep 2024, customers using Azure Virtual Desktop may notice a reduction in the
+diagnostic data we collect. This is a temporary adjustment aimed at stabilizing our backend databases as part of our ongoing
+investigation into the issues stemming from incident 1LG8-1X0.
+
+ 
+
+Current status: The decision to reduce diagnostics collection is a precaution to avoid a recurrence of the challenges we faced
+during that incident. One of the triggers of the incident was traced to an overload of data being written to database replicas,
+which triggered delays, automatic failovers, and ultimately led to a database outage. By temporarily limiting the amount of
+diagnostic data captured, we are reducing the load on the databases and mitigating potential replication issues, thus improving
+service stability.
+
+ 
+
+This is a temporary solution until we roll out a permanent fix.
+
+ 
+
+The diagnostics that we will no longer be ingesting are exclusive to "Feed and management diagnostics". One of the triggers of the
+incident was a degradation in the speed at which data was written to database replicas, which triggered delays, automatic
+failovers, and ultimately led to a database outage. We are working on a fix and a rollout. We will provide an update by 28 October
+2024. ```
+
+
+- October 21, 2024 at 5:46 AM: ```What happened?
+
+Between 18:46 UTC on 16 Sep 2024, and 21:43 UTC on 20 October 2024, customers using Azure Virtual Desktop may have noticed a
+reduction in the diagnostic data we collect. This was a temporary adjustment aimed at stabilizing our backend databases as part of
+our previously ongoing investigation into the issues stemming from incident 1LG8-1X0.
+
+
+
+
+Current Status: This incident has been mitigated. More information will be provided shortly.```
+
+
+
+*Azure Relay*
+- Status: Active
+- Last Updated At: October 29, 2024 at 7:50 AM
+
+
+- October 29, 2024 at 7:50 AM: ```Impact Statement: Starting at 18:46 UTC on 16 Sep 2024, customers using Azure Virtual Desktop may notice a reduction in the
+diagnostic data we collect. This is a temporary adjustment aimed at stabilizing our backend databases as part of our ongoing
+investigation into the issues stemming from incident 1LG8-1X0.
+
+ 
+
+Current status: The decision to reduce diagnostics collection is a precaution to avoid a recurrence of the challenges we faced
+during that incident. One of the triggers of the incident was traced to an overload of data being written to database replicas,
+which triggered delays, automatic failovers, and ultimately led to a database outage. By temporarily limiting the amount of
+diagnostic data captured, we are reducing the load on the databases and mitigating potential replication issues, thus improving
+service stability.
+
+ 
+
+This is a temporary solution until we roll out a permanent fix.
+
+ 
+
+The diagnostics that we will no longer be ingesting are exclusive to "Feed and management diagnostics". One of the triggers of the
+incident was a degradation in the speed at which data was written to database replicas, which triggered delays, automatic
+failovers, and ultimately led to a database outage.
+
+ 
+
+We are still working on the long term fix, and will provide a status update on its development by November 15, 2024, or sooner as
+events warrant. ```
+
+
+- October 22, 2024 at 2:20 AM: ```We previously reported this issue as mitigated, however, on further inspection we can confirm that the issue is still active and
+being investigated. We apologize for the inconvenience.
+
+
+
+
+Impact Statement: Starting at 18:46 UTC on 16 Sep 2024, customers using Azure Virtual Desktop may notice a reduction in the
+diagnostic data we collect. This is a temporary adjustment aimed at stabilizing our backend databases as part of our ongoing
+investigation into the issues stemming from incident 1LG8-1X0.
+
+ 
+
+Current status: The decision to reduce diagnostics collection is a precaution to avoid a recurrence of the challenges we faced
+during that incident. One of the triggers of the incident was traced to an overload of data being written to database replicas,
+which triggered delays, automatic failovers, and ultimately led to a database outage. By temporarily limiting the amount of
+diagnostic data captured, we are reducing the load on the databases and mitigating potential replication issues, thus improving
+service stability.
+
+ 
+
+This is a temporary solution until we roll out a permanent fix.
+
+ 
+
+The diagnostics that we will no longer be ingesting are exclusive to "Feed and management diagnostics". One of the triggers of the
+incident was a degradation in the speed at which data was written to database replicas, which triggered delays, automatic
+failovers, and ultimately led to a database outage. We are working on a fix and a rollout. We will provide an update by 28 October
+2024. ```
+
+
+- October 21, 2024 at 5:46 AM: ```What happened?
+
+Between 18:46 UTC on 16 Sep 2024, and 21:43 UTC on 20 October 2024, customers using Azure Virtual Desktop may have noticed a
+reduction in the diagnostic data we collect. This was a temporary adjustment aimed at stabilizing our backend databases as part of
+our previously ongoing investigation into the issues stemming from incident 1LG8-1X0.
+
+
+
+
+Current Status: This incident has been mitigated. More information will be provided shortly.```
