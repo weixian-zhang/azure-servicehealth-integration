@@ -1,0 +1,148 @@
+<mxfile host="Electron" modified="2024-08-13T07:47:20.979Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/22.1.2 Chrome/114.0.5735.289 Electron/25.9.4 Safari/537.36" etag="tCGL6EVhVNeEbRmsN6Pl" version="22.1.2" type="device">
+  <diagram name="Page-1" id="G8UrM7M67HIisbb6Z9TN">
+    <mxGraphModel dx="1966" dy="828" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="Y3nDfySXwRAaGiWAtd1p-7" value="" style="rounded=1;whiteSpace=wrap;html=1;fillColor=none;shadow=0;glass=1;arcSize=2;" vertex="1" parent="1">
+          <mxGeometry x="-541.34" y="222" width="240" height="360" as="geometry" />
+        </mxCell>
+        <mxCell id="WxOFqhejSJ8d4apdW_I4-80" value="0, 0" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;rounded=0;" parent="1" vertex="1">
+          <mxGeometry x="67.66000000000003" y="84" width="60" height="30" as="geometry" />
+        </mxCell>
+        <mxCell id="Y3nDfySXwRAaGiWAtd1p-1" value="&lt;a style=&quot;font-family: &amp;quot;Segoe UI&amp;quot;, &amp;quot;Segoe UI Web (West European)&amp;quot;, &amp;quot;Segoe UI&amp;quot;, -apple-system, BlinkMacSystemFont, Roboto, &amp;quot;Helvetica Neue&amp;quot;, sans-serif; -webkit-font-smoothing: antialiased; font-size: 13px; color: rgb(0, 69, 120); outline: none; text-decoration-line: none; line-height: 18px; text-align: left; background-color: rgb(247, 247, 247);&quot; class=&quot;ms-Link root-308&quot; href=&quot;https://portal.azure.com/#blade/WebsitesExtension/FunctionTabMenuBlade/resourceId/%2Fsubscriptions%2Fd8732e82-febd-4b92-b1ed-8fbce80a9ad8%2FresourceGroups%2Frg-service-health-devtest%2Fproviders%2FMicrosoft.Web%2Fsites%2Ffunc-service-health-integrator%2Ffunctions%2Ffunc_http_gateway&quot;&gt;func_http_gateway&lt;/a&gt;" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/compute/Function_Apps.svg;" vertex="1" parent="1">
+          <mxGeometry x="-441.34" y="376" width="45.34" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="Y3nDfySXwRAaGiWAtd1p-2" value="API&lt;br&gt;Events - List By Subscription Id" style="sketch=0;html=1;dashed=0;whitespace=wrap;fillColor=#2875E2;strokeColor=#ffffff;points=[[0.005,0.63,0],[0.1,0.2,0],[0.9,0.2,0],[0.5,0,0],[0.995,0.63,0],[0.72,0.99,0],[0.5,1,0],[0.28,0.99,0]];verticalLabelPosition=bottom;align=center;verticalAlign=top;shape=mxgraph.kubernetes.icon;prIcon=api" vertex="1" parent="1">
+          <mxGeometry x="-331.34" y="696" width="50" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="Y3nDfySXwRAaGiWAtd1p-3" value="&lt;a style=&quot;font-family: &amp;quot;Segoe UI&amp;quot;, &amp;quot;Segoe UI Web (West European)&amp;quot;, &amp;quot;Segoe UI&amp;quot;, -apple-system, BlinkMacSystemFont, Roboto, &amp;quot;Helvetica Neue&amp;quot;, sans-serif; -webkit-font-smoothing: antialiased; font-size: 13px; color: rgb(0, 69, 120); outline: none; text-decoration-line: none; line-height: 18px; text-align: left; background-color: rgb(247, 247, 247);&quot; class=&quot;ms-Link root-308&quot; href=&quot;https://portal.azure.com/#blade/WebsitesExtension/FunctionTabMenuBlade/resourceId/%2Fsubscriptions%2Fd8732e82-febd-4b92-b1ed-8fbce80a9ad8%2FresourceGroups%2Frg-service-health-devtest%2Fproviders%2FMicrosoft.Web%2Fsites%2Ffunc-service-health-integrator%2Ffunctions%2Ffunc_service_health_issue_fetcher&quot;&gt;func_service_health_issue_fetcher&lt;/a&gt;" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/compute/Function_Apps.svg;labelPosition=center;verticalLabelPosition=top;verticalAlign=bottom;" vertex="1" parent="1">
+          <mxGeometry x="-441.34" y="515" width="45.34" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="Y3nDfySXwRAaGiWAtd1p-5" value="&lt;a style=&quot;font-family: &amp;quot;Segoe UI&amp;quot;, &amp;quot;Segoe UI Web (West European)&amp;quot;, &amp;quot;Segoe UI&amp;quot;, -apple-system, BlinkMacSystemFont, Roboto, &amp;quot;Helvetica Neue&amp;quot;, sans-serif; -webkit-font-smoothing: antialiased; font-size: 13px; color: rgb(0, 69, 120); outline: none; text-decoration-line: none; line-height: 18px; text-align: left; background-color: rgb(247, 247, 247);&quot; tabindex=&quot;-1&quot; class=&quot;ms-Link root-308&quot; href=&quot;https://portal.azure.com/#blade/WebsitesExtension/FunctionTabMenuBlade/resourceId/%2Fsubscriptions%2Fd8732e82-febd-4b92-b1ed-8fbce80a9ad8%2FresourceGroups%2Frg-service-health-devtest%2Fproviders%2FMicrosoft.Web%2Fsites%2Ffunc-service-health-integrator%2Ffunctions%2Ffunc_timer_http_client&quot;&gt;func_timer_http_client&lt;/a&gt;&lt;br&gt;every 5 minutes" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/compute/Function_Apps.svg;labelPosition=center;verticalLabelPosition=top;verticalAlign=bottom;" vertex="1" parent="1">
+          <mxGeometry x="-441.34" y="274" width="45.34" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="Y3nDfySXwRAaGiWAtd1p-6" value="API&lt;br&gt;Impacted Resources -&lt;br&gt;List By Subscription Id And Event Id" style="sketch=0;html=1;dashed=0;whitespace=wrap;fillColor=#2875E2;strokeColor=#ffffff;points=[[0.005,0.63,0],[0.1,0.2,0],[0.9,0.2,0],[0.5,0,0],[0.995,0.63,0],[0.72,0.99,0],[0.5,1,0],[0.28,0.99,0]];verticalLabelPosition=bottom;align=center;verticalAlign=top;shape=mxgraph.kubernetes.icon;prIcon=api" vertex="1" parent="1">
+          <mxGeometry x="-551.6099999999999" y="682" width="50" height="48" as="geometry" />
+        </mxCell>
+        <mxCell id="Y3nDfySXwRAaGiWAtd1p-8" value="" style="image;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/azure2/compute/Function_Apps.svg;" vertex="1" parent="1">
+          <mxGeometry x="-541.3399999999999" y="196" width="29.47" height="26" as="geometry" />
+        </mxCell>
+        <mxCell id="Y3nDfySXwRAaGiWAtd1p-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;" edge="1" parent="1" source="Y3nDfySXwRAaGiWAtd1p-5" target="Y3nDfySXwRAaGiWAtd1p-1">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="Y3nDfySXwRAaGiWAtd1p-41" value="http request" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="Y3nDfySXwRAaGiWAtd1p-9">
+          <mxGeometry x="-0.1924" y="1" relative="1" as="geometry">
+            <mxPoint y="-1" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Y3nDfySXwRAaGiWAtd1p-10" value="Azure Storage&lt;br&gt;Queue" style="verticalLabelPosition=bottom;html=1;verticalAlign=top;align=center;strokeColor=none;fillColor=#00BEF2;shape=mxgraph.azure.storage_queue;" vertex="1" parent="1">
+          <mxGeometry x="-91.33999999999997" y="442" width="50" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="Y3nDfySXwRAaGiWAtd1p-11" value="Azure Storage&lt;br&gt;Table" style="image;sketch=0;aspect=fixed;html=1;points=[];align=center;fontSize=12;image=img/lib/mscae/Queues_Storage.svg;" vertex="1" parent="1">
+          <mxGeometry x="-91.33999999999997" y="586" width="50" height="44" as="geometry" />
+        </mxCell>
+        <mxCell id="Y3nDfySXwRAaGiWAtd1p-14" value="" style="endArrow=classic;html=1;rounded=0;entryX=0;entryY=0.252;entryDx=0;entryDy=0;entryPerimeter=0;exitX=1;exitY=0.7;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="1" source="Y3nDfySXwRAaGiWAtd1p-1" target="Y3nDfySXwRAaGiWAtd1p-10">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-331.34" y="502" as="sourcePoint" />
+            <mxPoint x="-281.34" y="452" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Y3nDfySXwRAaGiWAtd1p-15" value="send message" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="Y3nDfySXwRAaGiWAtd1p-14">
+          <mxGeometry x="0.2479" y="-1" relative="1" as="geometry">
+            <mxPoint x="-8" y="-16" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Y3nDfySXwRAaGiWAtd1p-16" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.882;exitY=0.6;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="1" source="Y3nDfySXwRAaGiWAtd1p-3" target="Y3nDfySXwRAaGiWAtd1p-10">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-386.34" y="430" as="sourcePoint" />
+            <mxPoint x="-201.33999999999997" y="473" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Y3nDfySXwRAaGiWAtd1p-20" value="receive&lt;br&gt;message" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="Y3nDfySXwRAaGiWAtd1p-16">
+          <mxGeometry x="0.4719" y="2" relative="1" as="geometry">
+            <mxPoint x="-39" y="14" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Y3nDfySXwRAaGiWAtd1p-21" value="" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.8;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0;entryY=0.485;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="Y3nDfySXwRAaGiWAtd1p-3" target="Y3nDfySXwRAaGiWAtd1p-11">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-391.34" y="556" as="sourcePoint" />
+            <mxPoint x="-201.33999999999997" y="493" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Y3nDfySXwRAaGiWAtd1p-23" value="save and track&lt;br&gt;previously fetched&lt;br&gt;service health issues&lt;br&gt;(to prevent duplicate sending)" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="Y3nDfySXwRAaGiWAtd1p-21">
+          <mxGeometry x="0.3762" y="-2" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Y3nDfySXwRAaGiWAtd1p-24" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.397;exitY=1;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="Y3nDfySXwRAaGiWAtd1p-3" target="Y3nDfySXwRAaGiWAtd1p-6">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-386.34" y="564" as="sourcePoint" />
+            <mxPoint x="-141.33999999999997" y="605" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Y3nDfySXwRAaGiWAtd1p-25" value="fetch impacted resources&lt;br&gt;foreach Issue" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="Y3nDfySXwRAaGiWAtd1p-24">
+          <mxGeometry x="0.3762" y="-2" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Y3nDfySXwRAaGiWAtd1p-26" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.706;exitY=1.067;exitDx=0;exitDy=0;exitPerimeter=0;entryX=0.5;entryY=0;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="1" source="Y3nDfySXwRAaGiWAtd1p-3" target="Y3nDfySXwRAaGiWAtd1p-2">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-413.34" y="572" as="sourcePoint" />
+            <mxPoint x="-501.3399999999999" y="692" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Y3nDfySXwRAaGiWAtd1p-27" value="fetch issues" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="Y3nDfySXwRAaGiWAtd1p-26">
+          <mxGeometry x="0.3762" y="-2" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Y3nDfySXwRAaGiWAtd1p-28" value="SMTP&lt;br&gt;Server" style="verticalLabelPosition=bottom;sketch=0;aspect=fixed;html=1;verticalAlign=top;strokeColor=none;align=center;outlineConnect=0;shape=mxgraph.citrix.smtp_server;" vertex="1" parent="1">
+          <mxGeometry x="-731.3399999999999" y="522" width="49.57" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Y3nDfySXwRAaGiWAtd1p-29" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.059;exitY=0.6;exitDx=0;exitDy=0;exitPerimeter=0;" edge="1" parent="1" source="Y3nDfySXwRAaGiWAtd1p-3" target="Y3nDfySXwRAaGiWAtd1p-28">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-413.34" y="572" as="sourcePoint" />
+            <mxPoint x="-516.3399999999999" y="692" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Y3nDfySXwRAaGiWAtd1p-30" value="sends HTML&lt;br&gt;email" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="Y3nDfySXwRAaGiWAtd1p-29">
+          <mxGeometry x="0.3762" y="-2" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Y3nDfySXwRAaGiWAtd1p-32" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=1;exitDx=0;exitDy=0;" edge="1" parent="1" source="Y3nDfySXwRAaGiWAtd1p-31" target="Y3nDfySXwRAaGiWAtd1p-28">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-428.34" y="556" as="sourcePoint" />
+            <mxPoint x="-671.3399999999999" y="561" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Y3nDfySXwRAaGiWAtd1p-33" value="get HTML email content" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="Y3nDfySXwRAaGiWAtd1p-32">
+          <mxGeometry x="0.3762" y="-2" relative="1" as="geometry">
+            <mxPoint x="2" y="-13" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Y3nDfySXwRAaGiWAtd1p-34" value="" style="shape=image;verticalLabelPosition=bottom;labelBackgroundColor=default;verticalAlign=top;aspect=fixed;imageAspect=0;image=https://d34u8crftukxnk.cloudfront.net/slackpress/prod/sites/6/EDU-Channels-hero%402x.jpg;" vertex="1" parent="1">
+          <mxGeometry x="-722.1099999999999" y="212" width="60" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="Y3nDfySXwRAaGiWAtd1p-35" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.634;exitY=0.006;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;exitPerimeter=0;" edge="1" parent="1" source="Y3nDfySXwRAaGiWAtd1p-31" target="Y3nDfySXwRAaGiWAtd1p-34">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="-696.3399999999999" y="426" as="sourcePoint" />
+            <mxPoint x="-696.3399999999999" y="532" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Y3nDfySXwRAaGiWAtd1p-38" value="sends to Slack channel" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];" vertex="1" connectable="0" parent="Y3nDfySXwRAaGiWAtd1p-35">
+          <mxGeometry x="-0.1468" y="3" relative="1" as="geometry">
+            <mxPoint as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="Y3nDfySXwRAaGiWAtd1p-31" value="" style="shape=image;verticalLabelPosition=bottom;labelBackgroundColor=default;verticalAlign=top;aspect=fixed;imageAspect=0;image=https://1000logos.net/wp-content/uploads/2021/06/Slack-logo.png;container=0;" vertex="1" parent="1">
+          <mxGeometry x="-751" y="366" width="88.89" height="50" as="geometry" />
+        </mxCell>
+        <mxCell id="Y3nDfySXwRAaGiWAtd1p-39" value="&lt;span style=&quot;color: rgb(0, 0, 0); font-family: Helvetica; font-size: 12px; font-style: normal; font-variant-ligatures: normal; font-variant-caps: normal; font-weight: 400; letter-spacing: normal; orphans: 2; text-align: center; text-indent: 0px; text-transform: none; widows: 2; word-spacing: 0px; -webkit-text-stroke-width: 0px; background-color: rgb(255, 255, 255); text-decoration-thickness: initial; text-decoration-style: initial; text-decoration-color: initial; float: none; display: inline !important;&quot;&gt;Slack-Email integration&lt;/span&gt;" style="text;whiteSpace=wrap;html=1;container=0;" vertex="1" parent="1">
+          <mxGeometry x="-809" y="363" width="70" height="40" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

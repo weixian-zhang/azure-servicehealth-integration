@@ -1,0 +1,16 @@
+<mxfile host="Electron" modified="2025-04-22T04:27:58.711Z" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/22.1.2 Chrome/114.0.5735.289 Electron/25.9.4 Safari/537.36" etag="964ujczavPOltionyH4j" version="22.1.2" type="device">
+  <diagram name="Page-1" id="G8UrM7M67HIisbb6Z9TN">
+    <mxGraphModel dx="1854" dy="745" grid="0" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="vVQCyA3plpaN8dxxsv8U-1" value="func_service_health_issue_fetcher" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-834" y="137" width="206" height="45" as="geometry" />
+        </mxCell>
+        <mxCell id="vVQCyA3plpaN8dxxsv8U-2" value="IssueReportGenerationWorkflow" style="rounded=0;whiteSpace=wrap;html=1;" vertex="1" parent="1">
+          <mxGeometry x="-597" y="137" width="189" height="46" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

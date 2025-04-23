@@ -115,8 +115,9 @@ resource "azurerm_windows_function_app" "func" {
     WEBSITE_TIME_ZONE= "Singapore Standard Time"
     APPLICATIONINSIGHTS_CONNECTION_STRING = "${azurerm_application_insights.appinsights.connection_string}"
     AzureWebJobsStorage = "${ data.azurerm_storage_account.func_storage.primary_connection_string}"
-    AZURE_STORAGEQUEUE_RESOURCEENDPOINT = "https://${var.func_storage_account_name}.queue.core.windows.net"
-    AZURE_STORAGETABLE_RESOURCEENDPOINT = "https://${var.func_storage_account_name}.table.core.windows.net"
+    AZURE_STORAGE_NAME = "${var.func_storage_account_name}"
+    # AZURE_STORAGEQUEUE_RESOURCEENDPOINT = "https://${var.func_storage_account_name}.queue.core.windows.net"
+    # AZURE_STORAGETABLE_RESOURCEENDPOINT = "https://${var.func_storage_account_name}.table.core.windows.net"
   }
 
   site_config {

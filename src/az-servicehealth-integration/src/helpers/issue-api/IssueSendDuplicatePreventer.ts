@@ -98,20 +98,16 @@ export default class IssueSendDuplicatePreventer {
 
                         const impactedSvc = trackedImpactedServices.get(svc.ImpactedService);
 
-                        // deciding whether to throw error as there should not have possibility to be null
-                        // if (_.isNil(impactedSvc)) {
-                        //     //TODO throw error or not
-                        //     continue;
-                        // }
 
-                        // issue/impacted service status change from Active to Resolved
+                        // only interested in SEA regional status, other regions are ignored
+                        // check if SEA region level status is Resolved, and update tracked issue status to Resolved
                         if (svc.SEARegionOrGlobalStatus == this.Resolved && impactedSvc.Status == this.Active) {
                             await this.db.updateImpactedServiceResolved(trackedIssue, svc.ImpactedService, svc.SEARegionOrGlobalLastUpdateTime);
                             
                             issuesToSend.push(issue);
                         }
 
-                        // issue/impacted service has newer "lastUpdateTime"
+                        // impacted service has newer "lastUpdateTime"
                         else if (svc.SEARegionOrGlobalLastUpdateTime.valueOf() > impactedSvc.LastUpdateTime) {
                             globalThis.funcContext.trace
                                 (`at IssueSendDuplicatePreventer: 

@@ -57,9 +57,10 @@ export async function func_http_gateway(request: HttpRequest, context: Invocatio
 // https://learn.microsoft.com/en-us/azure/service-connector/how-to-integrate-storage-table?tabs=nodejs
 
 function createQueueClient(): QueueClient {
+    const storage_queue_url = `https://${process.env.AZURE_STORAGE_NAME}.queue.core.windows.net`
     const credential = new DefaultAzureCredential();
     const queueName = 'incident-fetcher-in';
-    const queueUrl = `${process.env.AZURE_STORAGEQUEUE_RESOURCEENDPOINT}/${queueName}`
+    const queueUrl = `${storage_queue_url}/${queueName}`
     const queueClient = new QueueClient(queueUrl, credential);
     return queueClient;
 }

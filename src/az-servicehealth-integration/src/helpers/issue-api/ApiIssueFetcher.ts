@@ -73,20 +73,14 @@ export default class ApiIssueFetcher implements IIssueFetcher {
         for (const sub of this.subscriptions) {
 
             this.mrh.subscriptionId = sub.Id;
-            //const rhc = new MicrosoftResourceHealth(this.azcred, sub.Id);
             
             try {
                 for await (const currIssue of this.mrh.eventsOperations.listBySubscriptionId(options)) {
                 
                     const trackingId = currIssue.name;
     
-                    IssueFilterer.createAndFilterIssues(sub, currIssue, issueBag); //(this.tenantName, sub, currIssue, issueBag);
+                    IssueFilterer.createAndFilterIssues(sub, currIssue, issueBag); 
     
-                    
-                    // if (issueBag.has(trackingId)) {
-                    //     // get impacted resources
-                    //     await this.fetchImpactedResourcesForIssue(trackingId, issueBag);
-                    // }
                 }
             } catch (e) {
                 globalThis.funcContext.error(e.message,  {is_error: true});

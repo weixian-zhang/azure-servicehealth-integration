@@ -83,7 +83,7 @@ export default class IssueFilterer {
 
                     impactedSvc.ImpactedService = impact.impactedService;
                     impactedSvc.IsGlobal = (region.impactedRegion == "Global") ? true : false;
-                    impactedSvc.SEARegionOrGlobalStatus = region.status;
+                    impactedSvc.SEARegionOrGlobalStatus = region.status; //region level status
                     impactedSvc.SEARegionOrGlobalLastUpdateTime = new Date(region.lastUpdateTime);
                     impactedSvc.ImpactedTenants = region.impactedTenants;
                     impactedSvc.ImpactedSubscriptions = region.impactedSubscriptions;
@@ -125,7 +125,8 @@ export default class IssueFilterer {
 
         si.ImpactedRegions = Array.from(impactedRegions).join(', ');
 
-        // at this stage issue exist in SEA region, "addImpactedSubscription" will make sure unique subscriptions are added to list
+        // at this stage issue exist in SEA region,
+        // "addImpactedSubscription" maintains a unique list of subscriptions use in Reporting later
         si.addImpactedSubscription(subscription);
 
         // is previously collected issue

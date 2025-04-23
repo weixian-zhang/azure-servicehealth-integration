@@ -20,18 +20,16 @@ export default class AppConfig {
     TechPassClientSecret: string;
     TechPassTenantId: string;
     TechPassClientSecretCredential: ClientSecretCredential;
-    // WogClientId: string;
-    // WogClientSecret: string;
-    // WogTenantId: string;
-    // wogClientSecretCredential: ClientSecretCredential;
     IsDevTest: boolean;
     incidentQueryStartFromDate: string = '';
-    AzureStorageConnString: string = '';
+    //AzureStorageConnString: string = '';
     EMailConfig: EMailConfig;
     AzureAppInsightsConnString: string = '';
     incidentDayFromNow: number = 5 //if HTTP Func does not provide query incidentStartFromDate, this config will be used
     httpGatewayURL: string = ''; //used by func_timer_http_client only
+    AzureStorageName: string = ''; //used by func_timer_http_client only
     AzureStorageTableEndpoint: string = '';
+    //AzureStorageQueueEndpoint: string = '';
     Timezone: string = 'Asia/Singapore';
     TemplateOutput = 'slack'; // slack or html
     
@@ -52,14 +50,13 @@ export default class AppConfig {
             appconfig.TechPassClientSecret  = process.env.GCC_TECHPASS_CLIENT_SECRET;
             appconfig.TechPassTenantId  = process.env.GCC_TECHPASS_TENANT_ID;
 
-            // appconfig.WogClientId  = process.env.GCC_WOG_CLIENT_ID;
-            // appconfig.WogClientSecret  = process.env.GCC_WOG_CLIENT_SECRET;
-            // appconfig.WogTenantId  = process.env.GCC_WOG_TENANT_ID;
 
-            appconfig.AzureStorageConnString = process.env.AZURE_STORAGE_CONNECTION_STRING;
+            //appconfig.AzureStorageConnString = process.env.AZURE_STORAGE_CONNECTION_STRING;
 
-            appconfig.AzureStorageTableEndpoint = process.env.AZURE_STORAGETABLE_RESOURCEENDPOINT;
+            appconfig.AzureStorageName = process.env.AZURE_STORAGE_NAME;
 
+            appconfig.AzureStorageTableEndpoint = `https://${appconfig.AzureStorageName}.table.core.windows.net`;//process.env.AZURE_STORAGETABLE_RESOURCEENDPOINT;
+            
             appconfig.AzureAppInsightsConnString = process.env.APPLICATIONINSIGHTS_CONNECTION_STRING;
 
             this.createAzureCredentials(appconfig);

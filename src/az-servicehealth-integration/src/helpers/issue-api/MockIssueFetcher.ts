@@ -37,17 +37,8 @@ export default class MockIssueGenerator implements IIssueFetcher {
     
                 const trackingId = currIssue.name;
     
-                IssueFilterer.createAndFilterIssues(
-                    //wogTenantName, 
-                    sub, 
-                    currIssue, 
-                    issueBag);
+                IssueFilterer.createAndFilterIssues(sub, currIssue, issueBag);
                 
-                // if (issueBag.has(trackingId)) {
-                //     // get impacted resources
-                //     await this.fetchImpactedResourcesForIssue(trackingId, issueBag);
-                // }
-    
                 curr++;
             }
         }

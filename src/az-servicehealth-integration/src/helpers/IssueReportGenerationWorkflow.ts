@@ -6,7 +6,6 @@ import AppConfig from "./AppConfig";
 import { SubscriptionClient } from "@azure/arm-resources-subscriptions";
 import { ClientSecretCredential } from "@azure/identity";
 import ReportRenderer from "./template-engine/ReportRenderer";
-import * as fs from 'fs'; //testing only
 import EmailSinkCreator from "./send-sink/EmailSinkCreator";
 import { IEmailSink } from "./send-sink/IEmailSink";
 import { DB } from "./DB";
@@ -104,7 +103,7 @@ export default class IssueReportGenerationWorkflow {
             globalThis.techpassTenantName,
             globalThis.appconfig.TechPassClientSecretCredential, 
             subscriptions,
-            appconfig);
+            this.appconfig);
     
         const issues = await techpassIR.getIssues();
     
