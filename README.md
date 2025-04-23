@@ -25,7 +25,7 @@
 ### Service Health Issue Data Structure
 Sample service issue [here](https://raw.githubusercontent.com/weixian-zhang/azure-servicehealth-integration/refs/heads/main/src/az-servicehealth-integration/src/helpers/issue-api/test-data/bak/sea_issues_only_from_rest_api_response.json), a single Event (a.k.a service issue) can be identified uniquely by its Tracking Id.
 
-![image](https://github.com/user-attachments/assets/2c38570e-9dda-4d6b-be1b-c5d2c4d06224)
+![image](https://github.com/user-attachments/assets/4144f471-3bd4-4034-943a-074224221ea2)
 
 
 <br />  
@@ -84,10 +84,8 @@ App will retrieve all Azure Subscriptions that Service Principals below have acc
 * GCC_TECHPASS_CLIENT_ID
 * GCC_TECHPASS_CLIENT_SECRET
 * GCC_TECHPASS_TENANT_ID
-* GCC_TECHPASS_TENANT_NAME
 * AzureWebJobsStorage: {Azure storage conection string required by Function app}
-* AZURE_STORAGEQUEUE_RESOURCEENDPOINT: "https://{storage name}.queue.core.windows.net",
-* AZURE_STORAGETABLE_RESOURCEENDPOINT": "https://{storage name}.table.core.windows.net",
+* AZURE_STORAGE_NAME
 * StorageQueueIdentityAuth__queueServiceUri": "https://{storage name}.queue.core.windows.net/",
 * SERVICE_HEALTH_INTEGRATION_EMAIL_CONFIG (email config in Json format)
   e.g:
