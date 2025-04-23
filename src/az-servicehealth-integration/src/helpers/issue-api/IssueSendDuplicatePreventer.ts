@@ -20,24 +20,26 @@ export default class IssueSendDuplicatePreventer {
         await this.db.initDB()
     }
 
-    // ** decision tree to determine if an issue will be sent
+    // * goal is to prevent duplicate issue being sent
+    // decision tree to determine if an issue will be sent to 
+    // business rules:
     // issue level
         // issue is Resolved and no tracked issue is found in DB
             // do nothing
         // issue is Resolved and tracked issue is also Resolved
             // do nothing
         // issue is Active and no existing tracked issue is found in DB
-            // save issue as tracked issue in DB
+            // save issue as tracked-issue in DB
             // mark-issue-to-send
         // issue status change from Active to Resolved
             // update tracked issue status to Resolved in DB
             // mark-issue-to-send
 
-        // issue / impacted service - SEA region or Global only level
-            // if issue / impacted service has newer "lastUpdateTime", means has new update
+        // impacted service - SEA region or Global only level
+            // if impacted service has newer "lastUpdateTime", means has new update
                 // update tracked-impacted-service lastUpdatedTime to lasted updated time
                 // mark-issue-to-send
-            // if issue / impacted service status change from Active to Resolved
+            // if impacted service status change from Active to Resolved
                 // update tracked-impacted-service:
                     // set tracked-impacted-service status to Resolved in DB
                     // set tracked-impacted-service lastUpdatedTime to latest updated time in DB
@@ -78,7 +80,7 @@ export default class IssueSendDuplicatePreventer {
                     continue;
                 }
 
-                // issue status change from Active to Resolved
+                // issue level status change from Active to Resolved
                 if (issue.OverallStatus == this.Resolved && trackedIssue.Status == this.Active) {
                     await this.db.updateIssueResolved(trackedIssue, issue.LastUpdateTime)
                     issuesToSend.push(issue);

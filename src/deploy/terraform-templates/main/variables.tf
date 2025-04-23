@@ -1,11 +1,11 @@
 variable "resource_group_name" {
   type=string
-  default = "rg-service-health-to-email"
+  default = "rg-service-health-to-email-2"
 }
 
 variable "func_storage_account_name" {
   type = string
-  default = "strgsvchealth1"
+  default = "strgsvchealth22"
 }
 
 variable "storage_queue_name" {
@@ -20,21 +20,21 @@ variable "storage_table_name" {
 
 variable "app_service_plan_name" {
   type=string
-  default = "asp-sh-basic"
+  default = "asp-service-health-2"
 }
 
 variable "function_name" {
   type=string
-  default = "func-sh-dev-1"
+  default = "func-sh-2"
 }
 
 variable "existing_log_analytics_resource_group_name" {
   type=string
-  default = ""
+  default = "rg-common"
 }
 variable "existing_log_analytics_name" {
   type=string
-  default = ""
+  default = "law-common"
 }
 
 variable "smtp_config" {

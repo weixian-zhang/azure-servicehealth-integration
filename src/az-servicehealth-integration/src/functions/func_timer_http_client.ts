@@ -39,7 +39,7 @@ export async function func_timer_http_client(myTimer: Timer, context: Invocation
 }
     
 
-// app.timer('func_timer_http_client', {
-//     schedule: '0 0,5,10,15,20,25,30,35,40,45,50,55 * * * *',
-//     handler: func_timer_http_client,
-// });
+app.timer('func_timer_http_client', {
+    schedule: '0 0,5,10,15,20,25,30,35,40,45,50,55 * * * *',
+    handler: func_timer_http_client,
+});

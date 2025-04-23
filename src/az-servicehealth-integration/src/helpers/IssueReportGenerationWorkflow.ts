@@ -28,22 +28,22 @@ export default class IssueReportGenerationWorkflow {
         var tpIssuesToSend = []
         try {
             
-            globalThis.funcContext.trace(`techpass / issue_fetcher: get subscriptions by service principal`);
+            globalThis.funcContext.trace(`IssueReportGenerationWorkflow: get subscriptions by service principal`);
 
             const tpSubs = await this.getSubscriptionsByServicePrincipalRBAC(globalThis.appconfig.TechPassClientSecretCredential)
 
-            globalThis.funcContext.trace(`techpass / issue_fetcher: get issues`);
+            globalThis.funcContext.trace(`IssueReportGenerationWorkflow: get issues`);
 
             const tpIssues = await this.getTechPassIssues(tpSubs);
 
-            globalThis.funcContext.trace(`techpass / issue_fetcher: determine if issues should be send`);
+            globalThis.funcContext.trace(`IssueReportGenerationWorkflow: determining if issues should be send`);
 
             tpIssuesToSend = await this.sendDupPreventer.determineShouldSendIssues(tpIssues)
 
-            globalThis.funcContext.trace(`techpass / issue_fetcher: issues count to send: ${tpIssuesToSend.length}`)
+            globalThis.funcContext.trace(`IssueReportGenerationWorkflow: issues count to send via email: ${tpIssuesToSend.length}`)
 
         } catch (e) {
-            globalThis.funcContext.error(`techpass / issue_fetcher: error message: ${e.message}, ${e.stack}`, {is_error: true})
+            globalThis.funcContext.error(`IssueReportGenerationWorkflow: error message: ${e.message}, ${e.stack}`, {is_error: true})
         }
         
 

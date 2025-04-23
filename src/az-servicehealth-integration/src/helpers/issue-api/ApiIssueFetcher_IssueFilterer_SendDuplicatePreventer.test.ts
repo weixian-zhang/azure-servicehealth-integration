@@ -9,6 +9,7 @@ import dotenv from 'dotenv';
 import { mock, when, instance } from 'ts-mockito';
 import { MicrosoftResourceHealth, Event, EventsOperations, 
     EventsListBySubscriptionIdOptionalParams, 
+
     EventsListBySingleResourceOptionalParams, 
     EventsListByTenantIdOptionalParams,
     ImpactedResources,
@@ -476,7 +477,7 @@ test("test_case_6", async () => {
     const mrh_instance = instance(mrh);
     Object.defineProperty(mrh_instance, "subscriptionId", { writable: true, value: 'xx-xx-xx' });
 
-    //setup mock DB 
+    //setup mock DB
     const mdb = mock(DB);
     when(mdb.initDB).thenReturn(async () => await Promise.resolve());
     when(mdb.addIssue).thenReturn(async () => await Promise.resolve());
@@ -518,8 +519,8 @@ test("test_case_6", async () => {
 
 
 //test case 7
-// desc: Active issue GS98-G5Y1 is not tracked.
-// There are 2 existing tracked issues exist in DB but none of them is "GS98-G5Y1".
+// desc: Active issue GS98-CN3Y is not tracked but GS98-CN3Y is Not tracked
+// There are 2 existing tracked issues exist in DB, but none of them is "GS98-G5Y1".
 // Which means Active issue GS98-G5Y1 is not tracked. 
 // conditions:
 // - an issue is Resolved
@@ -550,21 +551,25 @@ test("test_case_7", async () => {
     when(mdb.updateIssueResolved).thenReturn(async () => await Promise.resolve());
     when(mdb.updateImpactedServiceResolved).thenReturn(async () => await Promise.resolve());
     when(mdb.updateImpactedServiceLastUpdateTime).thenReturn(async () => await Promise.resolve());
+
+    //return tracked impacted services
     when(mdb.getImpactedServices).thenReturn(async () => await Promise.resolve(
         [
             new TrackedIssue('TechPass', 'GS98-9V8', null, new Date().valueOf(), 'Active'),
             new Map<string, TrackedImpactedService>([
-                ['GS98-9V8', new TrackedImpactedService('Windows Virtual Desktop', new Date().valueOf(), 'Active')]
+                ['GS98-9V8', new TrackedImpactedService('Windows Virtual Desktop', new Date().valueOf(), 'Rsolved')],
             ])
         ]
     ));
 
     // mock DB return existing tracked issue
     when(mdb.issueExist)
+        // this issue is tracked
         .thenReturn(async () => await Promise.resolve([ 
             true, 
-            new TrackedIssue('TechPass', 'GS98-9V8', null, new Date().valueOf(), 'Resolved'),
+            new TrackedIssue('TechPass', 'GS98-9V8', null, new Date().valueOf(), 'Rsolved'),
         ]))
+        // this issue is Not tracked
         .thenReturn(async () => await Promise.resolve([ 
             false, 
             new TrackedIssue('TechPass', 'GS98-CN3Y', null, new Date().valueOf(), 'Active'),
@@ -619,6 +624,8 @@ test("test_case_8", async () => {
     when(mdb.updateIssueResolved).thenReturn(async () => await Promise.resolve());
     when(mdb.updateImpactedServiceResolved).thenReturn(async () => await Promise.resolve());
     when(mdb.updateImpactedServiceLastUpdateTime).thenReturn(async () => await Promise.resolve());
+
+    //return tracked impacted services
     when(mdb.getImpactedServices).thenReturn(async () => await Promise.resolve(
         [
             new TrackedIssue('TechPass', 'GS98-9V8', null, new Date().valueOf(), 'Active'),
@@ -726,7 +733,7 @@ test("test_case_9", async () => {
 
  // test case 10
 // desc: issue / impacted service of "Non SEA" region status change from Active to Resolved,
-// while tracked SEA impacted service is Active
+// while tracked SEA impacted service is Active. Non SEA issue are ignored.
 // conditions:
 // - issue is Active
 // - SEA region tracked impacted service is Active
