@@ -71,7 +71,7 @@ resource "azurerm_service_plan" "asp" {
   resource_group_name = var.resource_group_name
   location            = local.location
   os_type             = "Windows"
-  sku_name = "P1V3"
+  sku_name = "P1v3"
   # sku_name            = "P1V3 | P1v2 | S1"
   # zone_balancing_enabled = true
   # per_site_scaling_enabled = true
@@ -94,7 +94,7 @@ resource "azurerm_windows_function_app" "func" {
   }
 
   app_settings = {
-    HTTP_GATEWAY_FUNC_HOST_KEY_USED_BY_TIMER_FUNC = "{http gateway func host key manually set}"
+    # HTTP_GATEWAY_FUNC_HOST_KEY_USED_BY_TIMER_FUNC = "{http gateway func host key manually set}"
     # GCC_WOG_CLIENT_ID = " {manually set} "
     # GCC_WOG_CLIENT_SECRET = " {manually set} "
     # GCC_WOG_TENANT_ID = " {manually set} "
