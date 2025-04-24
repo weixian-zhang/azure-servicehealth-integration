@@ -27,7 +27,7 @@ export async function func_service_health_issue_fetcher(data: QueueData, context
 
         globalThis.funcContext = context;
 
-        globalThis.funcContext.trace(`techpass / issue_fetcher: received message with incidentStartFromDate ${data.incidentStartFromDate}, start fetching issues`);
+        globalThis.funcContext.trace(`func_service_health_issue_fetcher: received message with incidentStartFromDate ${data.incidentStartFromDate}, start fetching issues`);
         
         initGlobalVariables(context, data.incidentStartFromDate);
 
@@ -35,12 +35,12 @@ export async function func_service_health_issue_fetcher(data: QueueData, context
 
         await wfm.generateIssueReport();
 
-        globalThis.funcContext.trace(`techpass / issue_fetcher: Report generation completed`);
+        globalThis.funcContext.trace(`func_service_health_issue_fetcher: Report generation completed`);
     }
     catch(e){
         
         // if app insights is enabled at function, will log to app insights.Traces
-        globalThis.funcContext.error(`techpass / issue_fetcher: error message: ${e.message}, ${e.stack}`,  {is_error: true})
+        globalThis.funcContext.error(`func_service_health_issue_fetcher: error message: ${e.message}, ${e.stack}`,  {is_error: true})
 
         return {
             status: 500,

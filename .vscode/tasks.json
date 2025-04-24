@@ -10,15 +10,16 @@
 			}
     	},
     	{
-			"label": "terraform apply main app",
+			"label": "terraform apply",
 			"type": "shell",
 			"command": "terraform apply --auto-approve",
 			"options": {
 				"cwd": "${workspaceFolder}/src\\deploy\\terraform-templates\\main"
-			}
+			},
+			"dependsOn": "npm build (functions)",
 		},
 		{
-			"label": "terraform destroy main app",
+			"label": "terraform destroy",
 			"type": "shell",
 			"command": "terraform destroy --auto-approve",
 			"options": {

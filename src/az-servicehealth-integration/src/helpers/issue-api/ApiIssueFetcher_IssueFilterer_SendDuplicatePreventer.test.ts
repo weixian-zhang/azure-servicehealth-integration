@@ -519,7 +519,7 @@ test("test_case_6", async () => {
 
 
 //test case 7
-// desc: Active issue GS98-CN3Y is not tracked but GS98-CN3Y is Not tracked
+// desc: Active issue GS98-9V8 is tracked but GS98-CN3Y is Not tracked
 // There are 2 existing tracked issues exist in DB, but none of them is "GS98-G5Y1".
 // Which means Active issue GS98-G5Y1 is not tracked. 
 // conditions:
@@ -552,7 +552,7 @@ test("test_case_7", async () => {
     when(mdb.updateImpactedServiceResolved).thenReturn(async () => await Promise.resolve());
     when(mdb.updateImpactedServiceLastUpdateTime).thenReturn(async () => await Promise.resolve());
 
-    //return tracked impacted services
+    //return tracked-impacted-services
     when(mdb.getImpactedServices).thenReturn(async () => await Promise.resolve(
         [
             new TrackedIssue('TechPass', 'GS98-9V8', null, new Date().valueOf(), 'Active'),
@@ -597,7 +597,7 @@ test("test_case_7", async () => {
  });
 
 //test case 8
-// desc: issue status change from Active to Resolved, and tracked issue is Active
+// desc: issue status change from Active to Resolved, and tracked-impacted-service is Active
 // conditions:
 // - issue is Resolved
 // - issue/impactedRegions is SEA region or Global only
@@ -625,7 +625,7 @@ test("test_case_8", async () => {
     when(mdb.updateImpactedServiceResolved).thenReturn(async () => await Promise.resolve());
     when(mdb.updateImpactedServiceLastUpdateTime).thenReturn(async () => await Promise.resolve());
 
-    //return tracked impacted services
+    //return tracked-impacted-services
     when(mdb.getImpactedServices).thenReturn(async () => await Promise.resolve(
         [
             new TrackedIssue('TechPass', 'GS98-9V8', null, new Date().valueOf(), 'Active'),
@@ -666,7 +666,7 @@ test("test_case_8", async () => {
 
 
 // test case 9
-// desc: issue / impacted service region status change from Active to Resolved, while tracked impacted service is Active
+// desc: impacted service region status change from Active to Resolved, while tracked-impacted-service is Active
 // conditions:
 // - issue is Active
 // - tracked impacted service is Active

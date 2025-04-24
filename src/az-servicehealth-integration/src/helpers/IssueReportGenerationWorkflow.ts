@@ -28,11 +28,15 @@ export default class IssueReportGenerationWorkflow {
         var tpIssuesToSend = []
         try {
             
-            globalThis.funcContext.trace(`IssueReportGenerationWorkflow: get subscriptions by service principal`);
+            globalThis.funcContext.trace(`IssueReportGenerationWorkflow: getting subscriptions by service principal`);
 
             const tpSubs = await this.getSubscriptionsByServicePrincipalRBAC(globalThis.appconfig.TechPassClientSecretCredential)
 
-            globalThis.funcContext.trace(`IssueReportGenerationWorkflow: get issues`);
+            const subNames = tpSubs.map((s) => s.Name).join(', ');
+
+            globalThis.funcContext.trace(`IssueReportGenerationWorkflow: subscriptions retrieved ${subNames}`);
+
+            globalThis.funcContext.trace(`IssueReportGenerationWorkflow: getting issues`);
 
             const tpIssues = await this.getTechPassIssues(tpSubs);
 

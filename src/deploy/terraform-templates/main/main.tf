@@ -71,8 +71,8 @@ resource "azurerm_service_plan" "asp" {
   resource_group_name = var.resource_group_name
   location            = local.location
   os_type             = "Windows"
-  sku_name = "S1"
-  # sku_name            = "P1v2"
+  sku_name = "P1V3"
+  # sku_name            = "P1V3 | P1v2 | S1"
   # zone_balancing_enabled = true
   # per_site_scaling_enabled = true
   worker_count = 1
@@ -110,8 +110,8 @@ resource "azurerm_windows_function_app" "func" {
     FUNCTIONS_WORKER_RUNTIME = "node"
     SERVICE_HEALTH_INTEGRATION_IS_DEVTEST = false
     SERVICE_HEALTH_INTEGRATION_INCIDENT_DAY_FROM_NOW = 3
-    HTTP_GATEWAY_URL= "https://${var.function_name}.azurewebsites.net/api/azure-incident-report/generate"
-    HTTP_GATEWAY_FUNC_HOST_KEY_USED_BY_TIMER_FUNC = "" // manually set on function post creation
+    HTTP_GATEWAY_URL= "{manually set}" #"https://${var.function_name}.azurewebsites.net/api/azure-incident-report/generate?code=a"
+    #HTTP_GATEWAY_FUNC_HOST_KEY_USED_BY_TIMER_FUNC = "" // manually set on function post creation
     WEBSITE_TIME_ZONE= "Singapore Standard Time"
     APPLICATIONINSIGHTS_CONNECTION_STRING = "${azurerm_application_insights.appinsights.connection_string}"
     AzureWebJobsStorage =  "${ azurerm_storage_account.func_storage.primary_connection_string}" #"${ data.azurerm_storage_account.func_storage.primary_connection_string}"
@@ -120,10 +120,11 @@ resource "azurerm_windows_function_app" "func" {
     # AZURE_STORAGETABLE_RESOURCEENDPOINT = "https://${var.func_storage_account_name}.table.core.windows.net"
   }
 
+
   site_config {
     always_on = true
     application_stack {
-      node_version = "~22"
+      node_version = "~20"
       
     }
   }
