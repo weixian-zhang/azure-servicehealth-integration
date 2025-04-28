@@ -26,7 +26,7 @@
 ### Service Health Issue Data Structure
 Sample service issue [here](https://raw.githubusercontent.com/weixian-zhang/azure-servicehealth-integration/refs/heads/main/src/az-servicehealth-integration/src/helpers/issue-api/test-data/bak/sea_issues_only_from_rest_api_response.json), a single Event (a.k.a service issue) can be identified uniquely by its Tracking Id.
 
-![image](https://github.com/user-attachments/assets/49704a6d-cf52-4fa3-804e-ff67810e4d8a)
+![image](https://github.com/user-attachments/assets/9b77cb11-87c0-47e5-8a82-55759892600f)
 
 
 <br />  
