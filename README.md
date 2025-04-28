@@ -14,14 +14,15 @@
 * [Slack Markdown Formatted Report Sample](#slack-markdown-formatted-report-sample)
 
 ### What is Service Health to Slack?  
-* Curates Azure Service Health [incidents](https://learn.microsoft.com/en-us/azure/service-health/service-health-notifications-properties) and [impacted resources](https://learn.microsoft.com/en-us/azure/service-health/impacted-resources-security) of 2 Entra tenants, generates [HTML report](https://github.com/weixian-zhang/azure-servicehealth-integration/blob/main/src/az-servicehealth-integration/doc/sample-wog-incident-report.html) and sends as email. Slack's email integration picks up email content and sends to preconfigured Slack channels.
-* Other "destinations" in addition to Slack can be potentially enhanced for e.g: Enahnce app to generate impacted Azure resources as CSV email attachment
+* Curates Azure Service Health [incidents](https://learn.microsoft.com/en-us/azure/service-health/service-health-notifications-properties) and [impacted resources](https://learn.microsoft.com/en-us/azure/service-health/impacted-resources-security), generates [Slack markdown](#slack-markdown-formatted-report-sample) or [HTML format](https://github.com/weixian-zhang/azure-servicehealth-integration/blob/main/src/az-servicehealth-integration/doc/sample-wog-incident-report.html) and sends as email.
+* Slack's email integration picks up email content and sends to preconfigured Slack channels
 
 ### How the App Works?
 * fetches incidents using [Events Api - List by Subscription Id](https://learn.microsoft.com/en-us/rest/api/resourcehealth/events/list-by-subscription-id?view=rest-resourcehealth-2022-10-01&tabs=HTTP)
 * fetches impacted resources using [Impacted Resources - List By Subscription Id And Event Id](https://learn.microsoft.com/en-us/rest/api/resourcehealth/impacted-resources/list-by-subscription-id-and-event-id?view=rest-resourcehealth-2022-10-01&tabs=HTTP)
-* Curates data from both Events API and ImpactedResources API
-* Use curated data to generate HTML report.
+* Curates issue data from both Events API and ImpactedResources API
+* Tracks received issues to prevent from sending duplicate report
+* Generated Slack markdown formatted report or HTML formated report
 
 ### Service Health Issue Data Structure
 Sample service issue [here](https://raw.githubusercontent.com/weixian-zhang/azure-servicehealth-integration/refs/heads/main/src/az-servicehealth-integration/src/helpers/issue-api/test-data/bak/sea_issues_only_from_rest_api_response.json), a single Event (a.k.a service issue) can be identified uniquely by its Tracking Id.
